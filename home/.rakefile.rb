@@ -49,6 +49,10 @@ namespace :dotfiles do
   end
 end
 
+task :fixcaps do
+  
+end
+
 namespace :git do
   namespace :setup do
     desc "Setup Git and Github"
