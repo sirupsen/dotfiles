@@ -12,7 +12,7 @@ xkb_symbols "basic" {
     // and all of ISO-8859-1 characters available.
 
     include "latin"
-      name[Group1]= "Denmark - Mac";
+    name[Group1]= "Denmark - Mac";
 
     key <LSGT> {	[         dollar,         section,    threequarters,       paragraph	]};
     key <TLDE> {	[           less,         greater,        backslash,         notsign	]};

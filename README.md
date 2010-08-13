@@ -41,6 +41,16 @@ You can install my dotfiles easily with [Homesick][homesick]:
     homesick clone Sirupsen/dotfiles
     homesick symlink Sirupsen/dotfiles
 
+## Keyboard layouts
+
+I use a custom keyboard layout for my danish Apple keyboard, here's how to get it working in Linux:
+
+    $ cd /usr/share/X11/xkb/symbols
+    $ cp dk dk.backup
+    $ cp latin latin.backup
+    $ ln -s ~/.config/.dk_layout .
+    $ ln -s ~/.config/.latin_layout .
+
 ## Syncing with Dropbox
 
 If you have your own local dotfiles syncing across computers, here's a tip on how to sync your dotfiles.
