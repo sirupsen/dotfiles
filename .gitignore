@@ -1,0 +1,10 @@
+.config/Pinta/*
+.config/Thunar/*
+.config/Trolltech.conf
+.config/chromium-dev/*
+.config/enchant/*
+.config/gtk-2.0/*
+.config/nitrogen/*
+.config/op/*
+.gitconfig
+.vim/.netrwhist
