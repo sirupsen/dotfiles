@@ -1,2 +1,0 @@
-#!/bin/bash
-wwwshare $1 > /dev/null &

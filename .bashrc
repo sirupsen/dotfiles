@@ -42,7 +42,7 @@ PS1="\[\033]0;${USER} ${PWD}\007\]\[${COLOR_BLUE}\]\W/\[${COLOR_GRAY}\]\[${COLOR
 #PS1=""
 
 # Add user Bin to path
-PATH=$PATH:~/Code/Bin
+PATH=$PATH:~/Bin
 PATH=$PATH:/usr/local/bin
 PATH=$PATH:/opt/java/jre/bin
 PATH=$PATH:~/Code/Bin/gsutil
