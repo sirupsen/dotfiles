@@ -1,0 +1,1164 @@
+#!/usr/bin/env python
+#
+# Copyright 2010 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Google Storage command line tool."""
+
+import datetime
+import fnmatch
+import getopt
+import glob
+import mimetypes
+import os
+import platform
+import re
+import shutil
+import signal
+import stat
+import sys
+import tarfile
+import tempfile
+import xml.dom.minidom
+
+
+def OutputAndExit(message):
+  sys.stderr.write('%s\n' % message)
+  sys.exit(1)
+
+
+# Before importing boto, find where gsutil is installed and include its
+# boto sub-directory at the start of the PYTHONPATH, to ensure the versions of
+# gsutil and boto stay in sync after software updates. This also allows gsutil
+# to be used without explicitly adding it to the PYTHONPATH.
+# We use realpath() below to unwind symlinks if any were used in the gsutil
+# installation.
+gsutil_bin_dir = os.path.realpath(os.path.dirname(sys.argv[0]))
+if not gsutil_bin_dir:
+  OutputAndExit('Unable to determine where gsutil is installed. Sorry, '
+                'cannot run correctly without this.\n')
+boto_lib_dir = gsutil_bin_dir + os.sep + 'boto'
+if not os.path.isdir(boto_lib_dir):
+  OutputAndExit('There is no boto library under the gsutil install directory '
+                '(%s).\nThe gsutil command cannot work properly when installed '
+                'this way.\nPlease re-install gsutil per the installation '
+                'instructions.' % gsutil_bin_dir)
+if 'PYTHONPATH' not in os.environ:
+  os.environ['PYTHONPATH'] = boto_lib_dir
+else:
+  os.environ['PYTHONPATH'] = boto_lib_dir + ':' + os.getenv('PYTHONPATH')
+
+import boto
+boto.UserAgent = boto.UserAgent + '/gsutil'
+from boto import handler
+from boto.exception import BotoClientError
+from boto.exception import InvalidAclError
+from boto.exception import InvalidUriError
+from boto.exception import S3ResponseError
+
+usage_string = """
+SYNOPSIS
+  gsutil [-d] [-h header]... command args
+
+  -d option shows HTTP protocol detail.
+
+  -h option allows you to specify additional HTTP headers, for example:
+     gsutil -h "Cache-Control:public,max-age=3600" -h "Content-Type:gzip" cp * gs://bucket
+
+  Commands:
+    Concatenate object content to stdout:
+      cat [-h] uri...
+        -h  Prints short header for each object.
+    Copy objects:
+      cp [-a canned_acl] [-t] src_uri dst_uri
+        - or -
+      cp [-a canned_acl] [-t] uri... dst_uri
+        -a Sets named canned_acl when uploaded objects created (list below).
+        -t Sets MIME type based on file extension.
+    Get ACL XML for a bucket or object (save and edit for "setacl" command):
+      getacl uri
+    List buckets or objects:
+      ls [-l] uri...
+        -l Prints long listing.
+    Make buckets:
+      mb uri...
+    Move/rename objects:
+      mv src_uri dst_uri
+        - or -
+      mv uri... dst_uri
+    Remove buckets:
+      rb uri...
+    Remove objects:
+      rm uri...
+    Set ACL on buckets and/or objects:
+      setacl file-or-canned_acl_name uri...
+
+  Omitting URI scheme defaults to "file". For example, "dir/file.txt" is
+  equivalent to "file://dir/file.txt"
+
+  URIs support object name wildcards, for example:
+    gsutil cp gs://mybucket/[a-f]*.doc localdir
+
+  Source directory or bucket names are implicitly wildcarded, so
+    gsutil cp localdir gs://mybucket
+  will recursively copy localdir.
+
+  canned_acl_name can be one of: "public-read", "public-read-write",
+  "authenticated-read", "bucket-owner-read", "bucket-owner-full-control"
+"""
+
+
+def OutputUsageAndExit():
+  sys.stderr.write(usage_string)
+  sys.exit(0)
+
+
+def StorageUri(uri_str, disallow_object_name=False, debug=False):
+  """Instantiate boto.StorageUri with given debug flag with validity checks.
+
+  Args:
+    uri_str: StorageUri naming bucket + optional object.
+    disallow_object_name: Set to true to only allow object name-less buckets.
+    debug: Whether to enable debugging on StorageUri method calls.
+
+  Returns:
+    boto.StorageUri for given uri_str.
+
+  Raises:
+    InvalidUriError: if uri_str not valid.
+  """
+
+  uri = boto.storage_uri(uri_str, 'file', debug)
+  if disallow_object_name and uri.object_name:
+    raise InvalidUriError('Command requires a URI with no object name')
+  if uri.bucket_name and re.search('[*?\[\]]', uri.bucket_name):
+    raise InvalidUriError('Bucket names cannot contain wildcards')
+  return uri
+
+
+def ExpandStorageUriGlob(bucket_obj_glob, headers=None, debug=False):
+  """Expands globbing (if any) in bucket_obj_glob.
+
+  Args:
+    bucket_obj_glob: bucket+object name, possibly including glob chars.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+
+  Returns:
+    list of boto.StorageUri, after expanding any globbing.
+
+  For example, ExpandStorageUriGlob('gs://mybucket/*.txt', headers, debug)
+  might return [StorageUri('gs://mybucket/obj1.txt'),
+                StorageUri('gs://mybucket/obj2.txt')]
+  """
+
+  uri = StorageUri(bucket_obj_glob, False, debug)
+  key_glob = uri.object_name
+  result = []
+  # Avoid server round trip if input contains no glob chars.
+  if not re.search('[*?\[\]]', key_glob):
+    result.append(uri)
+  elif uri.is_file_uri():
+    # FileStorageUri objects don't provide a way to return a list of all
+    # files in the 'bucket', so do our own wildcard expansion for that case.
+    filenames = glob.glob(uri.object_name)
+    for filename in filenames:
+      expanded_uri = uri.clone_replace_name(filename)
+      result.append(expanded_uri)
+  else:
+    # BucketStorageUri with wildcarding.
+    objs = uri.get_bucket(False, headers)
+    for obj in objs:
+      if fnmatch.fnmatch(obj.name, key_glob):
+        # Replace wildcard name in URI with specific matched obj.name
+        expanded_uri = uri.clone_replace_name(obj.name)
+        result.append(expanded_uri)
+  return result
+
+
+def ExpandWildcardsAndContainers(uri_strs, headers=None, debug=False):
+  """Expands any URI globbing, object-less bucket names, or directory names.
+
+  Args:
+    uri_strs: URI strings needing expansion
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+
+  Returns:
+    list of boto.StorageUri, after expanding any globbing and recursively
+    walking directories.
+  """
+
+  result = []
+  for uri_str in uri_strs:
+    for exp_uri in ExpandStorageUriGlob(uri_str, headers, debug):
+      if exp_uri.is_file_uri() and exp_uri.names_container():
+        # exp_uri is a file:// URI that names a directory, so include
+        # all its nested files.
+        for root, unused_dirs, files in os.walk(exp_uri.object_name):
+          for name in files:
+            result.append(StorageUri(os.path.join(root, name)))
+      elif exp_uri.is_cloud_uri() and exp_uri.names_container():
+        # exp_uri is an object-less bucket URI, so include
+        # all its nested objects.
+        bucket_wildcard = exp_uri.clone_replace_name('*').uri
+        uris = ExpandStorageUriGlob(bucket_wildcard, headers, debug)
+        for uri in uris:
+          result.append(uri)
+      else:
+        result.append(exp_uri)
+  return result
+
+
+def InsistUriNamesContainer(command, uri):
+  """Prints error and exists if URI doesn't name a directory or bucket.
+
+  Args:
+    command: command being run
+    uri: StorageUri to check
+  """
+
+  if uri.names_singleton():
+    OutputAndExit('destination StorageUri must name a bucket or directory '
+                  'for the multiple source\nform of the "%s" command.' %
+                  command)
+
+
+def CatCommand(args, sub_opts, headers=None, debug=False):
+  """Implementation of cat command.
+
+  Args:
+    args: command-line arguments
+    sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  show_header = False
+  for o, unused_a in sub_opts:
+    if o == '-h':
+      show_header = True
+
+  # Expand object name globs, if any.
+  exp_uris = []
+  for uri_str in args:
+    for exp_uri in ExpandStorageUriGlob(uri_str, headers, debug):
+      exp_uris.append(exp_uri)
+  if not exp_uris:
+    OutputAndExit('No objects matched.')
+  printed_one = False
+  for uri in exp_uris:
+    if not uri.object_name:
+      OutputAndExit('"cat" command must specify objects.')
+    if show_header:
+      if printed_one:
+        print
+      print '==> %s <==' % uri.__str__()
+      printed_one = True
+    sys.stdout.write(uri.get_contents_as_string(False, headers))
+
+
+def SetAclCommand(args, unused_sub_opts, headers=None, debug=False):
+  """Implementation of setacl command.
+
+  Args:
+    args: command-line arguments
+    unused_sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  acl_arg = args[0]
+  # Expand object name globs, if any.
+  exp_uris = []
+  for uri_str in args[1:]:
+    for exp_uri in ExpandStorageUriGlob(uri_str, headers, debug):
+      exp_uris.append(exp_uri)
+
+  # Disallow setacl command spanning multiple providers because
+  # there are differences in the ACL models.
+  provider = None
+  for uri in exp_uris:
+    if not provider:
+      provider = uri.provider
+    elif uri.provider != provider:
+      OutputAndExit('"setacl" command spanning multiple providers not allowed.')
+
+  # Get ACL object from connection for the first URI, for interpreting the
+  # ACL.  This won't fail because the main startup code insists on 1 arg
+  # for this command.
+  storage_uri = exp_uris[0]
+  acl_class = storage_uri.acl_class()
+  canned_acls = storage_uri.canned_acls()
+
+  # Determine whether acl_arg names a file containing XML ACL text vs. the
+  # string name of a canned ACL.
+  if os.path.isfile(acl_arg):
+    acl_file = open(acl_arg, 'r')
+    acl_txt = acl_file.read()
+    acl_file.close()
+    acl_obj = acl_class()
+    h = handler.XmlHandler(acl_obj, storage_uri.get_bucket())
+    try:
+      xml.sax.parseString(acl_txt, h)
+    except xml.sax._exceptions.SAXParseException, e:
+      OutputAndExit('Requested ACL is invalid: %s at line %s, column %s' %
+                    (e.getMessage(), e.getLineNumber(), e.getColumnNumber()))
+    acl_arg = acl_obj
+  else:
+    # No file exists, so expect a canned ACL string.
+    if acl_arg not in canned_acls:
+      OutputAndExit('Invalid canned ACL "%s".' % acl_arg)
+
+  # Now iterate over URIs and set the ACL on each.
+  for uri in exp_uris:
+    if len(exp_uris) > 1:
+      # Progress indicator
+      print 'Setting ACL on %s...' % uri
+    uri.set_acl(acl_arg, uri.object_name, False, headers)
+
+
+def ExplainIfSudoNeeded(tf, dirs_to_remove):
+  """Explains what to do if sudo needed to update gsutil software.
+
+  Happens if gsutil was previously installed by a different user (typically if
+  someone originally installed in a shared file system location, using sudo).
+
+  Args:
+    tf: opened TarFile.
+    dirs_to_remove: list of directories to remove.
+  """
+
+  system = platform.system()
+  # If running under Windows we don't need (or have) sudo.
+  if system.lower().startswith('windows'):
+    return
+
+  user_id = os.getuid()
+  if (os.stat(gsutil_bin_dir).st_uid == user_id and
+      os.stat(boto_lib_dir).st_uid == user_id):
+    return
+
+  # Won't fail - this command runs after main startup code that insists on
+  # having a config file.
+  config_file = GetBotoConfigFileList()[0]
+  CleanUpUpdateCommand(tf, dirs_to_remove)
+  OutputAndExit(('Since it was installed by a different user previously, '
+                 'you will need to update using the following commands.\n'
+                 'You will be prompted for your password, and the install '
+                 'will run as "root". If you\'re unsure what this means please '
+                 'ask your system administrator for help:\n'
+                 '\tchmod 644 %s\n'
+                 '\tsudo env BOTO_CONFIG=%s gsutil update\n'
+                 '\tchmod 600 %s') % (config_file, config_file, config_file))
+
+
+def CleanUpUpdateCommand(tf, dirs_to_remove):
+  """Cleans up temp files etc. from running update command.
+
+  Args:
+    tf: opened TarFile.
+    dirs_to_remove: list of directories to remove.
+
+  """
+  tf.close()
+  for directory in dirs_to_remove:
+    shutil.rmtree(directory)
+
+
+def LoadVersionString():
+  """Loads version string for currently installed gsutil command.
+
+  Returns:
+    Version string.
+  """
+
+  ver_file_path = gsutil_bin_dir + os.sep + 'VERSION'
+  if not os.path.isfile(ver_file_path):
+    OutputAndExit('%s not found. Did you install the\ncomplete gsutil software '
+                  'after the gsutil "update" command was implemented?' %
+                  ver_file_path)
+  ver_file = open(ver_file_path, 'r')
+  installed_version_string = ver_file.read().rstrip('\n')
+  ver_file.close()
+  return installed_version_string
+
+
+def UpdateCommand(unused_args, sub_opts, headers=None, debug=False):
+  """Implementation of experimental update command.
+
+  Args:
+    unused_args: command-line arguments
+    sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  installed_version_string = LoadVersionString()
+
+  dirs_to_remove = []
+  # Retrieve gsutil tarball and check if it's newer than installed code.
+  # TODO: Store this version info as metadata on the tarball object and
+  # change this command's implementation to check that metadata instead of
+  # downloading the tarball to check the version info.
+  tmp_dir = tempfile.mkdtemp()
+  dirs_to_remove.append(tmp_dir)
+  os.chdir(tmp_dir)
+  print 'Checking for software update...'
+  CopyObjsCommand(['gs://pub/gsutil.tar.gz', 'file://gsutil.tar.gz'], [],
+                  headers, debug)
+  tf = tarfile.open('gsutil.tar.gz')
+  tf.errorlevel = 1  # So fatal tarball unpack errors raise exceptions.
+  tf.extract('./gsutil/VERSION')
+  ver_file = open('gsutil/VERSION', 'r')
+  latest_version_string = ver_file.read().rstrip('\n')
+  ver_file.close()
+
+  # The force_update option works around a problem with the way the
+  # first gsutil "update" command exploded the gsutil and boto directories,
+  # which didn't correctly install boto.  People running that older code can
+  # run "gsutil update" (to update to the newer gsutil update code) followed by
+  # "gsutil update -f" (which will then update the boto code, even though the
+  # VERSION is already the latest version).
+  force_update = False
+  for o, unused_a in sub_opts:
+    if o == '-f':
+      force_update = True
+  if not force_update and installed_version_string == latest_version_string:
+    CleanUpUpdateCommand(tf, dirs_to_remove)
+    OutputAndExit('You have the latest version of gsutil installed.')
+
+  print(('This command will update to the "%s" version of\ngsutil at %s') %
+        (latest_version_string, gsutil_bin_dir))
+  ExplainIfSudoNeeded(tf, tmp_dir)
+
+  answer = raw_input('Proceed (Note: experimental command)? [y/N] ')
+  if not answer or answer.lower()[0] != 'y':
+    CleanUpUpdateCommand(tf, dirs_to_remove)
+    OutputAndExit('Not running update.')
+
+  # Ignore keyboard interrupts during the update to reduce the chance someone
+  # hitting ^C leaves gsutil in a broken state.
+  signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+  # gsutil_bin_dir lists the path where the code should end up (like
+  # /usr/local/gsutil), which is one level down from the relative path in the
+  # tarball (since the latter creates files in ./gsutil).  So, we need to
+  # extract at the parent directory level.
+  gsutil_bin_parent_dir = os.path.dirname(gsutil_bin_dir)
+
+  # Extract tarball to a temporary directory in a sibling to gsutil_bin_dir.
+  old_dir = tempfile.mkdtemp(dir=gsutil_bin_parent_dir)
+  new_dir = tempfile.mkdtemp(dir=gsutil_bin_parent_dir)
+  dirs_to_remove.append(old_dir)
+  dirs_to_remove.append(new_dir)
+  try:
+    tf.extractall(path=new_dir)
+  except Exception, e:
+    CleanUpUpdateCommand(tf, dirs_to_remove)
+    OutputAndExit('Update failed: %s.' % e)
+
+  # Move old installation aside and new into place.
+  os.rename(gsutil_bin_dir, old_dir + os.sep + 'old')
+  os.rename(new_dir + os.sep + 'gsutil', gsutil_bin_dir)
+  CleanUpUpdateCommand(tf, dirs_to_remove)
+  signal.signal(signal.SIGINT, signal.SIG_DFL)
+  print 'Update complete.'
+
+
+def CheckForDirFileConflict(src_uri, dst_path):
+  """Checks whether copying src_uri into dst_path is not possible.
+
+     This happens if a directory exists in local file system where a file needs
+     to go or vice versa.  In that case we print an error message and exits.
+     Example: if the file "./x" exists and you try to do:
+       gsutil cp gs://mybucket/x/y .
+     the request can't succeed because it requires a directory where
+     the file x exists.
+
+  Args:
+    src_uri: source StorageUri of copy
+    dst_path: destination path.
+  """
+
+  final_dir = os.path.dirname(dst_path)
+  if os.path.isfile(final_dir):
+    OutputAndExit('Cannot retrieve %s because it a file exists where a '
+                  'directory needs to be created (%s).' % (src_uri, final_dir))
+  if os.path.isdir(dst_path):
+    OutputAndExit('Cannot retrieve %s because a directory exists '
+                  '(%s) where the file needs to be created.' %
+                  (src_uri, dst_path))
+
+
+def ReportNoMatchesAndExit(uri):
+  """Reports no URI wildcard matches and exits.
+
+  Args:
+    uri: the StorageUri that didn't match.
+  """
+  if uri.is_file_uri():
+    OutputAndExit('"%s" matches no files.' % uri.uri)
+  else:
+    OutputAndExit('"%s" matches no objects.' % uri.uri)
+
+
+def GetAclCommand(args, unused_sub_opts, headers=None, debug=False):
+  """Implementation of getacl command.
+
+  Args:
+    args: command-line arguments
+    unused_sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  # Wildcarding is allowed but must resolve to just one object.
+  uris = ExpandStorageUriGlob(args[0], headers, debug)
+  if len(uris) != 1:
+    OutputAndExit('Wildcards must resolve to exactly one object for "getacl" '
+                  'command.')
+  uri = uris[0]
+  if not uri.bucket_name:
+    OutputAndExit('"getacl" command must specify a bucket or object.')
+  acl = uri.get_acl(False, headers)
+  # Pretty-print the XML to make it more easily human editable.
+  parsed_xml = xml.dom.minidom.parseString(acl.to_xml())
+  print parsed_xml.toprettyxml(indent='    ')
+
+
+def PerformCopy(src_uri, dst_uri, sub_opts, headers):
+  """Helper method for CopyObjsCommand.
+
+  Args:
+    src_uri: source StorageUri for copy.
+    dst_uri: destination StorageUri for copy.
+    sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+  """
+
+  # Make a copy of the input headers each time so we can set a different
+  # MIME type for each object.
+  metadata = headers.copy()
+  canned_acl = None
+  for o, a in sub_opts:
+    if o == "-a":
+      canned_acls = dst_uri.canned_acls()
+      if a not in canned_acls:
+        OutputAndExit('Invalid canned ACL "%s".' % a)
+      canned_acl = a
+    elif o == "-t":
+      mimetype_tuple = mimetypes.guess_type(src_uri.object_name)
+      mime_type = mimetype_tuple[0]
+      content_encoding = mimetype_tuple[1]
+      if mime_type:
+        metadata['Content-Type'] = mime_type
+        print '\t[Setting Content-Type=%s]' % mime_type
+      else:
+        print '\t[Unknown content type -> using application/octet stream]'
+      if content_encoding:
+        metadata['Content-Encoding'] = content_encoding
+
+  src_key = src_uri.get_key(False, headers)
+  if not src_key:
+    OutputAndExit('"%s" does not exist.' % src_uri)
+
+  # Separately handle cases to avoid extra file and network copying of
+  # potentially very large files/objects.
+
+  if (src_uri.is_cloud_uri() and dst_uri.is_cloud_uri() and
+      src_uri.provider == dst_uri.provider):
+    # Object -> object, within same provider (uses x-<provider>-copy-source
+    # metadata HTTP header to request copying at the server). (Note: boto
+    # does not currently provide a way to pass canned_acl when copying from
+    # object-to-object through x-<provider>-copy-source):
+    src_bucket = src_uri.get_bucket(False, headers)
+    dst_bucket = dst_uri.get_bucket(False, headers)
+    dst_bucket.copy_key(dst_uri.object_name, src_bucket.name,
+                        src_uri.object_name, metadata)
+    return
+
+  dst_key = dst_uri.new_key(False, headers)
+  if src_uri.is_file_uri() and dst_uri.is_cloud_uri():
+    # File -> object:
+    fname_parts = src_uri.object_name.split('.')
+    dst_key.set_contents_from_file(src_key.fp, metadata, policy=canned_acl)
+  elif src_uri.is_cloud_uri() and dst_uri.is_file_uri():
+    # Object -> file:
+    src_key.get_file(dst_key.fp, headers)
+  elif src_uri.is_file_uri() and dst_uri.is_file_uri():
+    # File -> file:
+    dst_key.set_contents_from_file(src_key.fp, metadata)
+  else:
+    # We implement cross-provider object copy through a local temp file:
+    tmp = tempfile.TemporaryFile()
+    src_key.get_file(tmp, headers)
+    tmp.seek(0)
+    dst_key.set_contents_from_file(tmp, metadata)
+
+
+def CopyObjsCommand(args, sub_opts, headers=None, debug=False):
+  """Implementation of cp command.
+
+  Args:
+    args: command-line arguments
+    sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  src_uri_strs = args[0:len(args)-1]
+  dst_uri = StorageUri(args[-1], False, debug)
+  multi_obj_copy = True
+
+  # Expand wildcards and containers in source StorageUris.
+  exp_src_uris = ExpandWildcardsAndContainers(src_uri_strs, headers, debug)
+
+  # Abort if wildcarding produced no matches.
+  if not exp_src_uris:
+    ReportNoMatchesAndExit(StorageUri(src_uri_strs[0]))
+
+  # If there is 1 source arg after expansion, with src_uri naming an
+  # object-less bucket and dst_uri naming a directory, handle two cases to
+  # make copy command work like UNIX "cp -r" works:
+  #   a) if no directory exists for dst_uri copy objects to a new directory
+  #      with the dst_uri name, e.g., "bucket/a" -> "dir/a"
+  #   b) if a directory exists for dst_uri copy objects to a new directory
+  #      under that directory, e.g., "bucket/a" -> "dir/bucket/a"
+  if len(exp_src_uris) == 1:
+    src_uri_to_check = exp_src_uris[0]
+    if src_uri_to_check.names_container():
+      if dst_uri.names_container() and os.path.exists(dst_uri.object_name):
+        dst_uri = dst_uri.clone_replace_name(dst_uri.object_name + os.sep +
+                                             src_uri_to_check.bucket_name)
+    else:
+      multi_obj_copy = False
+
+  if (multi_obj_copy and dst_uri.is_file_uri()
+      and not os.path.exists(dst_uri.object_name)):
+    os.makedirs(dst_uri.object_name)
+
+  if multi_obj_copy:
+    InsistUriNamesContainer('cp', dst_uri)
+
+  # Abort if any source overlaps with a dest.
+  for src_uri in exp_src_uris:
+    if (src_uri.equals(dst_uri) or
+        # Example case: gsutil cp gs://mybucket/a/bb mybucket
+        (dst_uri.is_cloud_uri() and src_uri.uri.find(dst_uri.uri) != -1)):
+      OutputAndExit('Overlapping source and dest URIs not allowed.')
+
+  # Now iterate over expanded src URIs, and perform copy operations.
+  for src_uri in exp_src_uris:
+    if len(exp_src_uris) > 1:
+      # Progress indicator
+      print 'Copying %s...' % src_uri
+    if dst_uri.names_container():
+      if dst_uri.is_file_uri():
+        # dest names a directory, so append src obj name to dst obj name
+        dst_key_name = dst_uri.object_name + os.sep + src_uri.object_name
+        CheckForDirFileConflict(src_uri, dst_key_name)
+      else:
+        # dest names a bucket: use src obj name for dst obj name.
+        dst_key_name = src_uri.object_name
+    else:
+      # dest is an object or file: use dst obj name
+      dst_key_name = dst_uri.object_name
+    new_dst_uri = dst_uri.clone_replace_name(dst_key_name)
+    PerformCopy(src_uri, new_dst_uri, sub_opts, headers)
+
+
+def HelpCommand(unused_args, unused_sub_opts, unused_headers=None,
+                unused_debug=None):
+  """Implementation of help command.
+
+  Args:
+    unused_args: command-line arguments
+    unused_sub_opts: command-specific options from getopt.
+    unused_headers: dictionary containing optional HTTP headers to pass to boto.
+    unused_debug: flag indicating whether to include debug output
+  """
+
+  OutputUsageAndExit()
+
+
+def PrintObjectMetaData(uri, headers):
+  """Print object metadata.
+
+  Args:
+    uri: object-granularity StorageUri
+    headers: dictionary containing optional HTTP headers to pass to boto.
+  """
+  print '%s:' % uri
+  key = uri.get_key(False, headers)
+  key.open_read()
+  print '\tObject size:\t%s' % key.size
+  print '\tLast mod:\t%s' % key.last_modified
+  if key.cache_control:
+    print '\tCache control:\t%s' % key.cache_control
+  print '\tMIME type:\t%s' % key.content_type
+  if key.content_encoding:
+    print '\tContent-Encoding:\t%s' % key.content_encoding
+  print '\tMD5:\t%s' % key.etag.strip('"\'')
+  print '\tACL:\t%s' % uri.get_acl(False, headers)
+
+
+def ListCommand(args, sub_opts, headers=None, debug=False):
+  """Implementation of ls command.
+
+  Args:
+    args: command-line arguments
+    sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  long_listing = False
+  for o, unused_a in sub_opts:
+    if o == '-l':
+      long_listing = True
+  if not args:
+    # default to listing all gs buckets
+    args = ['gs://']
+
+  # First expand all URIs into URIs in exp_args, such that:
+  # a) provider-only URIs ('gs://') are left as-is.
+  # b) bucket-only URIs ('gs://bucket') with -l option are left as bucket-only
+  #    URIs.
+  # c) bucket-only URIs ('gs://bucket') without -l option are replaced by
+  #    the list of all the objects in the bucket.
+  # d) complete URIs ('gs://bucket/obj') are replaced by the list of all of
+  #    the matching objects names (handling URIs that contain wildcards,
+  #    as well as wildcard-less URIs).
+  exp_args = []
+  for uri_str in args:
+    uri = StorageUri(uri_str, False, debug)
+    if not uri.bucket_name:
+      # case a: provider-only URI
+      exp_args.append(uri_str)
+    elif not uri.object_name:
+      if long_listing:
+        # case b: bucket-only URI with -l option
+        exp_args.append(uri.__str__())
+      else:
+        # case c: bucket-only URI without -l option
+        bucket = uri.get_bucket(False, headers)
+        for obj in bucket:
+          exp_args.append(uri.clone_replace_name(obj.name).uri)
+    else:
+      # case d: complete URI
+      regex = fnmatch.translate(uri.object_name)
+      bucket = uri.get_bucket(False, headers)
+      for obj in bucket:
+        if re.match(regex, obj.name):
+          exp_args.append(uri.clone_replace_name(obj.name).uri)
+
+  # Handle the case of a complete URI that didn't match anything
+  if uri.names_singleton() and not exp_args:
+    ReportNoMatchesAndExit(uri)
+
+  # Now iterate over all URIs in exp_args and print requested info for each
+  for uri_str in exp_args:
+    uri = StorageUri(uri_str, False, debug)
+    if not uri.bucket_name:
+      if long_listing:
+        # Provider long listing: print metadata for all buckets
+        buckets = uri.get_all_buckets()
+        for bucket in buckets:
+          bucket_uri = StorageUri(uri.provider + '://' + bucket.name, False,
+                                  debug)
+          print '%s:\n\tACL:\t%s' % (bucket_uri,
+                                     bucket_uri.get_acl(False, headers))
+      else:
+        # Provider short listing: list all buckets
+        buckets = uri.get_all_buckets()
+        for bucket in buckets:
+          bucket_uri = StorageUri(uri.provider + '://' + bucket.name, False,
+                                  debug)
+          print bucket_uri
+    elif not uri.object_name:
+      if long_listing:
+        # Bucket long listing
+        print '%s:\n\tACL:' % uri
+        print '\t\t%s' % uri.get_acl(False, headers)
+      else:
+        # Bucket short listing
+        bucket = uri.get_bucket(False, headers)
+        for obj in bucket:
+          print '%s://%s/%s' % (uri.provider, uri.bucket_name, obj.name)
+    else:
+      if long_listing:
+        # Object long listing
+        PrintObjectMetaData(uri, headers)
+      else:
+        # Object short listing
+        print uri
+
+
+def MakeBucketsCommand(args, unused_sub_opts, headers=None, debug=False):
+  """Implementation of mb command.
+
+  Args:
+    args: command-line arguments
+    unused_sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  for bucket_uri_str in args:
+    bucket_uri = StorageUri(bucket_uri_str, False, debug)
+    if len(args) > 1:
+      # Progress indicator
+      print 'Creating %s...' % bucket_uri
+    bucket_uri.create_bucket(headers)
+
+
+def MoveObjsCommand(args, sub_opts, headers=None, debug=False):
+  """Implementation of mv command.
+
+     Note that there is no atomic rename operation - this command is simply
+     a shorthand for 'cp' followed by 'rm'.
+
+  Args:
+    args: command-line arguments
+    sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  # Refuse to delete a bucket or directory src URI (force users to explicitly
+  # do that as a separate operation).
+  src_uri_to_check = StorageUri(args[0])
+  if src_uri_to_check.names_container():
+    OutputAndExit('Will not remove source buckets or directories.  You should '
+                  'separately copy and remove for that purpose.')
+
+  if len(args) > 2:
+    InsistUriNamesContainer('mv', StorageUri(args[-1]))
+
+  CopyObjsCommand(args, sub_opts, headers, debug)
+  RemoveObjsCommand(args[0:1], sub_opts, headers, debug)
+
+
+def RemoveBucketsCommand(args, unused_sub_opts, headers=None, debug=False):
+  """Implementation of rb command.
+
+  Args:
+    args: command-line arguments
+    unused_sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  for bucket_uri_str in args:
+    bucket_uri = StorageUri(bucket_uri_str, True, debug)
+    if len(args) > 1:
+      # Progress indicator
+      print 'Removing %s...' % bucket_uri
+    bucket_uri.delete_bucket(headers)
+
+
+def RemoveObjsCommand(args, unused_sub_opts, headers=None, debug=False):
+  """Implementation of rm command.
+
+  Args:
+    args: command-line arguments
+    unused_sub_opts: command-specific options from getopt.
+    headers: dictionary containing optional HTTP headers to pass to boto.
+    debug: flag indicating whether to include debug output
+  """
+
+  # Expand object name globs, if any.
+  exp_uris = []
+  for uri_str in args:
+    for exp_uri in ExpandStorageUriGlob(uri_str, headers, debug):
+      exp_uris.append(exp_uri)
+  for uri in exp_uris:
+    if uri.names_container():
+      OutputAndExit('"rm" command will not remove buckets.  To delete this '
+                    'bucket do:\n\tgsutil rm %s/*\n\tgsutil rb %s' %
+                    (uri.uri, uri.uri))
+    if len(exp_uris) > 1:
+      # Progress indicator
+      print 'Removing %s...' % uri
+    uri.delete_key(False, headers)
+
+
+def HaveFileUris(args):
+  """Checks whether args contains any file URIs.
+
+  Args:
+    args: command-line arguments
+
+  Returns:
+    True if args contains any file URIs.
+  """
+  for uri_str in args:
+    if uri_str.lower().startswith('file://') or uri_str.find(':') == -1:
+      return True
+  return False
+
+
+def HaveProviderUris(args):
+  """Checks whether args contains any provider URIs (like 'gs://').
+
+  Args:
+    args: command-line arguments
+
+  Returns:
+    True if args contains any provider URIs.
+  """
+  for uri_str in args:
+    if re.match('^[a-z]+://$', uri_str):
+      return True
+  return False
+
+
+def GetBotoConfigFileList():
+  """Returns list of boto config files that exist."""
+
+  config_paths = boto.pyami.config.BotoConfigLocations
+  if 'AWS_CREDENTIAL_FILE' in os.environ:
+    config_paths.append(os.environ['AWS_CREDENTIAL_FILE'])
+  config_files = {}
+  for config_path in config_paths:
+    if os.path.exists(config_path):
+      config_files[config_path] = 1
+  cf_list = []
+  for config_file in config_files:
+    cf_list.append(config_file)
+  return cf_list
+
+
+prelude_config_content = (
+"""# This file contains credentials and other configuration information needed
+# by the boto library, used by gsutil. You can edit this file (e.g., to add
+# credentials) but be careful not to mis-edit any of the variable names (like
+# "gs_access_key_id") or remove important markers (like the "[Credentials]" and
+# "[Boto]" section delimeters).
+#
+""")
+
+additional_config_content = """
+
+[Boto]
+
+# To use a proxy, edit and uncomment the proxy and proxy_port lines.  If you
+# need a user/password with this proxy, edit and uncomment those lines as well.
+#proxy = <proxy host>
+#proxy_port = <proxy port>
+#proxy_user = <your proxy user name>
+#proxy_pass = <your proxy password>
+
+# Set 'is_secure' to False to cause boto to connect using HTTP instead of the
+# default HTTPS.  This is useful if you want to capture/analyze traffic
+# (e.g., with tcpdump).
+#is_secure = False
+
+# 'debug' controls the level of debug messages printed: 0 for none, 1
+# for basic boto debug, 2 for all boto debug plus HTTP requests/responses.
+# Note: 'gsutil -d' sets debug to 2 for that one command run.
+#debug = <0, 1, or 2>
+
+# 'num_retries' controls the number of retry attempts made when errors occur.
+# The default is 5.
+#num_retries = <integer value>
+"""
+
+
+def CreateBotoConfigFile():
+  """Creates a boto config file interactively, containing needed credentials."""
+
+  if 'HOME' in os.environ:
+    config_path = ('%s%s.boto' % (os.environ['HOME'], os.sep))
+  else:
+    config_path = ('.%s.boto' % os.sep)
+  sys.stderr.write('You have no boto config file.  This script will create '
+                   'one at\n%s\ncontaining your credentials, based on your '
+                   'responses to the following questions.\n\n' % config_path)
+
+  provider_map = {'Amazon': 'aws', 'Google': 'gs'}
+  uri_map = {'Amazon': 's3', 'Google': 'gs'}
+  key_ids = {}
+  sec_keys = {}
+  got_creds = False
+  for provider in provider_map:
+    if provider == 'Google':
+      key_ids[provider] = raw_input('What is your %s access key ID? ' %
+                                    provider)
+      sec_keys[provider] = raw_input('What is your %s secret access key? ' %
+                                     provider)
+      got_creds = True
+      if not key_ids[provider] or not sec_keys[provider]:
+        OutputAndExit('Incomplete credentials provided.  Please try again.')
+  if not got_creds:
+    OutputAndExit('No credentials provided.  Please try again.')
+  cfp = open(config_path, 'w')
+  if not cfp:
+    OutputAndExit('Unable to write "%s".' % config_path)
+  os.chmod(config_path, stat.S_IRUSR | stat.S_IWUSR)
+  cfp.write(prelude_config_content)
+  cfp.write('# This file was created by gsutil version "%s"\n# at %s.\n\n\n'
+            % (LoadVersionString(),
+               datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+  cfp.write('[Credentials]\n\n')
+  for provider in provider_map:
+    prefix = provider_map[provider]
+    uri_scheme = uri_map[provider]
+    if provider in key_ids and provider in sec_keys:
+      cfp.write('# %s credentials ("%s://" URIs):\n' %
+                (provider, uri_scheme))
+      cfp.write('%s_access_key_id = %s\n' % (prefix, key_ids[provider]))
+      cfp.write('%s_secret_access_key = %s\n' % (prefix, sec_keys[provider]))
+    else:
+      cfp.write('# To add %s credentials ("%s://" URIs), edit and '
+                'uncomment the\n# following two lines:\n'
+                '#%s_access_key_id = <your %s access key ID>\n'
+                '#%s_secret_access_key = <your %s secret access key>\n' %
+                (provider, uri_scheme, prefix, provider, prefix, provider))
+    cfp.write('# The ability to specify an alternate storage host is primarily '
+              'for developers.\n'
+              '#%s_host = <alternate storage host address>\n\n' % (prefix))
+  cfp.write(additional_config_content)
+  cfp.close()
+  OutputAndExit('\nConfiguration file "%s" created. If you need to use\na '
+                'proxy to access the Internet please see the instructions in '
+                'that file.\nPlease try running gsutil again now.' %
+                config_path)
+
+
+def SetupConfigIfNeeded():
+  """Interactively creates boto credential/config file if needed."""
+
+  config = boto.config
+  has_goog_creds = (config.has_option('Credentials', 'gs_access_key_id') and
+                    config.has_option('Credentials', 'gs_secret_access_key'))
+  has_amzn_creds = (config.has_option('Credentials', 'aws_access_key_id') and
+                    config.has_option('Credentials', 'aws_secret_access_key'))
+  if not has_goog_creds and not has_amzn_creds:
+    config_file_list = GetBotoConfigFileList()
+    if config_file_list:
+      OutputAndExit('You have no storage service credentials in any of the '
+                    'following boto config\nfiles. Please add your credentials '
+                    'as described in the gsutil README file, or else\ndelete'
+                    'these files and re-run this script to re-create them:\n%s'
+                    % config_file_list)
+    else:
+      CreateBotoConfigFile()
+
+
+# Maps command name to
+# [function, min_args, max_args, supported_sub_args, file_uri_ok,
+#  provider_uri_ok, uris_start_arg]
+NO_MAX = sys.maxint
+commands = {
+    'cat': [CatCommand, 0, NO_MAX, 'h', False, True, 0],
+    'cp': [CopyObjsCommand, 2, NO_MAX, 'a:tz:', True, False, 0],
+    'getacl': [GetAclCommand, 1, 1, '', False, False, 0],
+    'help': [HelpCommand, 0, 0, '', False, False, 0],
+    'ls': [ListCommand, 0, NO_MAX, 'l', False, True, 0],
+    'mb': [MakeBucketsCommand, 1, NO_MAX, '', False, False, 0],
+    'mv': [MoveObjsCommand, 2, NO_MAX, '', True, False, 0],
+    'rb': [RemoveBucketsCommand, 1, NO_MAX, '', False, False, 0],
+    'rm': [RemoveObjsCommand, 1, NO_MAX, '', False, False, 0],
+    'setacl': [SetAclCommand, 2, NO_MAX, '', False, False, 1],
+    'update': [UpdateCommand, 0, 0, 'f', False, False, 0]
+}
+
+
+def main():
+  if float('%d.%d%d'
+           %(sys.version_info[0], sys.version_info[1], sys.version_info[2])
+          ) < 2.51:
+    OutputAndExit('This tool requires Python 2.5.1 or higher.')
+
+  # If user enters no commands just print the usage info.
+  if len(sys.argv) == 1:
+    OutputUsageAndExit()
+  try:
+    opts, args = getopt.getopt(sys.argv[1:], 'd?h:',
+                               ['debug', 'help', 'header'])
+    if not args:
+      command = 'help'
+    else:
+      command = args[0]
+    if command not in commands:
+      OutputAndExit('Invalid command "%s".' % command)
+    command_info = commands[command]
+    command_func = command_info[0]
+    min_arg_count = command_info[1]
+    max_arg_count = command_info[2]
+    supported_sub_args = command_info[3]
+    file_uri_ok = command_info[4]
+    provider_uri_ok = command_info[5]
+    uris_start_arg = command_info[6]
+    sub_opts, args = getopt.getopt(args[1:], supported_sub_args)
+    if len(args) < min_arg_count or len(args) > max_arg_count:
+      OutputAndExit('Wrong number of arguments for "%s" command.' % command)
+    if not file_uri_ok and HaveFileUris(args[uris_start_arg:]):
+      OutputAndExit('"%s" command does not support "file://" URIs.' % command)
+    if not provider_uri_ok and HaveProviderUris(args[uris_start_arg:]):
+      OutputAndExit('"%s" command does not support provider-only URIs.' %
+                    command)
+  except InvalidUriError, e:
+    OutputAndExit(e.message)
+  except getopt.GetoptError, e:
+    OutputAndExit(e.msg)
+
+  SetupConfigIfNeeded()
+
+  debug = 0
+  headers = {}
+  for o, a in opts:
+    if o in ('-d', '--debug'):
+      # Debug level 2 causes httplib output plus boto debug output
+      debug = 2
+    if o in ('-?', '--help'):
+      OutputUsageAndExit()
+    if o in ('-h', '--header'):
+      (hdr_name, unused_ptn, hdr_val) = a.partition(':')
+      if not hdr_name or not hdr_val:
+        OutputUsageAndExit()
+      headers[hdr_name] = hdr_val
+
+  try:
+    command_func(args, sub_opts, headers, debug)
+  except BotoClientError, e:
+    OutputAndExit('BotoClientError,: %s.' % e.reason)
+  except InvalidAclError, e:
+    OutputAndExit('InvalidAclError: %s.' % e.message)
+  except InvalidUriError, e:
+    OutputAndExit('InvalidUriError: %s.' % e.message)
+  except S3ResponseError, e:
+    detail_start = e.body.find('<Details>')
+    detail_end = e.body.find('</Details>')
+    if detail_start != -1 and detail_end != -1:
+      detail = e.body[detail_start+9:detail_end]
+      OutputAndExit('S3ResponseError: status=%d, code=%s, reason=%s, detail=%s.'
+                    % (e.status, e.code, e.reason, detail))
+    else:
+      OutputAndExit('S3ResponseError:: status=%d, code=%s, reason=%s.' %
+                    (e.status, e.code, e.reason))
+  except AttributeError, e:
+    if e.message.find('aws_secret_access_key') != -1:
+      OutputAndExit('Missing credentials for the given URI(s). Does your '
+                    'boto config file contain all needed credentials?')
+    else:
+      OutputAndExit(e.message)
+  except Exception, e:
+    OutputAndExit('Failure: %s.' % e)
+
+if __name__ == '__main__':
+  main()
+  sys.exit(0)

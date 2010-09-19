@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ -d $1 ]; then
+  tar cvzf temp.tgz $1 > /dev/null
+  anyhub temp.tgz | xclip -selection c &
+else
+  anyhub $1 | xclip -selection c &
+fi
+
+notify-send "Url in clipboard"
