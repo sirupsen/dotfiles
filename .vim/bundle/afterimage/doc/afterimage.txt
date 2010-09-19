@@ -1,0 +1,43 @@
+*afterimage.txt*  Edit binary files by converting them to text
+
+Author:  Tim Pope <vimNOSPAM@tpope.org>         *afterimage-author*
+License: Same terms as Vim itself (see |license|)
+
+This plugin is only available if 'compatible' is not set.
+
+BUILT-INS                                       *afterimage-built-ins*
+
+PNGs and GIFs are converted to/from XPM with ImageMagick.  XPM is a plain text
+format that resembles a C header.  GUI versions of Vim will actually syntax
+highlight the image data to resemble the original.  While no replacement for a
+real image editor, this built-in can and has been used to tweak small icons.
+
+PDFs are uncompressed/recompressed with pdftk.  Even when decompressed, PDFs
+are partially a binary format, so this is mostly a novelty.
+
+Word documents have their text extracted (one way) with antiword.
+
+OS X binary plists are converted to/from XML with plutil.
+
+CUSTOMIZATION                                   *afterimage-customization*
+
+The easiest way to provide custom handlers is to learn from the source to the
+built-ins.  Briefly:
+
+AfterimageReadPost() should be called from a BufReadPost,FileReadPost autocmd,
+with the argument being a string containing the command to run.  The source
+and destination files should each be replaced by %s and must appear in that
+order.  If this function returns true, that means that an entire file was
+successfully converted, and that it is appropriate to issue commands like "set
+readonly" or "setf myfiletype".
+
+AfterimageWriteCmd() should be called from a BufWriteCmd,FileWriteCmd autocmd.
+The argument is a command in the same format AfterimageReadPost() requires.
+
+Don't forget to setlocal binary in a BufReadPre,FileReadPre autocmd if the
+file is in fact binary.
+
+If you have a customization you think others could use, feel free to submit it
+to the author of this plugin.
+
+ vim:tw=78:et:ft=help:norl:
