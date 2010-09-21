@@ -6,5 +6,6 @@
 .config/gtk-2.0/*
 .config/nitrogen/*
 .config/op/*
+.config/vlc/*
 .gitconfig
 .vim/.netrwhist
