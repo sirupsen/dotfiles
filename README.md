@@ -8,3 +8,5 @@ You can install them easily with [Homesick][homesick]:
 
     homesick clone Sirupsen/dotfiles
     homesick symlink Sirupsen/dotfiles
+
+[homesick]: http://github.com/technicalpickles/homesick
