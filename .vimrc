@@ -9,7 +9,20 @@ call pathogen#runtime_append_all_bundles()
 set nocompatible " No vi compatility
 autocmd BufEnter * :syntax sync fromstart
 
-" Indent settings
+" Mapleader
+let mapleader=","
+
+" Quickly edit/reload the vimrc file
+nmap <silent> <leader>ev :e $MYVIMRC<CR>
+nmap <silent> <leader>sv :so $MYVIMRC<CR>
+
+" Matching
+set sm
+set matchpairs+=<:> " html
+
+set nowrap " don't wrap lines
+
+" Tab settings
 set sw=2
 set sts=2
 set ts=2 " Tabs are 2 spaces
@@ -21,25 +34,31 @@ set smartindent
 set smarttab
 set expandtab
 
-" No swap
+" Hello, Git
 set noswapfile
+set nobackup
 
 set autoread " Auto read when file is changed
 set showmatch " Show matching brackets
+
+" Hide buffers, rather than close them
 set hidden
 
 set shortmess=atI
 
 set ruler " Enable cursor position
 set history=1000 " Keep more history
+set undolevels=1000 " .. and a lot of undoing!
 
-set ignorecase " Case only matters with regex
-set smartcase
+set ignorecase " case only matters with regex, else we have smartcase
+set smartcase " ignore case if all lowercase, else: case-sensitive
+
 set showcmd  " Show incomplete CMDS at the bottom
 set showmode " Show current mode at the bottom
 set linebreak " Crap at convenient points
 set incsearch " Search as you type
 
+" GVIM
 set guioptions-=m " Remove menu bar
 set guioptions-=T " Remove toolbar with icons
 set guioptions-=r " Remove scrollbars (http://vimdoc.sourceforge.net/htmldoc/options.html#%27guioptions%27)
@@ -63,7 +82,8 @@ set browsedir=buffer
 " Set the font :)
 set gfn=Monaco\ 9
 
-" Load FTP plug ins and indent files
+" Set filetype stuff `on` 
+filetype on
 filetype plugin on
 filetype indent on
 
@@ -105,9 +125,6 @@ cmap w!! w !sudo tee
 "au BufNewFile,BufRead *.coffee                  setf coffee
 
 if has("autocmd")
-  " Enable filetype detection
-  filetype plugin indent on
- 
   " Restore cursor position
   autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") |
@@ -120,3 +137,6 @@ map ,c :cd %:p:h<CR>
 " Save when losing focus
 au FocusLost * :wa
 
+" Gist
+let g:gist_detect_filetype = 1
+let g:gist_open_browser_after_post = 1
