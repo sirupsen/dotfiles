@@ -41,7 +41,7 @@ dist
 setuptools-*
 .sass-cache
 .DS_Store
-.rvmrc
+.rvmrc*
 log/*.log  
 tmp/**/*  
 vendor/*
