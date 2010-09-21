@@ -1,7 +1,25 @@
 #! /bin/bash
+
+# Platform information
+platform='unknown'
+unamestr=`uname`
+if [[ "$unamestr" == 'Linux' ]]; then
+   platform='linux'
+elif [[ "$unamestr" == 'Darwin' ]]; then
+   platform='darwin'
+fi
+
+# Linux and Darwin/BSD have different ways to get color
+# in `ls`
+if [[ $platform == 'linux' ]]; then
+   alias ls='ls --color=auto'
+elif [[ $platform == 'darwin' ]]; then
+   alias ls='ls -G'
+fi
+
 alias ll='ls -l'
 alias la='ls -A'
-alias l='ls -CF'
+alias l='ls'
 
 alias c='cd'
 alias !='sudo'
@@ -16,7 +34,7 @@ alias r='ruby'
 #
 # Git
 #
-alias git='hub'
+#alias git='hub'
 
 # Commiting
 alias gcam='git commit -am'
