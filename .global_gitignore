@@ -42,3 +42,13 @@ setuptools-*
 .sass-cache
 .DS_Store
 .rvmrc
+log/*.log  
+tmp/**/*  
+vendor/*
+public/stylesheets/admin.css
+public/stylesheets/admin2.css
+public/stylesheets/application.css
+public/stylesheets/login.css
+public/stylesheets/pay.css
+public/stylesheets/sales.css
+db/schema.rb
