@@ -1,0 +1,30 @@
+[submodule "home/.vim/bundle/ack"]
+	path = home/.vim/bundle/ack
+	url = http://github.com/mileszs/ack.vim.git
+[submodule "home/.vim/bundle/endwise"]
+	path = home/.vim/bundle/endwise
+	url = http://github.com/tpope/vim-endwise.git
+[submodule "home/.vim/bundle/fugitive"]
+	path = home/.vim/bundle/fugitive
+	url = http://github.com/tpope/vim-fugitive.git
+[submodule "home/.vim/bundle/gist"]
+	path = home/.vim/bundle/gist
+	url = http://github.com/mattn/gist-vim.git
+[submodule "home/.vim/bundle/liquid"]
+	path = home/.vim/bundle/liquid
+	url = http://github.com/tpope/vim-liquid.git
+[submodule "home/.vim/bundle/markdown"]
+	path = home/.vim/bundle/markdown
+	url = http://github.com/tpope/vim-markdown.git
+[submodule "home/.vim/bundle/rails"]
+	path = home/.vim/bundle/rails
+	url = http://github.com/tpope/vim-rails.git
+[submodule "home/.vim/bundle/snipmate"]
+	path = home/.vim/bundle/snipmate
+	url = http://github.com/msanders/snipmate.vim.git
+[submodule "home/.vim/bundle/supertab"]
+	path = home/.vim/bundle/supertab
+	url = http://github.com/tsaleh/vim-supertab.git
+[submodule "home/.vim/bundle/nerdtree"]
+	path = home/.vim/bundle/nerdtree
+	url = http://github.com/scrooloose/nerdtree.git
