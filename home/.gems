@@ -1,0 +1,24 @@
+# .gems generated gem export file. Note that any env variable settings will be missing. Append these after using a ';' field separator
+awesome_print -v0.2.1
+bcat -v0.5.2
+bond -v0.2.2
+classifier -v1.3.3
+directory_watcher -v1.3.2
+fast-stemmer -v1.0.0
+hirb -v0.3.3
+homesick -v0.5.4
+jekyll -v0.7.0
+liquid -v2.2.2
+looksee -v0.2.1
+map_by_method -v0.8.3
+maruku -v0.6.0
+net-http-spy -v0.2.1
+rack -v1.2.1
+rack -v1.1.0
+rdiscount -v1.6.5
+RedCloth -v4.2.3
+sketches -v0.1.1
+syntax -v1.0.0
+thor -v0.14.1
+what_methods -v1.0.1
+wirble -v0.1.3
