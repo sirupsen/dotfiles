@@ -1,0 +1,20 @@
+have_header: checking for ruby.h... -------------------- yes
+
+"gcc -o conftest -I/home/sirup/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/i686-linux -I/home/sirup/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/backward -I/home/sirup/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1 -I.  -D_FILE_OFFSET_BITS=64   -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wno-long-long  -fPIC conftest.c  -L. -L/home/sirup/.rvm/rubies/ruby-1.9.2-p0/lib -Wl,-R/home/sirup/.rvm/rubies/ruby-1.9.2-p0/lib -L.  -rdynamic -Wl,-export-dynamic     -Wl,-R -Wl,/home/sirup/.rvm/rubies/ruby-1.9.2-p0/lib -L/home/sirup/.rvm/rubies/ruby-1.9.2-p0/lib -lruby-static  -lpthread -lrt -ldl -lcrypt -lm   -lc"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main() {return 0;}
+/* end */
+
+"gcc -E -I/home/sirup/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/i686-linux -I/home/sirup/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/backward -I/home/sirup/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1 -I.  -D_FILE_OFFSET_BITS=64   -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wno-long-long  -fPIC  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <ruby.h>
+/* end */
+
+--------------------
+
