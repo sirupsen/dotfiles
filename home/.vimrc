@@ -20,8 +20,6 @@ nmap <silent> <leader>sv :so $MYVIMRC<CR>
 set sm
 set matchpairs+=<:> " html
 
-set nowrap " don't wrap lines
-
 " Tab settings
 set sw=2
 set sts=2
