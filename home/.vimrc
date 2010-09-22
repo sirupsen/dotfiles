@@ -8,21 +8,14 @@
 
 " Basics {
   set nocompatible " No vi compatility
-  set background=dark " Assume a dark background
+  let mapleader="," " Mapleader
 " }
 
 " General {
-  let mapleader="," " Mapleader
-
-  syntax on " Enable syntax highlightation.
-  colorscheme mustang " Default colorscheme
   filetype plugin indent on " Automatically change file types.
 
-  set mouse=a " Enable mouse usage.
   set autochdir " Automatically always switch to the current files directory.
-  scriptencoding utf-8 " Utf-8 encoding.
-  set shortmess+=filmnrxoOtT      " abbrev. of messages (avoids 'hit enter')
-  set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
+  set shortmess=filmnrxoOtT      " abbrev. of messages (avoids 'hit enter')
   set history=1000 " Keep (a lot) more history
 
   " No needs for backups, I have Git for that
@@ -31,23 +24,23 @@
 " }
 
 " Vim UI {
+  syntax on " Enable syntax highlightation.
+  color mustang " Default colorscheme
+
+  set t_Co=256 " Terminal colors
+
   set ruler " Enable cursor position
   set showcmd  " Show incomplete CMDS at the bottom
-
-  hi cursorline guibg=#333333     " highlight bg color of current line
-068
-  " hi CursorColumn guibg=#333333   " highlight cursor
   
   set showmatch " Show matching of: () [] {}
   set matchpairs+=<:> " Match <> (HTML)
 
-  " Set the font :)
-  set gfn=Monaco\ 9
-
-  set ignorecase " Case insensitive search
-  set smartcase " Case sensitive when uppercase is present
-  set incsearch " Search as you type
-  set hlsearch " Highlight search matches
+  " Searching {
+    set ignorecase " Case insensitive search
+    set smartcase " Case sensitive when uppercase is present
+    set incsearch " Search as you type
+    set hlsearch " Highlight search matches
+  " }
 
   set autoread " Auto read when file is changed
 
@@ -57,11 +50,16 @@
 
   " GVim {
     if has("gui_running")
-      set guioptions-=m " Remove menu bar
-      set guioptions-=T " Remove toolbar with icons
-      set guioptions-=r " Remove scrollbars (http://vimdoc.sourceforge.net/htmldoc/options.html#%27guioptions%27)
-      set guioptions-=l
-      set guioptions-=L
+      color railscasts " GUI Colorscheme
+      set guifont=Monaco\ 9 " Set the font
+
+      " GVIm options {
+        set guioptions-=m " Remove menu bar
+        set guioptions-=T " Remove toolbar with icons
+        set guioptions-=r " Remove scrollbars (http://vimdoc.sourceforge.net/htmldoc/options.html#%27guioptions%27)
+        set guioptions-=l
+        set guioptions-=L
+      " }
 
       " Title {
         if has('title')
@@ -76,13 +74,11 @@
       " Autoload NERDTree in Gui
       autocmd VimEnter * NERDTree ~/Code
 
-      " Default lines, columns as well as default position for gVim
-      set lines=65
-      set columns=115
-      winpos 1295 30
-
-      " 256 colorscheme
-      colorscheme railscasts
+      " Window {
+        set lines=65
+        set columns=115
+        winpos 1295 30
+      " }
     endif
   " }
 
@@ -143,7 +139,7 @@
 
   " SnipMate {
     " Author var
-    let g:snips_author = 'Steve Francia <<a class="linkclass" href="mailto:steve.francia@gmail.com">steve.francia@gmail.com</a>>'
+    let g:snips_author = 'Simon Hørup Eskildsen <<a class="linkclass" href="mailto:sirup@sirupsen.com">sirup@sirupsen.com</a>>'
 
     " Shortcut for reloading snippets
     nnoremap ,smr <esc>:exec ReloadAllSnippets()<cr>
