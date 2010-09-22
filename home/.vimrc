@@ -1,140 +1,151 @@
-"
-"
-" @Docs:
-" http://biodegradablegeek.com/2007/12/using-vim-as-a-complete-ruby-on-rails-ide/
+" A lot stolen from 'The Ultimate .Vimrc File'
+" http://spf13.com/post/ultimate-vim-config
 "
 
-call pathogen#runtime_append_all_bundles()
+" Setup Bundle Support {
+  call pathogen#runtime_append_all_bundles()
+" }
 
-set nocompatible " No vi compatility
-autocmd BufEnter * :syntax sync fromstart
+" Basics {
+  set nocompatible " No vi compatility
+  set background=dark " Assume a dark background
+" }
 
-" Mapleader
-let mapleader=","
+" General {
+  let mapleader="," " Mapleader
 
-" Quickly edit/reload the vimrc file
-nmap <silent> <leader>ev :e $MYVIMRC<CR>
-nmap <silent> <leader>sv :so $MYVIMRC<CR>
+  syntax on " Enable syntax highlightation.
+  colorscheme mustang " Default colorscheme
+  filetype plugin indent on " Automatically change file types.
 
-" Matching
-set sm
-set matchpairs+=<:> " html
+  set mouse=a " Enable mouse usage.
+  set autochdir " Automatically always switch to the current files directory.
+  scriptencoding utf-8 " Utf-8 encoding.
+  set shortmess+=filmnrxo0tT " Abbrev. of messages
+  set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
+  set history=1000 " Keep (a lot) more history
 
-" Tab settings
-set sw=2
-set sts=2
-set ts=2 " Tabs are 2 spaces
-set bs=2 " Backspaces are 2 spaces
-set shiftwidth=2 " Tabs
+  " No needs for backups, I have Git for that
+  set noswapfile 
+  set nobackup
+" }
 
-set autoindent
-set smartindent
-set smarttab
-set expandtab
+" Vim UI {
+  set ruler " Enable cursor position
+  set showcmd  " Show incomplete CMDS at the bottom
 
-" Hello, Git
-set noswapfile
-set nobackup
+  hi cursorline guibg=#333333     " highlight bg color of current line
+068
+  " hi CursorColumn guibg=#333333   " highlight cursor
+  
+  set showmatch " Show matching of: () [] {}
+  set matchpairs+=<:> " Match <> (HTML)
 
-set autoread " Auto read when file is changed
-set showmatch " Show matching brackets
+  " Set the font :)
+  set gfn=Monaco\ 9
 
-" Hide buffers, rather than close them
-set hidden
+  set ignorecase " Case insensitive search
+  set smartcase " Case sensitive when uppercase is present
+  set incsearch " Search as you type
+  set hlsearch " Highlight search matches
 
-set shortmess=atI
+  set autoread " Auto read when file is changed
 
-set ruler " Enable cursor position
-set history=1000 " Keep more history
-set undolevels=1000 " .. and a lot of undoing!
+  set hidden " Hide buffers, rather than close them
 
-set ignorecase " case only matters with regex, else we have smartcase
-set smartcase " ignore case if all lowercase, else: case-sensitive
+  au FocusLost * :wa " Save when losing focus
 
-set showcmd  " Show incomplete CMDS at the bottom
-set showmode " Show current mode at the bottom
-set linebreak " Crap at convenient points
-set incsearch " Search as you type
+  " GVim {
+    if has("gui_running")
+      set guioptions-=m " Remove menu bar
+      set guioptions-=T " Remove toolbar with icons
+      set guioptions-=r " Remove scrollbars (http://vimdoc.sourceforge.net/htmldoc/options.html#%27guioptions%27)
+      set guioptions-=l
+      set guioptions-=L
 
-" GVIM
-set guioptions-=m " Remove menu bar
-set guioptions-=T " Remove toolbar with icons
-set guioptions-=r " Remove scrollbars (http://vimdoc.sourceforge.net/htmldoc/options.html#%27guioptions%27)
-set guioptions-=l
-set guioptions-=L
+      " Title {
+        if has('title')
+            set titlestring=
+          set titlestring+=%f\                                              " file name
+          set titlestring+=%h%m%r%w                                         " flags
+          set titlestring+=\ -\ %{v:progname}                               " program name
+          set titlestring+=\ -\ %{substitute(getcwd(),\ $HOME,\ '~',\ '')}  " working directory
+        endif
+      " }
 
-" 256 color
-set t_Co=256
+      " Autoload NERDTree in Gui
+      autocmd VimEnter * NERDTree ~/Code
 
-" Default color scheme
-syntax on
-colorscheme mustang
+      " Default lines, columns as well as default position for gVim
+      set lines=65
+      set columns=115
+      winpos 1295 30
 
-" Default Nerdtree configuration
-let NERDTreeChDirMode = 1
-let NERDTreeWinSize=20
+      " 256 colorscheme
+      colorscheme railscasts
+    endif
+  " }
 
-" Dir
-set browsedir=buffer
+" }
 
-" Set the font :)
-set gfn=Monaco\ 9
+" Formatting {
+  " Be smart, and awesome, about indentation
+  set autoindent " Indent at the same level as previous line
+  set smartindent
+  set smarttab
+  set expandtab " Tabs are spaces
 
-" Set filetype stuff `on` 
-filetype on
-filetype plugin on
-filetype indent on
+  "set sw=2
+  "set sts=2
+  set tabstop=2 " Tabs are 2 spaces
+  set backspace=2 " Backspace back 2 spaces
+  set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
+" }
 
-" Only in gVim
-if has("gui_running")
-  " Autoload NERDTree in Gui
-  autocmd VimEnter * NERDTree ~/Dropbox/Code
-	autocmd VimEnter * NERDTree ~/Code
-  " Default lines, columns as well as default position for gVim
-  set lines=65
-  set columns=115
-  winpos 1295 30
-  colorscheme railscasts
-endif
+" Key Mapping {
+  map <C-J> <C-W>j<C-W>_
+  map <C-K> <C-W>k<C-W>_
+  map <C-L> <C-W>l<C-W>_
+  map <C-H> <C-W>h<C-W>_
+  map <C-K> <C-W>k<C-W>_
+  map <S-H> gT
+  map <S-L> gt
 
-" Nice title
-if has('title') && (has('gui_running') || &title)
-    set titlestring=
-	set titlestring+=%f\                                              " file name
-	set titlestring+=%h%m%r%w                                         " flags
-	set titlestring+=\ -\ %{v:progname}                               " program name
-	set titlestring+=\ -\ %{substitute(getcwd(),\ $HOME,\ '~',\ '')}  " working directory
-endif
+  " Shift key fixes
+  cmap W w
+  cmap WQ wq
+  cmap wQ wq
+  cmap Q q
 
-" Nice markdown behavior
-augroup mkd
-  autocmd BufRead *.mkd  set ai formatoptions=tcroqn2 comments=n:&gt;
-augroup END
+  " Quickly edit/reload the vimrc file
+  nmap <silent> <leader>ev :e $MYVIMRC<CR>
+  nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
-" Key mappings
-:noremap ,n :NERDTreeToggle<CR>
-:noremap ,d :bd<CR>
-cmap w!! w !sudo tee
+  " Key mappings
+  :noremap ,d :bd<CR>
+  cmap w!! w !sudo tee
+  map ,c :cd %:p:h<CR>
+" }
 
-" Filetypes for special files
-"au BufNewFile,BufRead *.j                       setf objj 
-"au BufNewFile,BufRead *.js                      setf javascript 
-"au BufNewFile,BufRead *.rb                      setf ruby 
-"au BufNewFile,BufRead *.coffee                  setf coffee
 
-if has("autocmd")
-  " Restore cursor position
-  autocmd BufReadPost *
-    \ if line("'\"") > 1 && line("'\"") <= line("$") |
-    \   exe "normal! g`\"" |
-    \ endif
-endif
+" Plugins {
+  " NerdTree {
+    let NERDTreeChDirMode = 1
+    let NERDTreeWinSize=20
 
-map ,c :cd %:p:h<CR>
+    :noremap ,n :NERDTreeToggle<CR>
+  " }
 
-" Save when losing focus
-au FocusLost * :wa
+  " Gist {
+    let g:gist_detect_filetype = 1
+    let g:gist_open_browser_after_post = 1
+  " }
 
-" Gist
-let g:gist_detect_filetype = 1
-let g:gist_open_browser_after_post = 1
+  " SnipMate {
+    " Author var
+    let g:snips_author = 'Steve Francia <<a class="linkclass" href="mailto:steve.francia@gmail.com">steve.francia@gmail.com</a>>'
+
+    " Shortcut for reloading snippets
+    nnoremap ,smr <esc>:exec ReloadAllSnippets()<cr>
+  " }
+" }
