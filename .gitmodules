@@ -31,3 +31,12 @@
 [submodule "home/.vim/bundle/jekyll"]
 	path = home/.vim/bundle/jekyll
 	url = http://github.com/csexton/jekyll.vim.git
+[submodule "delimitmate"]
+	path = delimitmate
+	url = http://github.com/Raimondi/delimitMate.git
+[submodule "home/.vim/bundle/delimitmate"]
+	path = home/.vim/bundle/delimitmate
+	url = http://github.com/Raimondi/delimitMate.git
+[submodule "home/.vim/bundle/tcomment"]
+	path = home/.vim/bundle/tcomment
+	url = http://github.com/tomtom/tcomment_vim.git

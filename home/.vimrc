@@ -142,6 +142,11 @@
     au FileType xhtml,xml ru ftplugin/html/autoclosetag.vim
   " }
 
+  " Delimitmate {
+    au FileType * let b:delimitMate_autoclose = 1
+  " }
+
+
   " SnipMate {
     " Author var
     let g:snips_author = 'Simon Hørup Eskildsen <<a class="linkclass" href="mailto:sirup@sirupsen.com">sirup@sirupsen.com</a>>'
