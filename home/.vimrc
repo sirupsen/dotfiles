@@ -21,7 +21,7 @@
   set mouse=a " Enable mouse usage.
   set autochdir " Automatically always switch to the current files directory.
   scriptencoding utf-8 " Utf-8 encoding.
-  set shortmess+=filmnrxo0tT " Abbrev. of messages
+  set shortmess+=filmnrxoOtT      " abbrev. of messages (avoids 'hit enter')
   set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
   set history=1000 " Keep (a lot) more history
 
