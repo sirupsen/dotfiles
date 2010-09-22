@@ -137,6 +137,11 @@
     let g:gist_open_browser_after_post = 1
   " }
 
+  " AutoCloseTag {
+    " .. for XML and XHTML as well
+    au FileType xhtml,xml ru ftplugin/html/autoclosetag.vim
+  " }
+
   " SnipMate {
     " Author var
     let g:snips_author = 'Simon Hørup Eskildsen <<a class="linkclass" href="mailto:sirup@sirupsen.com">sirup@sirupsen.com</a>>'
