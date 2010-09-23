@@ -39,7 +39,7 @@
     set ignorecase " Case insensitive search
     set smartcase " Case sensitive when uppercase is present
     set incsearch " Search as you type
-    set hlsearch " Highlight search matches
+    "set hlsearch " Highlight search matches
   " }
 
   set autoread " Auto read when file is changed
@@ -99,11 +99,16 @@
 " }
 
 " Key Mapping {
-  map <C-J> <C-W>j<C-W>_
-  map <C-K> <C-W>k<C-W>_
-  map <C-L> <C-W>l<C-W>_
-  map <C-H> <C-W>h<C-W>_
-  map <C-K> <C-W>k<C-W>_
+  map <S-J> <C-W>j<C-W>_
+  map <S-K> <C-W>k<C-W>_
+  map <S-L> <C-W>l<C-W>_
+  map <S-H> <C-W>h<C-W>_
+  map <S-K> <C-W>k<C-W>_
+  map <C-J> <C-W>j
+  map <C-K> <C-W>k
+  map <C-L> <C-W>l
+  map <C-H> <C-W>h
+  map <C-K> <C-W>k
   map <S-H> gT
   map <S-L> gt
 
