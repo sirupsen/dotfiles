@@ -102,10 +102,14 @@ USER_EMAIL="sirup@sirupsen.com"
 if [ -f ~/.gitconfig ]; then
   if [ "$(git config --global user.name)" != "$USER_NAME" ]; then
     echo "WARNING: git's user.name is $(git config --global user.name)"
+    echo "Set username to $USER_NAME by issuing:"
+    echo "git config --global user.name $USER_NAME"
   fi
   if [ "$(git config --global user.email)" != "$USER_EMAIL" ]; then
     echo "WARNING: git's user.email is $(git config --global user.email)"
+    echo "Set email to $USER_EMAIL by issuing:"
+    echo "git config --global user.email $USER_EMAIL"
   fi
 fi
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
