@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Cock="$(tput setaf 0)"
 BlackBG="$(tput setab 0)"
 
 DarkGrey="$(tput bold ; tput setaf 0)"
@@ -100,7 +99,6 @@ branch_color ()
 # Picture: http://ahb.me/BYp
 
 PS1="${Blue}\W/\$(branch_color)\$(parse_git_branch)${NC} "
-
 
 # Git configuration
 USER_NAME="Sirupsen"

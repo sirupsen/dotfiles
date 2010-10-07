@@ -40,7 +40,17 @@ complete -o default -o nospace -F _git_push gp
 alias gl='git pull'
 complete -o default -o nospace -F _git_pull gl
 
-alias gd='git diff'
+case $OSTYPE in
+  linux*)
+    alias gd='git diff | vim -R -'
+    ;;
+  darwin*)
+    alias gd='git diff | mate'
+    ;;
+  darwin*)
+    alias gd='git diff'
+    ;;
+esac
 complete -o default -o nospace -F _git_diff gd
 
 alias gc='git commit -v'
