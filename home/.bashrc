@@ -30,26 +30,58 @@ shopt -s checkwinsize
 # Vi command mode
 set -o vi
 
-# Defaults
-export BROWSER=google-chrome # Default browser
-
+# Default browser
+export BROWSER=chromium-dev # Default browser
 # Setting up editor 
 export EDITOR=vim # Default editor
 git config --global --replace-all core.editor $EDITOR
 
-PS1="\[\033]0;${USER} ${PWD}\007\]\[${COLOR_BLUE}\]\W/\[${COLOR_GRAY}\]\[${COLOR_NC}\] "
-#PS1="\[${COLOR_BLUE}\]\W\[${COLOR_NC}\] "
-#PS1=""
 
 # Add user Bin to path
-PATH=$PATH:~/.bin
-PATH=$PATH:/usr/local/bin
+PATH=$PATH:~/.bin:/usr/local/bin
 
 # Load aliases
 . ~/.bash_aliases
 
 # Load git completion
 . ~/.git_completion
+
+
+c_cyan=`tput setaf 6`
+c_red=`tput setaf 1`
+c_green=`tput setaf 2`
+c_sgr0=`tput sgr0`
+
+parse_git_branch ()
+{
+  if git rev-parse --git-dir >/dev/null 2>&1
+  then
+    gitver=$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')
+  else
+    return 0
+  fi
+  echo -e $gitver
+}
+
+branch_color ()
+{
+  if git rev-parse --git-dir >/dev/null 2>&1
+  then
+    color=""
+    if git diff --quiet 2>/dev/null >&2 
+    then
+      color="${c_green}"
+    else
+      color=${c_red}
+    fi
+  else
+    return 0
+  fi
+  echo -ne $color' '
+}
+
+PS1="${COLOR_BLUE}\W/\$(branch_color)\$(parse_git_branch)${COLOR_NC} "
+
 
 # Git configuration
 USER_NAME="Sirupsen"

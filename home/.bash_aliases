@@ -28,42 +28,50 @@ alias !='sudo'
 alias gems='gem list'
 alias r='ruby'
 
-# Remove to thrash
-#alias rm='mv --target-directory=$HOME/.Trash'
-
 #
 # Git
 #
-#alias git='hub'
+alias git='hub'
 
 # Commiting
-alias gcam='git commit -am'
-alias gcav='git commit -av'
-alias gcv='git commit -v'
-alias gca='git commit -a'
-
-alias gc='git clone'
-
 alias gp='git push'
-alias gpo='git push origin'
-alias gpom='git push origin master'
-
 alias gl='git pull'
-
-alias gb='git branch'
-
-alias gco='git checkout'
-alias gcb='git checkout -b'
-
-alias gs='git status -s'
 alias gd='git diff'
-
+alias gc='git commit -v'
+alias gca='git commit -av'
+alias gs='git status -sb'
+alias gb='git branch -v'
 alias glog='git log --oneline'
+alias gm='git merge --no-ff'
+
+function gco {
+  if [ -z "$1" ]; then
+    git checkout master
+  else
+    git checkout $1
+  fi
+}
+
+#
+# Rails
+#
+
+alias sc='./script/console'
+alias sg='./script/generate'
+alias ss='./script/server'
+alias sp='./script/server -e production'
+alias rk='rake test'
+alias rkp='rake parallel:test'
+alias ta='autotest -rails'
 
 # General
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../../'
+
+# Work
+alias work='cd ~/Code/Work/'
+alias ~='cd ~'
 
 # Handy 
 alias clipboard="xclip -selection c"
