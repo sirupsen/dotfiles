@@ -61,6 +61,8 @@ alias gs='git status -sb'
 alias gb='git branch -v'
 complete -o default -o nospace -F _git_branch gb
 
+alias ggraph='git log --graph --pretty=oneline --abbrev-commit'
+
 alias glog='git log --oneline'
 complete -o default -o nospace -F _git_log glog
 
