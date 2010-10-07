@@ -92,6 +92,13 @@ branch_color ()
   echo -ne $color' '
 }
 
+# Description of PS1
+#
+# Blue: Current Directory
+# Red (uncomitted changes)/Green: Branch
+# No color for input
+# Picture: http://ahb.me/BYp
+
 PS1="${Blue}\W/\$(branch_color)\$(parse_git_branch)${NC} "
 
 
