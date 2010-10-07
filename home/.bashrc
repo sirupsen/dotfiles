@@ -1,23 +1,41 @@
 #!/bin/bash
 
-# Colors
-export COLOR_NC='\033[0m' # No Color
-export COLOR_WHITE='\033[1;37m'
-export COLOR_BLACK='\033[0;30m'
-export COLOR_BLUE='\033[0;34m'
-export COLOR_LIGHT_BLUE='\033[1;34m'
-export COLOR_GREEN='\033[0;32m'
-export COLOR_LIGHT_GREEN='\033[1;32m'
-export COLOR_CYAN='\033[0;36m'
-export COLOR_LIGHT_CYAN='\033[1;36m'
-export COLOR_RED='\033[0;31m'
-export COLOR_LIGHT_RED='\033[1;31m'
-export COLOR_PURPLE='\033[0;35m'
-export COLOR_LIGHT_PURPLE='\033[1;35m'
-export COLOR_BROWN='\033[0;33m'
-export COLOR_YELLOW='\033[1;33m'
-export COLOR_GRAY='\033[1;30m'
-export COLOR_LIGHT_GRAY='\033[0;37m'
+# Cock="$(tput setaf 0)"
+BlackBG="$(tput setab 0)"
+
+DarkGrey="$(tput bold ; tput setaf 0)"
+LightGrey="$(tput setaf 7)"
+LightGreyBG="$(tput setab 7)"
+
+White="$(tput bold ; tput setaf 7)"
+
+Red="$(tput setaf 1)"
+RedBG="$(tput setab 1)"
+LightRed="$(tput bold ; tput setaf 1)"
+
+Green="$(tput setaf 2)"
+GreenBG="$(tput setab 2)"
+LightGreen="$(tput bold ; tput setaf 2)"
+
+Brown="$(tput setaf 3)"
+BrownBG="$(tput setab 3)"
+
+Yellow="$(tput bold ; tput setaf 3)"
+
+Blue="$(tput setaf 4)"
+BlueBG="$(tput setab 4)"
+LightBlue="$(tput bold ; tput setaf 4)"
+
+Purple="$(tput setaf 5)"
+PurpleBG="$(tput setab 5)"
+
+Pink="$(tput bold ; tput setaf 5)"
+
+Cyan="$(tput setaf 6)"
+CyanBG="$(tput setab 6)"
+LightCyan="$(tput bold ; tput setaf 6)"
+
+NC="$(tput sgr0)"
 
 # Append to the history file, don't overwrite it!
 shopt -s histappend
@@ -46,12 +64,6 @@ PATH=$PATH:~/.bin:/usr/local/bin
 # Load git completion
 . ~/.git_completion
 
-
-c_cyan=`tput setaf 6`
-c_red=`tput setaf 1`
-c_green=`tput setaf 2`
-c_sgr0=`tput sgr0`
-
 parse_git_branch ()
 {
   if git rev-parse --git-dir >/dev/null 2>&1
@@ -70,9 +82,9 @@ branch_color ()
     color=""
     if git diff --quiet 2>/dev/null >&2 
     then
-      color="${c_green}"
+      color="${Green}"
     else
-      color=${c_red}
+      color=${Red}
     fi
   else
     return 0
@@ -80,7 +92,7 @@ branch_color ()
   echo -ne $color' '
 }
 
-PS1="${COLOR_BLUE}\W/\$(branch_color)\$(parse_git_branch)${COLOR_NC} "
+PS1="${Blue}\W/\$(branch_color)\$(parse_git_branch)${NC} "
 
 
 # Git configuration
