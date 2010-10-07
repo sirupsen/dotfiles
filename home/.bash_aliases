@@ -35,14 +35,27 @@ alias git='hub'
 
 # Commiting
 alias gp='git push'
+complete -o default -o nospace -F _git_push gp
+
 alias gl='git pull'
+complete -o default -o nospace -F _git_pull gl
+
 alias gd='git diff'
+complete -o default -o nospace -F _git_diff gd
+
 alias gc='git commit -v'
 alias gca='git commit -av'
+
 alias gs='git status -sb'
+
 alias gb='git branch -v'
+complete -o default -o nospace -F _git_branch gb
+
 alias glog='git log --oneline'
+complete -o default -o nospace -F _git_log glog
+
 alias gm='git merge --no-ff'
+complete -o default -o nospace -F _git_merge gm
 
 function gco {
   if [ -z "$1" ]; then
@@ -51,6 +64,8 @@ function gco {
     git checkout $1
   fi
 }
+
+complete -o default -o nospace -F _git_checkout gco
 
 #
 # Rails
