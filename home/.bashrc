@@ -57,9 +57,6 @@ git config --global --replace-all core.editor $EDITOR
 # Add user Bin to path
 PATH=$PATH:~/.bin:/usr/local/bin
 
-# Load aliases
-. ~/.bash_aliases
-
 # Load git completion
 . ~/.git_completion
 
@@ -71,7 +68,7 @@ parse_git_branch ()
   else
     return 0
   fi
-  echo -e $gitver
+  echo "($gitver)"
 }
 
 branch_color ()
@@ -88,7 +85,20 @@ branch_color ()
   else
     return 0
   fi
-  echo -ne $color' '
+  echo -ne $color
+}
+
+function __my_rvm_ruby_version {
+  local gemset=$(echo $GEM_HOME | awk -F'@' '{print $2}')
+
+  [ "$gemset" != "" ] && gemset="@$gemset"
+  local version=$(echo $MY_RUBY_HOME | awk -F'-' '{print $2}')
+
+  [ "$version" == "1.9.2" ] && version=""
+
+  local full="$version$gemset"
+
+  [ "$full" != "" ] && echo "$full "
 }
 
 # Description of PS1
@@ -98,7 +108,7 @@ branch_color ()
 # No color for input
 # Picture: http://ahb.me/BYp
 
-PS1="${Blue}\W/\$(branch_color)\$(parse_git_branch)${NC} "
+PS1="${Blue}\W/${Cyan}\$(__my_rvm_ruby_version)\$(branch_color)\$(parse_git_branch) ${NC}$ "
 
 # Git configuration
 USER_NAME="Sirupsen"
@@ -118,3 +128,6 @@ if [ -f ~/.gitconfig ]; then
 fi
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+# Load aliases
+. ~/.bash_aliases

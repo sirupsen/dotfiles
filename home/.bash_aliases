@@ -37,20 +37,10 @@ alias git='hub'
 alias gp='git push'
 complete -o default -o nospace -F _git_push gp
 
-alias gl='git pull'
-complete -o default -o nospace -F _git_pull gl
+alias gpl='git pull'
+complete -o default -o nospace -F _git_pull gpl
 
-case $OSTYPE in
-  linux*)
-    alias gd='git diff | vim -R -'
-    ;;
-  darwin*)
-    alias gd='git diff | mate'
-    ;;
-  darwin*)
-    alias gd='git diff'
-    ;;
-esac
+alias gd='git diff | vim -R -'
 complete -o default -o nospace -F _git_diff gd
 
 alias gc='git commit -v'

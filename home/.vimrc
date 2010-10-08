@@ -14,7 +14,7 @@
 " General {
   filetype plugin indent on " Automatically change file types.
 
-  set autochdir " Automatically always switch to the current files directory.
+  "set autochdir " Automatically always switch to the current files directory.
   set shortmess=filmnrxoOtT      " abbrev. of messages (avoids 'hit enter')
   set history=1000 " Keep (a lot) more history
 
@@ -82,6 +82,12 @@
     endif
   " }
 
+  " MVIM {
+    if has("gui_macvim")
+      macmenu &File.New\ Tab key=<nop>
+      map <D-t> :CommandT<CR>
+    endif
+  " }
 " }
 
 " Formatting {
