@@ -45,54 +45,6 @@ git config --global --replace-all core.editor $EDITOR
 
 # Add user Bin to path
 PATH=$PATH:~/.bin:/usr/local/bin
-# 
-parse_git_branch ()
-{
-  if git rev-parse --git-dir >/dev/null 2>&1
-  then
-    gitver=$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')
-  else
-    return 0
-  fi
-  echo "($gitver)"
-}
-
-branch_color ()
-{
-  if git rev-parse --git-dir >/dev/null 2>&1
-  then
-    color=""
-    if git diff --quiet 2>/dev/null >&2 
-    then
-      color='\[${GREEN}\]'
-    else
-      color='\[${RED}\]'
-    fi
-  else
-    return 0
-  fi
-  echo -ne $color
-}
-
-function __my_rvm_ruby_version {
-  local gemset=$(echo $GEM_HOME | awk -F'@' '{print $2}')
-
-  [ "$gemset" != "" ] && gemset="@$gemset"
-  local version=$(echo $MY_RUBY_HOME | awk -F'-' '{print $2}')
-
-  [ "$version" == "1.9.2" ] && version=""
-
-  local full="$version$gemset"
-
-  [ "$full" != "" ] && echo "$full "
-}
-
-# Description of PS1
-#
-# Blue: Current Directory
-# Red (uncomitted changes)/Green: Branch
-# No color for input
-# Picture: http://ahb.me/BYp
 
 # Load git completion for PS1 feature
 . ~/.git_completion
