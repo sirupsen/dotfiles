@@ -8,7 +8,7 @@ These are my dotfiles. Use them as you like!
 
 Has current git branch.
 
-![PS1](http://ahb.me/BYp)
+![PS1](http://imgur.com/oCKTw.png)
 
 # Using my Dotfiles
 
