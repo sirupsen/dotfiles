@@ -1,0 +1,7 @@
+require 'rubygems'
+require 'rake'
+
+task :install do
+  `gem install irbtools`
+  `gem install irb_rocket --source http://merbi.st`
+end
