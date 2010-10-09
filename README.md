@@ -6,7 +6,16 @@ These are my dotfiles. Use them as you like!
 
 ## PS1
 
-Has current git branch.
+### Format
+
+* Current directory
+* Ruby version and Gemset (If not 1.9.2@default)
+* Git branch (If in a Git repository)
+    + Colors
+        - Red (dirty tree, uncomitted changes)
+        - Green (clear tree)
+
+### Screenshot
 
 ![PS1](http://imgur.com/oCKTw.png)
 
