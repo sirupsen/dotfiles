@@ -18,13 +18,21 @@ endif
 let g:colors_name = "railscasts"
 
 " Colors
+" Background   #2B2B2B
+" Foreground   #E6E1DC
+"
 " Brown        #BC9458
-" Dark Blue    #6D9CBE
-" Dark Green   #519F50
-" Dark Orange  #CC7833
+"
 " Light Blue   #D0D0FF
+" Dark Blue    #6D9CBE
+"
 " Light Green  #A5C261
-" Tan          #FFC66D
+" Dark Green   #519F50
+"
+" Light Orange #FFC66D
+" Dark Orange  #CC7833
+"
+" Red          #DA4939
 
 hi Normal                    guifg=#E6E1DC guibg=#2B2B2B
 hi Cursor                    guibg=#FFFFFF

@@ -1,40 +1,29 @@
-#!/bin/bash
+# #!/bin/bash
 
-BlackBG="$(tput setab 0)"
+# Normal Colors
+GREEN=$'\e[0;32m'
+RED=$'\e[0;31m'
+BLUE=$'\e[0;34m'
+WHITE=$'\e[1;37m'
+BLACK=$'\e[0;30m'
+YELLOW=$'\e[0;33m'
+PURPLE=$'\e[0;35m'
+CYAN=$'\e[0;36m'
+GRAY=$'\e[1;30m'
+PINK=$'\e[37;1;35m'
+ORANGE=$'\e[33;40m'
 
-DarkGrey="$(tput bold ; tput setaf 0)"
-LightGrey="$(tput setaf 7)"
-LightGreyBG="$(tput setab 7)"
+# Revert color back to the normal color
+NORMAL=$'\e[00m'
 
-White="$(tput bold ; tput setaf 7)"
-
-Red="$(tput setaf 1)"
-RedBG="$(tput setab 1)"
-LightRed="$(tput bold ; tput setaf 1)"
-
-Green="$(tput setaf 2)"
-GreenBG="$(tput setab 2)"
-LightGreen="$(tput bold ; tput setaf 2)"
-
-Brown="$(tput setaf 3)"
-BrownBG="$(tput setab 3)"
-
-Yellow="$(tput bold ; tput setaf 3)"
-
-Blue="$(tput setaf 4)"
-BlueBG="$(tput setab 4)"
-LightBlue="$(tput bold ; tput setaf 4)"
-
-Purple="$(tput setaf 5)"
-PurpleBG="$(tput setab 5)"
-
-Pink="$(tput bold ; tput setaf 5)"
-
-Cyan="$(tput setaf 6)"
-CyanBG="$(tput setab 6)"
-LightCyan="$(tput bold ; tput setaf 6)"
-
-NC="$(tput sgr0)"
+# LIGHT COLORS
+LIGHT_BLUE=$'\e[1;34m'
+LIGHT_GREEN=$'\e[1;32m'
+LIGHT_CYAN=$'\e[1;36m'
+LIGHT_RED=$'\e[1;31m'
+LIGHT_PURPLE=$'\e[1;35m'
+LIGHT_YELLOW=$'\e[1;33m'
+LIGHT_GRAY=$'\e[0;37m'
 
 # Append to the history file, don't overwrite it!
 shopt -s histappend
@@ -56,10 +45,7 @@ git config --global --replace-all core.editor $EDITOR
 
 # Add user Bin to path
 PATH=$PATH:~/.bin:/usr/local/bin
-
-# Load git completion
-. ~/.git_completion
-
+# 
 parse_git_branch ()
 {
   if git rev-parse --git-dir >/dev/null 2>&1
@@ -78,9 +64,9 @@ branch_color ()
     color=""
     if git diff --quiet 2>/dev/null >&2 
     then
-      color="${Green}"
+      color='\[${GREEN}\]'
     else
-      color=${Red}
+      color='\[${RED}\]'
     fi
   else
     return 0
@@ -108,7 +94,14 @@ function __my_rvm_ruby_version {
 # No color for input
 # Picture: http://ahb.me/BYp
 
-PS1="${Blue}\W/${Cyan}\$(__my_rvm_ruby_version)\$(branch_color)\$(parse_git_branch) ${NC}$ "
+# Load git completion for PS1 feature
+. ~/.git_completion
+
+# For unstaged(*) and staged(+) values next to branch name in __git_ps1
+GIT_PS1_SHOWDIRTYSTATE="enabled"
+
+# Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff(http://ubuntuforums.org/showthread.php?t=234232)
+PS1='\[$BLUE\]\W/\[$LIGHT_BLUE\]$(__my_rvm_ruby_version)\[$LIGHT_GREEN\]$(__git_ps1 "(%s)") \[${NORMAL}\]$ '
 
 # Git configuration
 USER_NAME="Sirupsen"
