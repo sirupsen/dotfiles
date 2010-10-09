@@ -24,7 +24,8 @@
 " }
 
 " Vim UI {
-  syntax on " Enable syntax highlightation.
+  syntax on " Enable syntax highlightation.¨
+
   color mustang " Default colorscheme
 
   set t_Co=256 " Terminal colors
@@ -48,10 +49,12 @@
 
   au FocusLost * :wa " Save when losing focus
 
+  set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+
   " GVim {
     if has("gui_running")
       color railscasts " GUI Colorscheme
-      set guifont=Monaco\ 9 " Set the font
+      set guifont=Monaco\ 9 " Set the font:
 
       " GVIm options {
         set guioptions-=m " Remove menu bar
@@ -86,6 +89,7 @@
     if has("gui_macvim")
       macmenu &File.New\ Tab key=<nop>
       map <D-t> :CommandT<CR>
+      set guifont=Monaco:h10
     endif
   " }
 " }

@@ -41,6 +41,10 @@ alias gpl='git pull'
 complete -o default -o nospace -F _git_pull gpl
 
 alias gd='git diff | vim -R -'
+
+if [[ $platform == 'darwin' ]]; then
+   alias gd='git digg | mvim -d'
+fi
 complete -o default -o nospace -F _git_diff gd
 
 alias gc='git commit -v'
