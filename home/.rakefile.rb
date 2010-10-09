@@ -32,3 +32,48 @@ namespace :gems do
     end
   end
 end
+
+namespace :git do
+  namespace :setup do
+    desc "Setup Git and Github"
+    task :git do
+      git = {
+              :git_name => 'user.name',
+              :user_email => 'user.email',
+              :github_user => 'github.user',
+              :github_token => 'github.token',
+            }
+
+      Empty = "\n"
+      GitGlobalConfig = 'git config --global'
+
+      git.each do |name, command|
+        if `#{GitGlobalConfig} #{command}` == Empty
+          print "#{name}: "
+          `#{GitGlobalConfig} #{command} "#{$stdin.gets}"`
+        else
+          puts "#{command} already set to: " + `#{GitGlobalConfig} #{command}`.strip
+        end
+      end
+    end
+
+    desc "Setup SSH for Github"
+    task :ssh do
+      unless File.exist?(".ssh/id_rsa.pub")
+        print "Email: "
+        `ssh-keygen -t rsa -C #{$stdin.gets}`
+      else
+        puts "SSH key already generated."
+      end
+
+      puts "Add it to your account at https://github.com/account\n\n"
+      puts File.read(".ssh/id_rsa.pub")
+    end
+
+    desc "Setup SSH and Git"
+    task :all do
+      Rake::Task['git:setup:git'].invoke
+      Rake::Task['git:setup:ssh'].invoke
+    end
+  end
+end
