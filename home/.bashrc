@@ -25,23 +25,15 @@ LIGHT_PURPLE=$'\e[1;35m'
 LIGHT_YELLOW=$'\e[1;33m'
 LIGHT_GRAY=$'\e[0;37m'
 
-# Append to the history file, don't overwrite it!
-shopt -s histappend
-HISTCONTROL=ignoredups
-
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
-
 # Vi command mode
 set -o vi
 
 # Default browser
-export BROWSER=chromium-dev # Default browser
-# Setting up editor 
-export EDITOR=vim # Default editor
-git config --global --replace-all core.editor $EDITOR
+BROWSER=chromium-dev # Default browser
 
+# Setting up editor 
+EDITOR=vim # Default editor
+GIT_EDITOR=$EDITOR
 
 # Add user Bin to path
 PATH=$PATH:~/.bin:/usr/local/bin
