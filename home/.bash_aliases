@@ -21,7 +21,7 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls'
 
-alias c='cd'
+alias c='clear'
 alias !='sudo'
 
 # Ruby aliases
@@ -43,7 +43,7 @@ complete -o default -o nospace -F _git_pull gpl
 alias gd='git diff | vim -R -'
 
 if [[ $platform == 'darwin' ]]; then
-   alias gd='git digg | mvim -d'
+   alias gd='git diff'
 fi
 complete -o default -o nospace -F _git_diff gd
 
