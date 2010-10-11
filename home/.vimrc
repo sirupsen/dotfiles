@@ -109,11 +109,11 @@
 " }
 
 " Key Mapping {
-  map <S-J> <C-W>j<C-W>_
-  map <S-K> <C-W>k<C-W>_
-  map <S-L> <C-W>l<C-W>_
-  map <S-H> <C-W>h<C-W>_
-  map <S-K> <C-W>k<C-W>_
+  map <S-C-J> <C-W>j<C-W>_
+  map <S-C-K> <C-W>k<C-W>_
+  map <S-C-L> <C-W>l<C-W>_
+  map <S-C-H> <C-W>h<C-W>_
+  map <S-C-K> <C-W>k<C-W>_
   map <C-J> <C-W>j
   map <C-K> <C-W>k
   map <C-L> <C-W>l
