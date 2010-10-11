@@ -33,6 +33,22 @@ namespace :gems do
   end
 end
 
+namespace :dotfiles do
+  namespace :homesick do
+    namespace :dropbox do
+      desc "Link dotfiles from Dropbox to Homesick"
+      task :symlink do
+        `ln -s ~/Dropbox/Dumper/Configuration ~/homesick/repos`
+      end
+    end
+
+    desc "Symlink with Homesick"
+    task :symlink do
+      `homesick symlink Configuration`
+    end
+  end
+end
+
 namespace :git do
   namespace :setup do
     desc "Setup Git and Github"

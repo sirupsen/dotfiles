@@ -1,14 +1,5 @@
 #! /bin/bash
 
-# Platform information
-platform='unknown'
-unamestr=`uname`
-if [[ "$unamestr" == 'Linux' ]]; then
-   platform='linux'
-elif [[ "$unamestr" == 'Darwin' ]]; then
-   platform='darwin'
-fi
-
 # Linux and Darwin/BSD have different ways to get color
 # in `ls`
 if [[ $platform == 'linux' ]]; then
