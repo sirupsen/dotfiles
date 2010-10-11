@@ -4,7 +4,7 @@ These are my dotfiles. Use them as you like!
 
 # Packages
 
-Packages of choice relevant to these configurations.
+My packages of choice relevant to these configurations.
 
 * Terminal
   - Unicode Rxvt
