@@ -2,6 +2,21 @@
 
 These are my dotfiles. Use them as you like! 
 
+# Packages
+
+Packages of choice relevant to these configurations.
+
+* Terminal
+  - Unicode Rxvt
+* Shell
+  - Bash
+* Window Manager
+  - Openbox
+* Text editor
+  - Vim
+* Version control
+  - Git
+
 # Misc
 
 ## PS1
