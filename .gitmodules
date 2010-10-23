@@ -40,3 +40,6 @@
 [submodule "home/.vim/bundle/command-t"]
 	path = home/.vim/bundle/command-t
 	url = git://git.wincent.com/command-t.git
+[submodule "home/.vim/bundle/javascript"]
+	path = home/.vim/bundle/javascript
+	url = http://github.com/pangloss/vim-javascript.git

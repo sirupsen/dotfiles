@@ -25,7 +25,7 @@ xkb_symbols "basic" {
     key <AE06> {	[              6,       ampersand,              yen,        NoSymbol	]};
     key <AE07> {	[              7,           slash,        braceleft,       backslash	]};
     key <AE08> {	[              8,       parenleft,      bracketleft,       braceleft	]};
-    key <AE09> {	[              9,      parenright,     bracketright,       braceleft	]};
+    key <AE09> {	[              9,      parenright,     bracketright,       braceright	]};
     key <AE10> {	[              0,           equal,       braceright,          degree	]};
     key <AB08> {	[          comma,       semicolon,     dead_cedilla,     dead_ogonek	]};
     key <AB09> {	[         period,           colon,   periodcentered,   dead_abovedot	]};

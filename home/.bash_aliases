@@ -18,6 +18,7 @@ alias !='sudo'
 # Ruby aliases
 alias gems='gem list'
 alias r='ruby'
+alias rw='ruby -w'
 
 #
 # Git

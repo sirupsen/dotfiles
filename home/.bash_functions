@@ -8,3 +8,8 @@ if [[ "$unamestr" == 'Linux' ]]; then
 elif [[ "$unamestr" == 'Darwin' ]]; then
    platform='darwin'
 fi
+
+mkcd () {
+  mkdir -p $1
+  cd $1
+}

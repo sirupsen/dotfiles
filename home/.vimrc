@@ -80,7 +80,7 @@
       " Window {
         set lines=65
         set columns=115
-        winpos 1295 30
+        winpos 1270 0
       " }
     endif
   " }
@@ -106,6 +106,9 @@
   set tabstop=2 " Tabs are 2 spaces
   set backspace=2 " Backspace back 2 spaces
   set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
+
+  " Man pager
+  let $PAGER=''
 " }
 
 " Key Mapping {
@@ -134,7 +137,7 @@
 
   " Key mappings
   :noremap ,d :bd<CR>
-  cmap w!! w !sudo tee
+  cmap w!! w !sudo tee %
   map ,c :cd %:p:h<CR>
 " }
 
@@ -161,12 +164,21 @@
     au FileType * let b:delimitMate_autoclose = 1
   " }
 
-
   " SnipMate {
     " Author var
     let g:snips_author = 'Simon Hørup Eskildsen <<a class="linkclass" href="mailto:sirup@sirupsen.com">sirup@sirupsen.com</a>>'
 
     " Shortcut for reloading snippets
     nnoremap ,smr <esc>:exec ReloadAllSnippets()<cr>
+  " }
+
+  " Jekyll {
+    let g:jekyll_path = "~/Code/Web/sirupsen.github.com"
+    let g:jekyll_post_suffix = "md"
+  " }
+
+  " Fugitive {
+    map <Leader>gc :Gcommit
+    map <Leader>gs :Gstatus
   " }
 " }

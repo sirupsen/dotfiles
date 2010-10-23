@@ -10,7 +10,7 @@
 set -o vi
 
 # Default browser
-BROWSER="chromium-dev" # Default browser
+BROWSER="chromium-browser" # Default browser
 
 # Setting up editor 
 EDITOR="vim" # Default editor
@@ -30,3 +30,8 @@ PATH=$PATH:~/.bin:/usr/local/bin
 
 # Load aliases at end to not conflict with anything
 . ~/.bash_aliases
+
+export PAGER="/bin/sh -c \"unset PAGER;col -b -x | \
+  vim -R -c 'set ft=man nomod nolist' -c 'map q :q<CR>' \
+  -c 'map <SPACE> <C-D>' -c 'map b <C-U>' \
+  -c 'nmap K :Man <C-R>=expand(\\\"<cword>\\\")<CR><CR>' -\""
