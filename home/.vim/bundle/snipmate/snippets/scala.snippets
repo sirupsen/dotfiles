@@ -1,0 +1,111 @@
+# documentation: if the snippet is prefixed by lines that start "## ", those can be used by
+# a pre-processor script to create a quickref. the idea is that you can print such a file
+# out and have it for quick reference while learning how to use the snippets for that
+# particular language.
+#
+snippet class
+	class ${1:ClassName} {
+		${2}
+	}
+## case class
+snippet cclass
+	case class ${1:ClassName} {
+		${2}
+	}
+snippet trait
+	trait ${1:TraitName} {
+		${2}
+	}
+## singleton object
+snippet object
+	object ${2:ObjectName} {
+		${2}
+	}
+## application trait
+snippet application
+	object ${1:ObjectName} extends Application {
+		${2}
+	}
+## defines a type (e.g. structural)
+snippet type
+	type ${1} = {${2}}
+## method definition
+snippet def
+	def ${1:method}(${2})${3: : ${4:Unit}} = {
+		${5}
+	}
+## if conditional
+snippet if
+	if (${1:condition}) {
+	    ${2:// expression}
+	}
+snippet ifelse
+	if (${1:condition}) {
+	    ${2:// expression}
+	} else {
+	  
+	}
+snippet while
+	while (${1:condition}) {
+	    ${2:// expression}
+	}
+snippet try
+	try {
+	    ${2:// expression}
+	} 
+	catch {
+	    case e : ${1:Exception} => ${3:// expression}
+	}
+## try..catch..finally
+snippet tfc
+	try {
+	    ${2:// expression}
+	} 
+	catch {
+	    case e : ${1:Exception} => ${3:// expression}
+	}
+	finally {
+	  ${4:// expression}
+	}
+## private
+snippet pr
+	private 
+## scoped private
+snippet pri
+	private[${1:this}]
+## protected
+snippet pro
+	protected 
+## scoped protected
+snippet prop
+	protected[${1:this}]
+snippet for
+	for (${1} <- ${2}) {
+	  ${3}
+	}
+snippet foreach
+	foreach {${1} =>
+	  ${2}
+	}
+snippet match
+	match {
+	    case ${1} => ${2}
+	}
+snippet case
+	case ${1} => ${2}
+## println
+snippet p
+	println(${1})
+snippet main
+	def main(args: Array[String]) = {
+	  ${1}
+	}
+## specifies arguments - x1
+snippet 1
+	(${1:first}: ${2:Type})
+## specifies arguments - x2
+snippet 2
+	(${1:first}: ${2:Type}, ${3:second}: ${4:Type})
+## specifies arguments - x3
+snippet 3
+	(${1:first}: ${2:Type}, ${3:second}: ${4:Type}, ${5:third}: ${6:Type})
