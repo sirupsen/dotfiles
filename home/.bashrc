@@ -1,12 +1,24 @@
 #!/bin/bash
 
+# Load credentials, sets a few environment variables
+# used e.g. in the Mutt config.
+#
+# Sets the following variables (not in the Git tree :-)
+# USERNAME=""
+# PASSWORD1=""
+# PASSWORD2=""
+# EMAIL=""
+# FULLNAME=""
+
+. ~/.credentials
+
 # Load colors
 . ~/.colors
 
 # Load functions
 . ~/.bash_functions
 
-# Vi command mode
+# Vi Bash command mode
 set -o vi
 
 # Default browser
@@ -14,7 +26,6 @@ BROWSER="chromium-browser" # Default browser
 
 # Setting up editor 
 EDITOR="vim" # Default editor
-GIT_EDITOR=$EDITOR
 
 # Add user bins to path
 PATH=$PATH:~/.bin:/usr/local/bin
@@ -30,8 +41,3 @@ PATH=$PATH:~/.bin:/usr/local/bin
 
 # Load aliases at end to not conflict with anything
 . ~/.bash_aliases
-
-export PAGER="/bin/sh -c \"unset PAGER;col -b -x | \
-  vim -R -c 'set ft=man nomod nolist' -c 'map q :q<CR>' \
-  -c 'map <SPACE> <C-D>' -c 'map b <C-U>' \
-  -c 'nmap K :Man <C-R>=expand(\\\"<cword>\\\")<CR><CR>' -\""

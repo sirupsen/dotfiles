@@ -8,6 +8,7 @@ elif [[ $platform == 'darwin' ]]; then
    alias ls='ls -G'
 fi
 
+# General aliases
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls'
@@ -15,10 +16,12 @@ alias l='ls'
 alias c='clear'
 alias !='sudo'
 
-# Ruby aliases
-alias gems='gem list'
-alias r='ruby'
-alias rw='ruby -w'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../../'
+
+alias svim="sudo vim"
+alias ~='cd ~'
 
 #
 # Git
@@ -65,6 +68,14 @@ function gco {
 
 complete -o default -o nospace -F _git_checkout gco
 
+# 
+# Ruby
+#
+
+alias gems='gem list'
+alias r='ruby'
+alias rw='ruby -w'
+
 #
 # Rails
 #
@@ -76,16 +87,3 @@ alias sp='./script/server -e production'
 alias rk='rake test'
 alias rkp='rake parallel:test'
 alias ta='autotest -rails'
-
-# General
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../../'
-
-# Work
-alias work='cd ~/Code/Work/'
-alias ~='cd ~'
-
-# Handy 
-alias clipboard="xclip -selection c"
-alias svim="sudo vim"

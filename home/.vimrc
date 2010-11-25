@@ -185,7 +185,7 @@
   " }
 
   " Jekyll {
-    let g:jekyll_path = "~/Code/Web/sirupsen.github.com"
+    let g:jekyll_path = "~/Code/projects/sirupsen.com"
     let g:jekyll_post_suffix = "md"
   " }
 
@@ -193,4 +193,7 @@
     map <Leader>gc :Gcommit
     map <Leader>gs :Gstatus
   " }
-" }
+
+  " Ri {
+  "source ~/.vim/bundle/ri/ftplugin/ri.vim
+  " }
