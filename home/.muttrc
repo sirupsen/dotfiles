@@ -1,0 +1,101 @@
+# Don't sheep our fires!
+set ssl_force_tls = yes
+
+# Basic Gmail configuration
+# Environment variables would be set in e.g. ~/.credentials (included in .bashrc)
+set imap_user = $EMAIL
+set imap_pass = $PASSWORD1
+
+set smtp_url = "smtp://$imap_user:$imap_pass@smtp.gmail.com:587/"
+set smtp_pass = $PASSWORD1
+
+set from = $EMAIL
+set realname = $FULLNAME
+
+set editor = $EDITOR
+
+# Basic config
+set folder = "imaps://imap.gmail.com:993"
+set spoolfile = "+INBOX"
+set imap_check_subscribed
+set hostname = gmail.com
+set mail_check = 40
+set timeout = 300
+set imap_keepalive = 300
+set postponed = "+[GMail]/Drafts"
+set record = "+[GMail]/Sent Mail"
+
+# Cache it!
+set header_cache=~/.mutt/cache/headers
+set message_cachedir=~/.mutt/cache/bodies
+set certificate_file=~/.mutt/certificates
+set move = no
+set include
+set sort = 'threads'
+set sort_aux = 'reverse-last-date-received'
+set auto_tag = yes
+
+# Macros 
+
+# Mark as read didn't really turn out how I wanted it to, I recommend
+# you (if you are using Gmail) to just go there, select all, and then
+# it asks if you want to select ALL mails, say yes, and then hit mark
+# as read.
+macro index ,r "T~N | ~O\nN^T~A\n" "mark all read"
+macro index M "T.*\n;WN" "Mark all messages as read"
+
+# Ignore some headers
+ignore "Authentication-Results:"
+ignore "DomainKey-Signature:"
+ignore "DKIM-Signature:"
+hdr_order Date From To Cc
+alternative_order text/plain text/html *
+auto_view text/html
+
+set markers=no # No + at beginning of wrapped lines
+
+# Gmail-style keyboard shortcuts
+macro index,pager y "<enter-command>unset trash\n <delete-message>" "Gmail archive message"
+macro index,pager d "<enter-command>set trash=\"imaps://imap.googlemail.com/[GMail]/Bin\"\n <delete-message>" "Gmail delete message"
+macro index,pager gi "<change-folder>=INBOX<enter>" "Go to inbox"
+macro index,pager ga "<change-folder>=[Gmail]/All Mail<enter>" "Go to all mail"
+macro index,pager gs "<change-folder>=[Gmail]/Starred<enter>" "Go to starred messages"
+macro index,pager gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to drafts">
+
+# Various colors
+color quoted    yellow     default
+color quoted1   cyan       default
+color quoted2   magenta    default
+color quoted3   green      default
+color quoted4   red        default
+
+color signature blue default
+color normal    white black
+color status    brightgreen black
+color indicator red black
+color error     red black
+color tree      yellow black
+color attachment blue default
+color index     cyan black (calomel.org)
+color header    green black .*
+color header    brightred  black (^From\:|^Reply-To\:)
+color header    brightyellow black (^To\:|^cc\:|^Cc\:)
+
+color body      magenta      default "(ftp|http|https)://[^ ]+"
+color body      magenta      default [-a-z_0-9.]+@[-a-z_0-9.]+
+color body      brightgreen  default "^(gpg: )?Good signature"
+color body      brightgreen  default "^(gpg: )?encrypted"
+color body      brightred    default "^(gpg: )?Bad signature"
+color body      red          default "^(gpg: )?warning:"
+color body      red          default "^(gpg: ).*failed:"
+
+color message    magenta        default # info messages
+color search     brightyellow   red     # search matches
+color tilde      brightmagenta  default # ~ at bottom of msg
+color markers    red            default # + at beginning of wrapped lines
+color hdrdefault cyan           default # default header lines
+color bold       cyan           default # hiliting bold patterns in body
+color underline  cyan           default # hiliting underlined patterns in body
+
+color index     green          default  ~T      # Tagged
+color index     red            default  ~D      # Deleted
