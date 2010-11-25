@@ -141,6 +141,18 @@
   map ,c :cd %:p:h<CR>
 " }
 
+" Misc hacks {
+
+  " Open PDF's, requires xpdf and cups-pdf see:
+  " http://vim.wikia.com/wiki/Open_PDF_files
+  autocmd BufReadPre *.pdf set ro nowrap
+  autocmd BufReadPost *.pdf silent %!pdftotext -nopgbrk "%" - |fmt -csw78
+  autocmd BufWritePost *.pdf silent !rm -rf ~/PDF/%
+  autocmd BufWritePost *.pdf silent !lp -s -d pdffg "%"
+  autocmd BufWritePost *.pdf silent !until [ -e ~/PDF/% ]; do sleep 1; done
+  autocmd BufWritePost *.pdf silent !mv ~/PDF/% %:p:h
+" }
+
 
 " Plugins {
   " NerdTree {
