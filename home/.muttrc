@@ -3,16 +3,16 @@ set ssl_force_tls = yes
 
 # Basic Gmail configuration
 # Environment variables would be set in e.g. ~/.credentials (included in .bashrc)
-set imap_user = $EMAIL
-set imap_pass = $PASSWORD1
+set imap_user=$EMAIL
+set imap_pass=$PASSWORD
 
-set smtp_url = "smtp://$imap_user:$imap_pass@smtp.gmail.com:587/"
-set smtp_pass = $PASSWORD1
+set smtp_url="smtp://$imap_user:$imap_pass@smtp.gmail.com:587/"
+set smtp_pass=$PASSWORD
 
-set from = $EMAIL
-set realname = $FULLNAME
+set from=$EMAIL
+set realname=$FULLNAME
 
-set editor = $EDITOR
+set editor=vim
 
 # Basic config
 set folder = "imaps://imap.gmail.com:993"

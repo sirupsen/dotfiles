@@ -10,7 +10,9 @@
 # EMAIL=""
 # FULLNAME=""
 
-. ~/.credentials
+if [ -f ~/.credentials ]; then
+  . ~/.credentials
+fi
 
 # Load colors
 . ~/.colors

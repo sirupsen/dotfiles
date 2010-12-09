@@ -5,19 +5,28 @@ Xft.hinting: true
 Xft.hintstyle: hintslight
 Xcursor.theme: White
 
-! UXrvt
+! Font
+urxvt.font: xft:Monaco:pixelsize=10
+urxvt.letterSpace: -1
+
 urxvt.scrollBar:false
 urxvt.visualBell:true
 urxvt.sessionMgt:false
-urxvt.urlLauncher:chromium-dev
+
 
 ! Tabs
-URxvt.perl-ext-common:  default,tabbedex
-URxvt.tabbed.autohide: yes
+URxvt.perl-ext-common:  default,tabbedex,keyboard-select,url-select,clipboard
 
-! Font
-urxvt.font:xft:Monaco:pixelsize=11
-urxvt.letterSpace: -1
+URxvt.keysym.M-Escape: perl:keyboard-select:activate
+URxvt.keysym.M-u:       perl:url-select:select_next
+URxvt.urlLauncher:      firefox
+URxvt.underlineURLs:    true
+
+URxvt.keysym.M-c:   perl:clipboard:copy
+URxvt.keysym.M-v:   perl:clipboard:paste
+URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
+
+URxvt.tabbed.autohide: yes
 
 ! urxvt (TODO: is there a way to target both urxvt *and* xterm?)
 urxvt*foreground:#E6E1DC

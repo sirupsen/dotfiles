@@ -55,7 +55,7 @@ alias ggraph='git log --graph --pretty=oneline --abbrev-commit'
 alias glog='git log --oneline'
 complete -o default -o nospace -F _git_log glog
 
-alias gm='git merge --no-ff'
+alias gm='git merge'
 complete -o default -o nospace -F _git_merge gm
 
 function gco {
@@ -87,3 +87,5 @@ alias sp='./script/server -e production'
 alias rk='rake test'
 alias rkp='rake parallel:test'
 alias ta='autotest -rails'
+
+alias server='178.63.193.163'
