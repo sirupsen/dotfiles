@@ -697,7 +697,8 @@ function! s:Commit(args) abort
       endif
       return ''
     else
-      let error = get(readfile(errorfile),-2,'!')
+      let errors = readfile(errorfile)
+      let error = get(errors,-2,get(errors,-1,'!'))
       if error =~# "'false'\\.$"
         let args = a:args
         let args = s:gsub(args,'%(%(^| )-- )@<!%(^| )@<=%(-[se]|--edit|--interactive)%($| )','')
@@ -748,7 +749,6 @@ endfunction
 
 function! s:FinishCommit()
   let args = getbufvar(+expand('<abuf>'),'fugitive_commit_arguments')
-  let g:args = args
   if !empty(args)
     call setbufvar(+expand('<abuf>'),'fugitive_commit_arguments','')
     return s:Commit(args)
@@ -1008,11 +1008,13 @@ endfunction
 " Gdiff {{{1
 
 call s:command("-bang -bar -nargs=? -complete=customlist,s:EditComplete Gdiff :execute s:Diff(<bang>0,<f-args>)")
+call s:command("-bar -nargs=? -complete=customlist,s:EditComplete Gvdiff :execute s:Diff(0,<f-args>)")
+call s:command("-bar -nargs=? -complete=customlist,s:EditComplete Gsdiff :execute s:Diff(1,<f-args>)")
 
 augroup fugitive_diff
   autocmd!
-  autocmd BufWinLeave * if s:diff_window_count() == 2 && &diff && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | execute 'windo call s:diff_off()' | endif
-  autocmd BufWinEnter * if s:diff_window_count() == 1 && &diff && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | call s:diff_off() | endif
+  autocmd BufWinLeave * if s:diff_window_count() == 2 && &diff && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | call s:diff_off_all(getbufvar(+expand('<abuf>'), 'git_dir')) | endif
+  autocmd BufWinEnter * if s:diff_window_count() == 1 && &diff && getbufvar(+expand('<abuf>'), 'git_dir') !=# '' | diffoff | endif
 augroup END
 
 function! s:diff_window_count()
@@ -1023,10 +1025,21 @@ function! s:diff_window_count()
   return c
 endfunction
 
-function! s:diff_off()
-  if &l:diff
-    diffoff
-  endif
+function! s:diff_off_all(dir)
+  for nr in range(1,winnr('$'))
+    if getwinvar(nr,'&diff')
+      if nr != winnr()
+        execute nr.'wincmd w'
+        let restorewinnr = 1
+      endif
+      if exists('b:git_dir') && b:git_dir ==# a:dir
+        diffoff
+      endif
+      if exists('restorewinnr')
+        wincmd p
+      endif
+    endif
+  endfor
 endfunction
 
 function! s:buffer_compare_age(commit) dict abort
@@ -1215,6 +1228,10 @@ function! s:Blame(bang,line1,line2,count,args) abort
           silent! execute '%write !('.basecmd.' > '.temp.') >& '.error
         else
           silent! execute '%write !'.basecmd.' > '.temp.' 2> '.error
+        endif
+        if exists('l:dir')
+          execute cd.'`=dir`'
+          unlet dir
         endif
         if v:shell_error
           call s:throw(join(readfile(error),"\n"))

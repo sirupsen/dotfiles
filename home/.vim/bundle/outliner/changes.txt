@@ -1,0 +1,96 @@
+v122 (25 May 2006)
+
+Fixed Viki integration (with fixes from Thomas Link)
+
+Changed email address in ftplugin/otl.vim
+
+Defaulted g:otl_use_viki
+
+Made double-click conditional on having a fold
+
+Added variable g:otl_highlight_extensions to make TODO, XXX, NOTE highlighting configurable
+
+Improved installation directions in README.otl
+
+v111 (19 March 2006)
+
+Made settings work right for the first file
+
+v108 (13 March 2006)
+
+Added global g:otl_initial_foldlevel to set preferred folding level for .otl files
+
+Respect foldlevel settings in modelines. 
+
+v107 (7 March 2006)
+
+Made sure that newly created buffers would look right when you set the filetype to otl.
+
+Made sure that existing buffers would look right when you set the filetype to otl. 
+
+1.56-
+
+moved plugin/filetype_otl.vim to ftdetect/otl.vim
+
+added support for Viki (added links and navigation)
+
+1.47-1.55
+
+added doc/otl.txt help file
+
+changed otl_install_mappings to no_otl_maps (reversed logic)
+
+changed otl_install_insert_mappings to no_otl_insert_maps (reversed logic)
+
+limited text markers to just '|'
+
+improved text extract
+
+made it work with :set nomagic
+
+removed accidental changes to mappings and settings outside of outline buffers, including 'backspace', 'smarttab', and 'J' mapping
+
+fixed menu entries to reflect new commands
+
+added OtlToggleBodyText() that can change back and forth from heading to text
+
+fixed insert-mode mappings
+
+1.56
+
+Fixed bug with old-style backspace definitions
+
+1.57
+
+Added <Tab> and <Shift-Tab> mappings for demote/promote
+NOTE that you must set otl_map_tabs for this to work; this is NOT the default
+because it replaces the Control-I (=Tab) mapping.
+
+Made Join work with Visual mode
+
+Made menu and toolbar commands work better with Visual mode
+
+Fixed OtlJoin behavior with multiple lines
+
+Added <LocalLeader>b to toggle between text and header
+
+Made text/header toolbar button work with Visual selections
+
+Moved buffer settings to BufRead handler to keep 'comments' from being clobbered
+
+1.63
+
+fixed otl2html to make better HTML and use optionally supplied style sheet.
+
+made TVO variables explicitly global
+
+1.64
+
+Added support for Viki (Vim Wiki); see http://www.vim.org/scripts/script.php?script_id=861
+If you have it installed, then a tag jump on a recognized Viki name will follow that link.
+
+107
+
+Made sure that newly created buffers would look right when you set the filetype to otl.
+
+Made sure that existing buffers would look right when you set the filetype to otl. 

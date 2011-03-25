@@ -14,6 +14,7 @@ Usage:
 
     :Gist -p
   post whole text to gist with private.
+ if you got empty gist list, try :Gist --abandon
 
     :Gist -a
   post whole text to gist with anonymous.
@@ -32,6 +33,10 @@ Usage:
   delete the gist. (should be work on gist buffer)
   password authentication is needed.
 
+    :Gist -f
+      fork the gist. (should be work on gist buffer)
+      password authentication is needed.
+ 
     :Gist XXXXX
   get gist XXXXX.
 
@@ -76,6 +81,10 @@ Tips:
 
   on windows, should work with your setting.
 
+  if you want to show your private gists with ':Gist -l'
+
+    let g:gist_show_privates = 1
+
 Require:
 --------
   curl command (http://curl.haxx.se/)
@@ -109,4 +118,12 @@ License:
 Install:
 --------
   copy it to your plugin directory.
+
+  gist.vim leave cookie-jar file into runtimepath.
+
+  rtp:
+    plugin/gist.vim
+    cookies/github
+
+  if you want to uninstall gist.vim, you have better to remove 'cookies/github'.
 

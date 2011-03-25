@@ -1,0 +1,46 @@
+# Converts TVO format to .rtf
+#
+# $Id: otl2rtf 118 2006-04-17 21:12:45Z ned $
+#
+# -> level 1
+# print '\pard\s1\sb240\sa60\b\f0\fs28 ', line, '\par'
+# -> level 2
+# print '\pard\s2\sb240\sa60\i\fs24 '
+# print paragraph
+# print line, '\par'
+# -> text at level 2
+# print '\pard\b0\i0\f1 '
+# -> text at level 1
+
+# print header
+#
+if $0 == __FILE__
+  require 'otlParser'
+  ARGV.unshift('-f', 'RTF', '-i', $0)
+  include TVO
+  parseAndFormat
+  exit 0
+end
+
+class RTFFormatter < Formatter
+
+  def visitHead(item,seq=0)
+      file.print '\pard\s', item.level + 1, '\sb240\sa60\b\f0 '
+      super
+      file.print "\\par\r\n"
+  end
+
+  def visitText(item,seq=0)
+      file.print '\pard\b0\f1 '
+      super
+      file.print "\\par\r\n"
+  end
+
+  def format(outlineRoot)
+    file.print '{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fnil\fcharset0 Times New Roman;}}
+  {\stylesheet{ Normal;}{\s1 Heading 1;}{\s2 Heading 2;}{\s3 Heading 3;}{\s4 Heading 4;}{\s5 Heading 5;}}
+  \viewkind4\uc1'
+    visitItem(outlineRoot)
+    file.print "}\r\n\000"
+  end
+end

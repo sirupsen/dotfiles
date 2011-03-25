@@ -37,12 +37,36 @@
 [submodule "home/.vim/bundle/tcomment"]
 	path = home/.vim/bundle/tcomment
 	url = http://github.com/tomtom/tcomment_vim.git
-[submodule "home/.vim/bundle/command-t"]
-	path = home/.vim/bundle/command-t
-	url = git://git.wincent.com/command-t.git
 [submodule "home/.vim/bundle/javascript"]
 	path = home/.vim/bundle/javascript
 	url = http://github.com/pangloss/vim-javascript.git
-[submodule "home/.vim/bundle/jade"]
-	path = home/.vim/bundle/jade
-	url = git://github.com/digitaltoad/vim-jade.git
+[submodule "home/.vim/bundle/haml"]
+	path = home/.vim/bundle/haml
+	url = https://github.com/tpope/vim-haml.git
+[submodule "home/.vim/bundle/tabular"]
+	path = home/.vim/bundle/tabular
+	url = https://github.com/godlygeek/tabular.git
+[submodule "home/.vim/bundle/sinatra"]
+	path = home/.vim/bundle/sinatra
+	url = https://github.com/hallison/vim-ruby-sinatra.git
+[submodule "home/.vim/bundle/js"]
+	path = home/.vim/bundle/js
+	url = https://github.com/pangloss/vim-javascript.git
+[submodule "home/.vim/bundle/ruby"]
+	path = home/.vim/bundle/ruby
+	url = git://github.com/vim-ruby/vim-ruby.git
+[submodule "home/.vim/bundle/txt"]
+	path = home/.vim/bundle/txt
+	url = git://github.com/vim-scripts/txt.vim--xu.git
+[submodule "home/.vim/bundle/sparkup"]
+	path = home/.vim/bundle/sparkup
+	url = git://github.com/rstacruz/sparkup.git
+[submodule "home/.vim/bundle/rainbow"]
+	path = home/.vim/bundle/rainbow
+	url = https://github.com/vim-scripts/Rainbow-Parenthesis.git
+[submodule "home/.vim/bundle/molokai"]
+	path = home/.vim/bundle/molokai
+	url = https://github.com/mrtazz/molokai.vim.git
+[submodule "home/.vim/bundle/mercurial"]
+	path = home/.vim/bundle/mercurial
+	url = https://github.com/DasIch/vim-mercurial.git

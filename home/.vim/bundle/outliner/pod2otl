@@ -1,0 +1,107 @@
+#!/usr/bin/perl -w
+# translates POD to TVO outliner format
+# By Ned Konz Aug 2002
+# $Id: pod2otl 73 2002-12-19 19:08:59Z ned $
+use strict;
+
+use IO::File;
+use Text::Wrap;
+use Pod::Parser;
+use File::Basename;
+
+package MyParser;
+@MyParser::ISA = qw(Pod::Parser);
+
+my $level  = 0;
+my $indent = "";
+my $perl_fh;
+
+$Text::Wrap::columns = 80;
+
+sub level
+{
+	$level  = shift;
+	$indent = "\t" x $level;
+
+	# $Text::Wrap::columns = 80 - ($level * 8)
+}
+
+sub command
+{
+	my ( $parser, $command, $paragraph, $line_num ) = @_;
+	my $prefix = "";
+
+	# correct level
+	if    ( $command eq 'head1' ) { level(0) }
+	elsif ( $command eq 'head2' ) { level(1) }
+	elsif ( $command eq 'over' )  { level( ++$level ); return }
+	elsif ( $command eq 'back' )  { level( --$level ); return }
+	elsif ( $command eq 'item' ) { $prefix = '* ' }
+
+	my $out_fh = $parser->output_handle();
+	my $expansion = $parser->interpolate( $paragraph, $line_num );
+	chomp($paragraph);
+	$out_fh->print( $indent, $prefix, $paragraph );
+}
+
+sub verbatim
+{
+	my ( $parser, $paragraph, $line_num ) = @_;
+
+	my $out_fh = $parser->output_handle();
+	for my $line ( split ( /\n/, $paragraph ) )
+	{
+		$line =~ s/^    //;
+		$out_fh->print( $indent, "|| ", $line, "\n" );
+	}
+}
+
+sub textblock
+{
+	my ( $parser, $paragraph, $line_num ) = @_;
+
+	my $out_fh = $parser->output_handle();
+	my $expansion = $parser->interpolate( $paragraph, $line_num );
+	$out_fh->print(
+		Text::Wrap::fill( $indent . "| ", $indent . "| ", $expansion ), "\n" );
+}
+
+sub preprocess_paragraph
+{
+	my ( $parser, $text, $line_num ) = @_;
+	if ( $perl_fh && $parser->cutting() ) { $perl_fh->print($text) }
+	return $text;
+}
+
+sub perl_to
+{
+	my $parser   = shift;
+	my $filename = shift;
+	$perl_fh = IO::File->new( $filename, 'w' )
+	  or die "can't open $filename\: $!\n";
+}
+
+package main;
+
+## Create a parser object and have it parse file whose name was
+## given on the command-line (use STDIN if no files were given).
+my $parser = new MyParser();
+$parser->parseopts( -want_nonPODs => 1 );
+
+if ( @ARGV == 0 )
+{
+	# write Perl to pod2otlout.pl
+	# write OTL to STDOUT
+	$parser->perl_to('pod2otlout.pl');
+	$parser->parse_from_filehandle( \*STDIN );
+}
+else
+{
+	for (@ARGV)
+	{
+		my $filename = $_;
+		my ($name, $path, $suffix) = fileparse($filename, '.p[lm]');
+		$parser->perl_to( $path . $name . ".p2o" );
+		$parser->parse_from_file($filename, $path . $name . ".otl");
+	}
+}

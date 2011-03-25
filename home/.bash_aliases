@@ -12,21 +12,16 @@ fi
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls'
-
 alias c='clear'
-alias !='sudo'
 
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../../'
 
-alias svim="sudo vim"
-alias ~='cd ~'
-
 #
 # Git
 #
-alias git='hub'
+#alias git='hub'
 
 # Commiting
 alias gp='git push'
@@ -35,15 +30,12 @@ complete -o default -o nospace -F _git_push gp
 alias gpl='git pull'
 complete -o default -o nospace -F _git_pull gpl
 
-alias gd='git diff | vim -R -'
-
-if [[ $platform == 'darwin' ]]; then
-   alias gd='git diff'
-fi
+alias gd='git diff'
 complete -o default -o nospace -F _git_diff gd
 
 alias gc='git commit -v'
 alias gca='git commit -av'
+alias gcp='git commit -p'
 
 alias gs='git status -sb'
 
@@ -58,23 +50,28 @@ complete -o default -o nospace -F _git_log glog
 alias gm='git merge'
 complete -o default -o nospace -F _git_merge gm
 
-function gco {
-  if [ -z "$1" ]; then
-    git checkout master
-  else
-    git checkout $1
-  fi
-}
-
+alias gco='git checkout'
 complete -o default -o nospace -F _git_checkout gco
+
+#
+# Mercurial
+#
+
+alias hgc='hg commit -m'
+alias hgpl='hg pull'
+alias hgp='hg push'
+alias hgd='hg diff'
+alias hgs='hg status'
+alias hgu='hg update'
+alias hgbr='hg branches'
+alias hgb='hg branch'
+alias hgl='hg slog | head -n 10'
 
 # 
 # Ruby
 #
 
 alias gems='gem list'
-alias r='ruby'
-alias rw='ruby -w'
 
 #
 # Rails
@@ -83,9 +80,4 @@ alias rw='ruby -w'
 alias sc='./script/console'
 alias sg='./script/generate'
 alias ss='./script/server'
-alias sp='./script/server -e production'
-alias rk='rake test'
-alias rkp='rake parallel:test'
-alias ta='autotest -rails'
-
-alias server='178.63.193.163'
+alias hydra='env RUBYLIB=test RAILS_ENV=test rake hydra'

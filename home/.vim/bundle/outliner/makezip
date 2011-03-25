@@ -1,0 +1,8 @@
+#!/bin/sh
+svn commit
+version=$(svn log -q --limit 1  ftplugin/otl.vim | sed -n '/^r/s/^r\([0-9]\+\).*/\1/p')
+echo -e "version ${version}, created on $(date -u)\n" > versions.txt
+ident -q $(cat MANIFEST) >> versions.txt
+zipname=vimoutliner-${version}.zip  
+zip -r ${zipname} -i@MANIFEST .
+zip -r ${zipname} versions.txt

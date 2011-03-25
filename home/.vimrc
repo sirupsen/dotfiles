@@ -47,8 +47,6 @@
 
   set hidden " Hide buffers, rather than close them
 
-  au FocusLost * :wa " Save when losing focus
-
   set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
   " GVim {
@@ -66,7 +64,7 @@
 
       " Title {
         if has('title')
-            set titlestring=
+          set titlestring=
           set titlestring+=%f\                                              " file name
           set titlestring+=%h%m%r%w                                         " flags
           set titlestring+=\ -\ %{v:progname}                               " program name
@@ -75,7 +73,7 @@
       " }
 
       " Autoload NERDTree in Gui
-      autocmd VimEnter * NERDTree ~/code
+      autocmd VimEnter * NERDTree ~/Dropbox/code
 
       " Window {
         set lines=65
@@ -132,25 +130,13 @@
   cmap Q q
 
   " Quickly edit/reload the vimrc file
-  nmap <silent> <leader>ev :e $MYVIMRC<CR>
+  omap <silent> <leader>ev :e $MYVIMRC<CR>
   nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
   " Key mappings
   :noremap ,d :bd<CR>
   cmap w!! w !sudo tee %
   map ,c :cd %:p:h<CR>
-" }
-
-" Misc hacks {
-
-  " Open PDF's, requires xpdf and cups-pdf see:
-  " http://vim.wikia.com/wiki/Open_PDF_files
-  autocmd BufReadPre *.pdf set ro nowrap
-  autocmd BufReadPost *.pdf silent %!pdftotext -nopgbrk "%" - |fmt -csw78
-  autocmd BufWritePost *.pdf silent !rm -rf ~/PDF/%
-  autocmd BufWritePost *.pdf silent !lp -s -d pdffg "%"
-  autocmd BufWritePost *.pdf silent !until [ -e ~/PDF/% ]; do sleep 1; done
-  autocmd BufWritePost *.pdf silent !mv ~/PDF/% %:p:h
 " }
 
 
@@ -165,11 +151,6 @@
   " Gist {
     let g:gist_detect_filetype = 1
     let g:gist_open_browser_after_post = 1
-  " }
-
-  " AutoCloseTag {
-    " .. for XML and XHTML as well
-    au FileType xhtml,xml ru ftplugin/html/autoclosetag.vim
   " }
 
   " Delimitmate {
@@ -190,8 +171,19 @@
   " }
 
   " Fugitive {
-    map <Leader>gc :Gcommit
-    map <Leader>gs :Gstatus
+    map <Leader>gc :Gcommit<CR>
+    map <Leader>gs :Gstatus<CR>
+  " }
+
+  " Tabular {
+    if exists(":Tab")
+      nmap <Leader>t= :Tab /=<CR>
+      nmap <Leader>t= :Tab /=<CR>
+      vmap <Leader>t> :Tab /=><CR>
+      vmap <Leader>t> :Tab /=><CR>
+      nmap <Leader>t: :Tab /:\zs<CR>
+      vmap <Leader>t: :Tab /:\zs<CR>
+    endif
   " }
 
   " Outliner {
@@ -211,4 +203,9 @@
 
   " Ri {
   "source ~/.vim/bundle/ri/ftplugin/ri.vim
+  " }
+  
+  " Command-T {
+    nmap <Leader>f :CommandTFlush<CR>
+    nmap <Leader>t :CommandT<CR>
   " }

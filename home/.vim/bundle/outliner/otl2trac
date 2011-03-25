@@ -1,0 +1,77 @@
+# Converts TVO format to TRAC
+#
+# $Id$
+
+if $0 == __FILE__
+  require 'otlParser'
+  ARGV.unshift('-f', 'TRAC', '-i', $0)
+  include TVO
+  parseAndFormat
+  exit 0
+end
+
+class TRACFormatter < Formatter
+
+  def italic(text)
+    "''" + text + "''"
+  end
+
+  def bold(text)
+    "'''" + text + "'''"
+  end
+
+  def code(text)
+    "{{{" + text + "}}}"
+  end
+
+  def underline(text)
+    "__" + text + "__"
+  end
+
+  def standout(text)
+    "'''''" + text + "'''''"
+  end
+
+  def tagRef(text)
+    "[" + text + "]"
+  end
+
+  def htmlOnly(text)
+    "{{{\n#!html\n" + text + "\n}}}"
+  end
+
+  # Format using headlines
+  def visitHead(item,seq=0)
+    return unless printHead?(item)
+    if item.level == 0 && seq > 0
+      file.print("----\n")
+    end
+    if item.level.between?(0,4)
+      file.print('=' * (item.level + 1), ' ')
+      file.print(embellish(item.head))
+      file.print(' ', '=' * (item.level + 1), "\n")
+    else
+      super
+    end
+  end
+
+  def visitText(item, seq=0)
+    item.relatedTextParagraphsDo do |related, marker|
+      related.each do |p|
+        file.print(" * ") if marker != ''
+        file.print(p.join(" "))
+        file.print("\n")
+      end
+    end
+  end
+
+  def format(outlineRoot)
+    visitItem(outlineRoot)
+  end
+end
+
+class TRACListFormatter < TRACFormatter
+
+
+end
+

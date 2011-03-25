@@ -1,0 +1,78 @@
+#!/usr/bin/ruby
+# $Id$
+require 'rexml/document'
+
+$context = { :ignore_whitespace_nodes => :all }
+
+def levelAndNext(h)
+  retval = [nil, nil]
+  case h.name
+  when 'chapter'
+    retval = [0, 'sect1']
+  when /sect([1-4])/
+    level = $1.to_i
+    retval = [level, 'sect' + (level+1).to_s]
+  when 'sect5'
+    retval = [5, 'para']
+  else
+    $stderr.puts(h.inspect)
+  end
+  return *retval
+end
+
+def doPara(p, level, io)
+  text = p.text
+  io.print("\t" * level, '| ', (text ? text.strip : ''), "\n")
+end
+
+def deepTextOfElement(parent)
+  text = []
+  parent.each_element do |el|
+    if el.has_text? 
+      text.push(el.text.to_s)
+    else
+      text.push(deepTextOfElement(el))
+    end
+  end
+  text.join(' ')
+end
+
+def doTitle(t, level, io)
+  text = deepTextOfElement(t)
+  io.print("\t" * level, (text ? text.strip : ''), "\n")
+end
+
+def doHead(h, io)
+  (level, nextLevel) = levelAndNext(h)
+  h.elements.each do |el|
+    case el.name
+    when 'title'
+      doTitle(el, level, io)
+    when 'para'
+      doPara(el, level, io)
+    when nextLevel
+      doHead(el, io)
+    else
+      $stderr.puts(el.inspect)
+    end
+  end
+end
+
+# book/title
+# book/bookinfo (title, author, date, corpname)
+# book/chapter/title Heading1 {emphasis?}
+# | book/chapter/para Text1
+#     book/chapter/sect1/title Heading 2
+#     | book/chapter/sect1/para Text 2
+#       book/chapter/sect2/title Heading 3
+#       | book/chapter/sect2/para Text 3
+#
+#       ... through sect5 (level 6)
+#
+# chapter includes sect1
+#   sectN includes sectN+1
+#
+IO.popen('antiword -x db ' + ARGV.collect { |arg| "\"#{arg}\"" }.join(' ')) do |io|
+  xml = REXML::Document.new(io, $context)
+  doHead(xml.root.elements['chapter'], $stdout)
+end

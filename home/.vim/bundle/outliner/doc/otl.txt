@@ -1,0 +1,255 @@
+*otluser.txt* *tvo* *outliner* *otl-plugin*
+TVO: The Vim Outliner
+
+Maintainer: Ned Konz <vim@bike-nomad.com>
+Documentation version: $Id: otl.txt 121 2006-05-16 01:51:54Z ned $
+
+Contents:
+  Introduction  |tvo-intro|
+  Outlines      |tvo-outlines|
+  Mappings      |tvo-mappings|
+  Commands      |tvo-commands|
+  Toolbar       |tvo-toolbar|
+  Settings      |tvo-settings|
+
+==============================================================================
+Introduction:                                                      *tvo-intro*
+
+TVO is a full-featured text outliner based on Vim. This means that you can use
+all the Vim commands and plugins you're used to but still have the kind of
+power that a text outliner brings you.
+
+TVO has been made so that its operation using arrow keys and the toolbar
+(especially in |Insert| mode) will be familiar to you if you've used Microsoft
+Word's outline view.
+
+==============================================================================
+Outlines in TVO:                                                *tvo-outlines*
+
+TVO uses Vim's |folding| capabilities to provide an outlining capability
+similar to that of familiar outliners:
+
+- folded headlines hide all sub-headlines
+
+- text blocks fold separately so you can see the first line under its
+  corresponding headline.
+
+A TVO outline consists of:
+
+- Headings -- Text with 0 or more tabs preceding it. These are by default
+  displayed in color, and logically include text and headings that are more
+  indented. If the tabs are immediately followed by a '+' character, then that
+  heading will be extracted along with the text when you do a \T
+  |tvo-<LocalLeader>T|.
+
+- Plain text -- Text preceded by 0 or more tabs and the '|' character.
+
+- File links -- File names enclosed in square brackets like [README.otl]. You
+  can navigate to these files
+
+- Vim tags -- Regular vim tags (which use a |tags| file), enclosed in square
+  brackets like [tvo-outlines]. If you have |Thlnk| installed, these can also
+  use its style of tags.
+
+- Viki tags -- If you have |viki| installed, these will also be navigable.
+
+- Vim command tags -- Vim |commands| enclosed in square brackets with a leading
+  colon, like [:he tags]
+
+You can choose at what level headings become hidden.
+
+You can choose to fold all the headings and see just text blocks with their
+immediately enclosing headings.
+
+==============================================================================
+Mappings:                                                       *tvo-mappings*
+
+Standard Vim keystrokes redefined:
+
+Some little-used Vim commands have been re-defined for
+convenience in TVO:
+
+  =       open heading (zo) |zo|                                       *tvo-=*
+  -       close heading (zc) |zc|                                      *tvo--*
+
+Standard Vim keystrokes that work slightly differently in TVO:
+
+Some commands have been enhanced for TVO, mostly to deal
+with the differences between headlines and text blocks:
+
+  g<C-]>                                                          *tvo-g<C-]>*
+  g<LeftMouse>                                              *tvo-g<LeftMouse>*
+  <C-]>     tag jump                                               *tvo-<C-]>*
+
+  g<RightMouse>                                            *tvo-g<RightMouse>*
+  <C-RightMouse>                                          *tvo-<C-RightMouse>*
+  <C-T>     tag return                                             *tvo-<C-T>*
+
+  J         join lines                                                 *tvo-J*
+  o         open line below                                            *tvo-o*
+  O         open line above                                            *tvo-O*
+
+Fold operations:                                                 *tvo-folding*
+
+Read the Vim manual about folding |fold-commands|
+
+Outliner macro mappings:                                          *tvo-macros*
+
+Note that the mappings shown here as \x are really using the local leader
+character, which can be changed to whatever you want using the
+|maplocalleader| command.
+
+Display operations:
+
+  \1      show level 1                                    *tvo-<LocalLeader>1*
+  \2      show level 2                                    *tvo-<LocalLeader>2*
+  \3      show level 3                                    *tvo-<LocalLeader>3*
+  \4      show level 4                                    *tvo-<LocalLeader>4*
+  \5      show level 5                                    *tvo-<LocalLeader>5*
+  \6      show level 6                                    *tvo-<LocalLeader>6*
+  \7      show level 7                                    *tvo-<LocalLeader>7*
+  \8      show level 8                                    *tvo-<LocalLeader>8*
+  \9      show level 9                                    *tvo-<LocalLeader>9*
+  \a      show all levels and text                        *tvo-<LocalLeader>a*
+  \t      toggles showing just the first line of text     *tvo-<LocalLeader>t*
+
+Heading operations:
+
+All of these that change text operate on a heading and all its text and
+subheadings.
+
+  \u      move heading up one                             *tvo-<LocalLeader>u*
+  \d      move heading down one                           *tvo-<LocalLeader>d*
+  \C      change the current heading                      *tvo-<LocalLeader>C*
+  \D      delete the current heading                      *tvo-<LocalLeader>D*
+  \y      yank the current heading                        *tvo-<LocalLeader>y*
+  \p      insert yanked/deleted heading after the current line  *tvo-<LocalLeader>p*
+  \P      insert yanked/deleted heading before the current line *tvo-<LocalLeader>P*
+  \>      shift current heading right (demote)            *tvo-<LocalLeader>>*
+  <Shift-Tab>  shift current heading right (demote)       *tvo-<Shift-Tab>*
+  \<      shift current heading left (promote)            *tvo-<LocalLeader><*
+  <Tab>   shift current heading left (promote)            *tvo-<Tab>*
+  -       close current heading
+  =       open current heading
+
+Motion:
+
+  \k      move cursor up one heading                      *tvo-<LocalLeader>k*
+  \j      move cursor down one heading                    *tvo-<LocalLeader>j*
+  \[      move cursor to top of fold                      *tvo-<LocalLeader>[*
+  \]      move cursor to bottom of fold                   *tvo-<LocalLeader>]*
+
+Miscellaneous:
+
+  \T      extract text to new window                      *tvo-<LocalLeader>T*
+  \H      extract headers to new window                   *tvo-<LocalLeader>H*
+  \b      convert heading to text or back                 *tvo-<LocalLeader>b*
+  \h      toggle bold headers display                     *tvo-<LocalLeader>h*
+  \f      format current fold                             *tvo-<LocalLeader>f*
+  \F      format current fold after joining all lines     *tvo-<LocalLeader>F*
+  \w      count words in text blocks                      *tvo-<LocalLeader>w*
+
+Switching modes:
+
+These let you switch between entering text and entering headers.
+If the cursor is on a header line, these make a new text line, or if the
+cursor is on a text line, these make a new header.
+
+  <C-CR>  toggle mode and insert line after current               *tvo-<C-CR>*
+  \o      toggle mode and insert line after current       *tvo-<LocalLeader>o*
+  \O      toggle mode and insert line before current      *tvo-<LocalLeader>O*
+
+==============================================================================
+Word-compatible level changing:                       *tvo-word-compatibility*
+
+  Alt-shift-down          shift heading down one              *tvo-<M-S-Down>*
+  Alt-shift-up            shift heading up one                  *tvo-<M-S-Up>*
+  Alt-down                move cursor down one heading          *tvo-<M-Down>*
+  Alt-up                  move cursor up one heading              *tvo-<M-Up>*
+  Alt-shift-Left          promote current heading             *tvo-<M-S-Left>*
+  Alt-shift-Right         demote current heading             *tvo-<M-S-Right>*
+  Alt-shift-keyboardPlus  open current fold                  *tvo-<M-S-kPlus>*
+  Alt-shift-keyboardMinus close current fold                *tvo-<M-S-kMinus>*
+
+==============================================================================
+Mouse Operation:                                                   *tvo-mouse*
+
+A double-click on a heading will toggle its folded state.
+
+==============================================================================
+Commands:                                                       *tvo-commands*
+
+  :OtlJoin   takes range of lines and joins them
+
+==============================================================================
+Toolbar:                                                         *tvo-toolbar*
+
+If you are using the toolbar, some buttons have been added:
+
+Left, right: promote or demote the current heading (\< and \>)
+Convert to body text
+Up, down: move the current heading up or down
++, - : expand or collapse the current heading
+1 - 7: show the corresponding level (\1 - \7)
+All: show all levels plus text (\t)
+
+==============================================================================
+Settings:                                                     *tvo-settings*
+
+These can be set in your .vimrc file to change the default behavior of TVO:
+
+Turn off bold headers (useful if you find the colors too dark in a color
+terminal):
+  let g:otl_bold_headers = 0
+
+Don't install TVO menu:
+  let g:otl_install_menu = 0
+
+Don't install TVO toolbar buttons:
+  let g:otl_install_toolbar = 0
+
+Don't install any TVO keyboard mappings:
+  let g:no_otl_maps = 1
+
+Install TVO mapping of <Tab> and <Shift-Tab> to demote/promote (default=0):
+  let g:otl_map_tabs = 1
+
+Don't install TVO insert mode mappings:
+  let g:no_otl_insert_maps = 1
+
+Start out in text view:
+  let g:otl_text_view = 1
+
+Set default initial foldlevel (default=9)
+Note that you can override this in a modeline in an .otl file
+  let g:otl_initial_foldlevel=9
+
+If you have installed Viki:
+
+  Set g:otl_use_viki to 0 if Viki is installed but you don't want to use it
+    let g:otl_use_viki=1
+
+  Set g:otl_viki_name_types to the default Viki name types that you want to use
+  (see viki.txt)
+    s Simple viki name
+    c CamelCase
+    S simple, quoted viki name
+    i interviki
+    u URL
+
+    let otl_viki_name_types='csSeui'
+
+    let otl_viki_anchor_marker='#'
+
+    let otl_viki_comment_string='.*\[\[%s]]'
+
+Don't use |thlnk| even if it exists:
+  let g:otl_use_thlnk = 0
+
+Change the key prefix for TVO mappings |tvo-mappings| (in this example, to a comma):
+  let maplocalleader = ","
+ 
+
+
+
+" vim: ft=help tw=78 ts=2 et

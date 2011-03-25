@@ -1,0 +1,356 @@
+TVO: The Vim Outliner
+| $Id: README.otl 121 2006-05-16 01:51:54Z ned $
+| Note: Things that aren't done yet are marked as TODO.
+	Background
+	| I've used outliners for years to brainstorm and edit text. With
+	| the prospect of doing more writing, I've wanted to have an
+	| outliner that matched my editing style and wasn't too mouse-heavy.
+	| Since I'm a Vim user, and since Vim 6.0 added folding, it seemed
+	| natural to make an outliner out of it.  The name "TVO: The Vim
+	| Outliner" was suggested by Ben Peterson.
+	Vim and folding
+	| The Vim editor has had folding added to it for version 6.0.
+	|
+	| TVO uses Vim's folding capabilities to provide an outlining
+	| capability similar to that of familiar outliners:
+	|
+	| * folded headlines hide all sub-headlines
+	| * text blocks fold separately so you can see the first line under
+	|   its corresponding headline.
+	|
+	| One of the things that TVO provides is a way to selectively hide
+	| all but the first line in a group of lines.
+	|
+	| Another is changing the folding behavior of Vim to do the expected
+	| outline nesting.
+	|
+	| By itself, Vim doesn't work quite right as an outliner. So I added
+	| a foldexpr() routine to make folding work right. This defines text
+	| blocks as level 10, and headlines from level 1 to 9 depending on
+	| how many tabs (0 to 8) precede them.
+	About macros
+	| TVO can supply a number of keystroke macros. By default, these are
+	| two-character sequences that start with a backslash (\) character.
+	| However, the first character can be changed using the
+	| 'maplocalleader' setting (see below).
+	|
+	| In this document, wherever a macro is mentioned, it is shown with
+	| a backslash. If you've changed the 'maplocalleader' setting, make
+	| the required adjustment in your head.
+	|
+	| For instance, the sequence to show all text is shown as \a here.
+	| If you've changed the 'maplocalleader' setting to ',' (as I do),
+	| then you'd actually type ,a for this operation.
+	Syntax highlighting
+	| TVO uses Vim's syntax highlighting to color headlines.  The colors
+	| are fixed, though you can edit the syntax/otl.vim file to change
+	| them.
+	|
+	| You can toggle between having bold (colored) headers and non-bold
+	| headers using the <LocalLeader>h (by default, '\h') command.
+	Hyperlink navigation using Vim tags
+	| TVO provides hyperlinking between files using a "tags" file.
+	| When you jump to a tag, the tag is looked up in a tags file, and
+	| that file tells Vim where to jump to.
+	|
+	| If you install the Viki script
+	| [http://www.vim.org/scripts/script.php?script_id=861] you will
+	| have live links to URLs as well as the ability to define links
+	| between TVO files just by using a WikiName (capitalized word with
+	| internal caps) and navigating using a <C-]> or
+	| <LocalLeader><C-CR> keystroke combination. If the file named by
+	| the link does not exist, you will be prompted whether you want to
+	| create that file.
+		Vim tag navigation
+		| TVO provides four kinds of tags:
+		| * Regular vim tags (that use an index file)
+		| * Tags recognized by Viki (if you have it installed)
+		| * File tags that refer directly to another file
+		| * Vim command tags that can execute a Vim command directly
+		|   (the tags below that start with "[:he" are an example of
+		|   these)
+		| Either double click inside the square brackets below, or put
+		| your cursor between the square brackets below and hit ctrl-]
+		| to learn more about Vim's tag navigation features.
+		| 
+		| [:he tags]
+		| 
+		| If you jump to a regular tag (as opposed to a file or to a Vim
+		| command reference) you can jump back using the usual ctrl-O
+		| [:he ctrl-O] or ctrl-T [:he ctrl-T] commands. If you jumped to a
+		| file, you can jump back using :e # or ctrl-^ [:he ctrl-^].
+		Jumping to tags
+		| You can jump from one outline to a specified point in the same
+		| or another outline by using the ctrl-] key, or by the "Jump to
+		| this tag" menu choice in the Tools menu, or by typing the "g"
+		| key and then clicking with the left mouse button.
+		|
+		| You can jump back from the tag using the ctrl-T key, or by
+		| using Control-<RightMouse>, or by using g<RightMouse>
+		| 
+		| You can insert tag references in your text by using square
+		| brackets, like this:
+		| 
+		| [this is a tag]
+		| 
+		| Note that you can have spaces in the tag reference.
+		Jumping to files
+		| If you enclose the name of a file within square brackets, and
+		| there is no tag by that name, then TVO will jump to the
+		| first line of that file instead.
+		Jumping to arbitrary Vim commands
+		| You can make a tag that will execute a Vim command by
+		| prefixing it with a ':' sign:
+		| 
+		| [:set]
+		Jumping to anchors within another file (using Viki)
+		| If you have Viki installed, you can use its ability to define
+		| anchors
+		| Your link will look like
+		| 	VikiName
+		| 	VikiName#anchor
+		| 	[--file name--]
+		| 	[[README.otl#anchor][name]]
+		Specifying a different tags file
+		| The default tags file is "tags" in the current directory. If
+		| you want outlines in different directories to share tags
+		| files, you can change the Vim tags option in one of several
+		| ways:
+		| * Use a modeline to set the tags option [:he tags-option]:
+		|   | vim: tags=../tags
+		| * Set up a .vimrc [:he .vimrc] (and set the exrc option
+		|   [:he 'exrc']) 
+		| * Set it in your own .vimrc
+Deplate support
+Upgrading
+| Follow the installation instructions below, but remove any
+| plugin/filetype_otl.vim files from prior installations.
+| Also remove anything TVO-related from your filetype.vim file, if
+| any.
+Installation
+| Please read the file INSTALL for directions on how to install TVO.
+Configuring the outliner
+	Changing the colors
+	Changing the tab stops
+		Problems with ts=2 and hanging indents?
+		Problems with ts=3 and numbered lists?
+	Using modelines for settings
+	| See the last line of this file for an example of a modeline. You
+	| can set the tab stop, textwidth, and other options. See :he
+	| modeline
+	|
+	| For instance, if you want to open an outline and only see its
+	| top-level headings, you can use this modeline:
+	|
+	| # vim: foldlevel=0
+	|
+	Redefining the macro leader character
+	| If you want to use something other than a backslash to introduce
+	| the macros, you can set the 'maplocalleader' variable in your .vimrc
+	| file.  For instance, you can do this to set it to a comma: 
+	| 
+	| set maplocalleader = ","
+	Setting textwidth
+	| The textwidth can be set with the tw or textwidth options like
+	| this:
+	|
+	| :set tw=72
+	|
+	| This will affect where lines are automatically broken. When you
+	| type over the column position given by the textwidth, a new line
+	| will be created. This will happen for both headers and text. If
+	| you want it to happen just for text blocks (ones that start with
+	| "|" characters), do this (perhaps in a modeline):
+	| 
+	| :set fo-=t
+	| 
+	| TODO should I have a variable for this?
+	Setting tabwidth (and shiftwidth)
+Contents of an outline
+	Headings
+	| Headings are plain text with zero or more tabs to their left. They
+	| don't wrap automatically like text does.
+	+ Marking headings so they stay with extracted text
+	| If you prepend a "+" sign to the text of a heading, that
+	| heading will be extracted along with the text (the plus sign
+	| and any spaces following it will be removed).
+	| However, when these headings are extracted as headings, the +
+	| sign and any spaces following it will also be removed.
+	Text
+	| Text appears in a different color than the headings.
+	| The "|" character introduces text blocks that will remain flush
+	| when the text wraps. The default highlighting tries to make
+	| the "|" sign less noticeable than the text itself.
+	| 
+	| You can use other characters after the '|' sign as markers:
+	|
+	| - The "-" character introduces items that will appear with a
+	|   hanging indent. So when you break a line the new characters
+	|   will appear offset.
+	| * The "*" character also introduces items that will appear
+	|   with a hanging indent. 
+	Markup
+	| You can markup various pieces of text using:
+	|
+	| <html:I<italic>>
+	|
+	| I<italic>
+	|
+	| <html:B<bold>>
+	|
+	| B<bold>
+	|
+	| <html:C<code>>
+	|
+	| C<code>
+	|
+	| <html:<html:stuff for html output>>
+Using TVO
+License
+Hyperlinks
+	Creating links
+	Navigating between links
+	Making or refreshing the tags file
+	Keystrokes
+		Standard Vim keystrokes
+			Redefined
+			| Some little-used Vim commands have been re-defined for
+			| convenience in TVO:
+				=	open heading (zo)
+				-	close heading (zc)
+			Work slightly differently in TVO
+			| Some commands have been enhanced for TVO, mostly to deal
+			| with the differences between headlines and text blocks:
+				Ctrl-]	tag jump
+				J	join lines
+				o	open line below
+				O	open line above
+			Fold operations
+			| Read the Vim manual about folding
+			| [:he fold-commands]
+		Outliner macro keys
+			Display operations
+				\1	show level 1
+				\2	show level 2
+				\3	show level 3
+				\4	show level 4
+				\5	show level 5
+				\6	show level 6
+				\7	show level 7
+				\8	show level 8
+				\9	show level 9
+				\a	show all
+				\t	toggle showing text
+			Heading operations
+			| All of these that change text operate on a heading and all
+			| its text and subheadings.
+				\k	move cursor up one heading
+				\j	move cursor down one heading
+				\u	move heading up one
+				\d	move heading down one
+				\C	change the current heading
+				\D	delete the current heading
+				\y	yank the current heading
+				\p	insert yanked/deleted heading after the current line
+				\P	insert yanked/deleted heading before the current line
+				\>	shift current heading right (demote)
+				| TODO make this work in Visual mode inside insertmode
+				\<	shift current heading left (promote)
+				| TODO make this work in Visual mode inside insertmode
+				-	close current heading
+				=	open current heading
+			Formatting
+				\f	reformat text block, maintain paragraphs
+				\F	reformat text block, join paragraphs
+			Heading operations
+			| For these two tab commands to work, you'll need to set
+			| otl_map_tabs to 1 in your .vimrc like this:
+			| 	let otl_map_tabs = 1
+				<Shift-Tab> shift current heading left (promote)
+				<Tab> shift current heading right (demote)
+			Miscellaneous
+				\T	extract text to new window
+				\H	extract headers to new window
+				\b	convert heading to text or back
+			Switching modes
+			| These let you switch between entering text and
+			| entering headers. If the cursor is on a header line,
+			| these make a new text line, or if the cursor is on a text
+			| line, these make a new header.
+				Ctrl-CR toggle mode and insert line after current
+				\o      toggle mode and insert line after current
+				\O      toggle mode and insert line before current
+			Word-compatible level changing
+				Alt-shift-down	shift heading down one
+				Alt-shift-up	shift heading up one
+				Alt-down		move cursor down one heading
+				Alt-up			move cursor up one heading
+				Alt-shift-Left	promote current heading
+				Alt-shift-Right	demote current heading
+				Alt-shift-keyboardPlus	open current fold TODO: do these work?
+				Alt-shift-keyboardMinus	close current fold
+	Menu
+	ToolBar
+	| If you are using the toolbar, some buttons have been added:
+	| * Left, right: promote or demote the current heading (\< and \>)
+	| * Convert to body text
+	| * Up, down: move the current heading up or down
+	| * +, - : expand or collapse the current heading
+	| * 1 - 7: show the corresponding level (\1 - \7)
+	| * All: show all levels plus text (\t toggles this view)
+	Wrapping text blocks
+	| You can reformat a TVO outline text block using the \f macro. This
+	| will respect the ends of paragraphs. Or if you also wish to join
+	| the paragraphs, use the \F macro.
+	| Note that if you do this on headlines that don't have text blocks,
+	| the headlines will be run together.
+	Mouse usage
+		Left double click
+		| Double-clicking in the outline with the left mouse button will
+		| either follow a link, or will alternately expand and fold the
+		| headline or text block that you clicked on.
+		Right click
+		| Right clicking will bring up a context menu. TODO
+	Extracting text
+	| You can extract all the text in your outline into a new buffer,
+	| without any headings that don't have "+" signs in front. Vim
+	| modelines at the bottom of the file will also be deleted.  TODO:
+	| is this a good idea?
+	|
+	| To do this, use the \T macro or use the menu choice
+	| Outliner/Extract Text.
+	Extracting headings
+	| You can extract all the headings in your outline into a new buffer,
+	| without any text.
+	|
+	| To do this, use the \H macro or use the menu choice
+	| Outliner/Extract Headings.
+	Syntax coloring
+	| You can switch the bold headings on or off using the \h mapping.
+	MS Word compatibility
+	| You may be used to using Microsoft Word's outlining. So I added some
+	| keystrokes for compatibility:
+		Promote a heading ALT+SHIFT+LEFT ARROW (same as \<)
+		Demote a heading ALT+SHIFT+RIGHT ARROW (same as \>)
+		Demote to body text	CTRL+SHIFT+N (or CTRL+N)
+		Move current heading up	ALT+SHIFT+UP ARROW
+		Move current heading down	ALT+SHIFT+DOWN ARROW
+		Expand text under a heading	ALT+SHIFT+PLUS SIGN TODO
+		Collapse text under a heading	ALT+SHIFT+MINUS SIGN TODO
+		Expand or collapse all text or headings	ALT+SHIFT+A or the asterisk (*) key on the numeric keypad TODO
+		Hide or display character formatting	The slash (/) key on the numeric keypad TODO
+		Show the first line of body text or all body text	ALT+SHIFT+L TODO
+		Show all headings with the Heading 1 style	ALT+SHIFT+1 TODO
+		Show all headings up to Heading n	ALT+SHIFT+n TODO
+Credits
+| Ben Peterson <ben.peterson@riskcare.com> added proper up/down
+| movement.
+	##anchor
+Contacting the author
+| You can reach me at ned@bike-nomad.com . I would appreciate hearing
+| about bugs, suggestions, or just about how you're using this. Thanks!
+|
+| [http://www.bike-nomad.com]
+|
+| (modeline:) 
+| vim: tw=72 ts=3 sw=3 fo-=t foldlevel=10

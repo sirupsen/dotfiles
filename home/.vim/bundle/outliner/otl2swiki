@@ -1,0 +1,113 @@
+#!/usr/bin/ruby
+# otl2swiki -- translate .otl files into Swiki markup
+#
+# OTL format:
+#   text lines have 0+ tabs, [|-*\s0-9]\s 
+#      /^\t*[-|* 0-9]+/
+#   
+#   header lines have 0+ tabs
+#   headers may have <h> tags preceding
+#   ones that begin with + are copied to final text output
+#   
+#   lists have additional indent of 2 spaces:
+#   \t*-\sStuff
+#   \t*\s\sMore stuff at same level
+#   
+#   ^!!!printOutline
+#   id=anchorId
+#   <url:stuff>
+#   I<italic>
+#   B<bold>
+#   C<code>
+#
+# Swiki format:
+#   ^!stuff  => <h3>stuff</h3> 
+#   ^!stuff  => <h2>stuff</h2> 
+#   ^!!!stuff  => <h1>stuff</h1> 
+#   ^_stuff => <hr>stuff
+#
+#   -line1
+#   -line2
+#       => <ul><li>line1</li><li>line2</li></ul>
+#
+#   *line1
+#   *line2
+#       => <ul><li>line1</li><li>line2</li></ul>
+#
+#   =stuff
+#       => <pre>stuff</pre>
+#
+#   *link*  => <a href="link">link</a>
+#   *text>link*  => <a href="link">text</a>
+#
+#   <html>stuff</html>
+#   <code>stuff</code>
+#
+# $Id$
+
+# state is :header, :list, :text, :listText
+$state = :header
+$level = 0
+$outlineToo = true
+
+def setLevel(tabs)
+  $level = tabs.length + 1
+  # $level = 4 if $level > 4
+end
+
+def newState(news)
+
+#  print "|old=#{$state}|"
+  # leave old state
+#  print "|new=#{news}|"
+  # enter new one
+  $state = news
+end
+
+ARGF.each do |line|
+  line.chomp!
+  line.gsub!(/\bid=(\w+)/, "*\\1*")
+  line.gsub!(/<url:([^>]*)>/i, "*\\1*" )
+  line.gsub!(/I<([^>]*)>/, "<i>\\1</i>")
+  line.gsub!(/B<([^>]*)>/, "<b>\\1</b>")
+  line.gsub!(/C<([^>]*)>/, "<code>\\1</code>")
+  case line
+  when /^!!!printOutline/
+    $outlineToo = true
+  when /^(\t*)\+?(<[hH][0-9].*)/   # already-tagged header
+    setLevel($1)
+    newState(:header)
+    print $2
+  when /^(\t*)\+?([^\t|* <-].*)/# untagged header
+    setLevel($1)
+    newState(:header)
+    if $level < 2
+      print '!' * (3-$level)
+    else
+      print '-' * ($level - 1)
+    end
+    puts $2
+  when /^\t*([-*])\s*(.*)/   # list top
+    newState(:list)
+    print '-' * ($level - 1)
+    puts $2
+    newState(:listText)
+  when /^\t*[|]?\s*$/            # blank text line
+    newState(:blankText)
+  when /^\t*[ ]\s*$/            # blank list text
+    newState(:blankText)
+  when /^\t*\|\s([-*])\s*(.*)/   # list in text
+    newState(:list)
+    print '-' * ($level - 1)
+    puts $2
+  when /^\t*\|\s{2,}(.+)/         # wrapped list text
+    newState(:listText)
+    puts $1
+  when /^\t*[|] *(.+)/         # text
+    newState(:text)
+    puts $1
+  else
+    puts "!!!unrecognized #{line}"
+    exit 1
+  end
+end

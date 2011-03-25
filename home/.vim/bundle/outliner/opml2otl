@@ -1,0 +1,51 @@
+#!/usr/bin/ruby
+# Convert OTML (http://www.opml.org/spec) outline files to TVO .otl
+# files
+#
+# Ned Konz <ned@bike-nomad.com>
+# $Id: opml2otl 83 2002-12-23 05:38:47Z ned $
+#
+# Requires:
+#   Ruby (http://www.ruby-lang.org)
+#   REXML (http://www.germane-software.com/~ser)
+#
+# Usage:
+#   opml2otl file.opml [file2.opml [...]]
+# Writes files with .otl extension replacing the original extension
+#
+# NOTE: requires that opml files end in native line-termination
+# characters.
+#
+require 'rexml/document'
+
+# print the <head> node
+def doHead(h, io)
+  io.print("head\n")
+  h.elements.each { |el| io.print("\t", el.name, ": ", el.text, "\n") }
+end
+
+# print the <body> node
+def doBody(b, io)
+  b.elements.each('outline') { |el| doOutline(el, io) }
+end
+
+# print an <outline> node, recursively
+def doOutline(o, io, level = 0)
+  indent = "\t" * level
+  io.print(indent, o.attributes['text'], "\n")
+  o.attributes.each do |name, value|
+    next if name == 'text'
+    io.print(indent, "| ", name, ": ", value, "\n")
+  end
+  o.elements.each('outline') { |el| doOutline(el, io, level+1) }
+end
+
+ARGV.each do | arg |
+  File.open(arg) do |io|
+    File.open(arg.sub(/(\.[^.]+)?$/, '.otl'), 'w') do |out|
+      xml = REXML::Document.new(io)
+      doHead(xml.root.elements['head'], out)
+      doBody(xml.root.elements['body'], out)
+    end
+  end
+end

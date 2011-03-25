@@ -1,0 +1,58 @@
+> could you post an explaination of what you mean by outliner?
+
+Sure...
+
+An outliner is an editor for hierarchically structured text or other content.
+
+The first outliners appeared back in the '80's (ThinkTank, More!, and Ready
+come to mind), but have not survived as a separate product category.
+
+However, their legacy lives on in modern projects.  Probably the best known
+example of them is the Outline View in Microsoft Word.  I've adopted this model
+for my outliner.  Of course, Vim outlines are pure text instead of a M$
+proprietary file format.
+
+Here's the model:
+
+Headlines establish a hierarchy.
+
+Headline levels are determined by their indenting (1 tab per headline level).
+
+Headlines may be collapsed, in which case you just see the headline and the
+first line of its text, if any, but not any of its sub-headlines.
+
+Operations on headlines affect their text as well as subheads.  These include:
+
+* Promote/Demote (decrease/increase the indent) 
+* Cut Paste before/after
+* Yank (copy)
+
+You can quickly determine how many levels you want to display, so you can zoom
+into and out of the structure.  If you do (for instance) \2 then only levels 0,
+1, and 2 will be shown.
+
+Headlines may have attached text.  I've used pipe characters to mark text
+blocks, so a piece of an outline with text might look like:
+
+Level 0
+	Level 1
+	| Level 1's text
+		Level 2
+		| level 2 text
+		| another line
+	Another Level 1 heading
+		Another level 2 heading
+
+Because there's both text and headlines, I've also supplied two operations that
+extract a subset of the outline to another buffer/window:
+
+* Extract text (gets all the text, removes comment characters, reformats).
+Will include headings marked with "+" signs.
+
+* Extract heads
+
+Also see some web sites that discuss outliners:
+http://www.outliners.com/
+http://frontier.userland.com/stories/storyReader$307
+http://john.redmood.com/organizers.html
+http://radio.weblogs.com/0001215/stories/2002/03/04/insideOutliners.html

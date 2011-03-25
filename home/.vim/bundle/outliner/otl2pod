@@ -1,0 +1,60 @@
+#!/usr/local/bin/ruby
+
+# Read an OTL file, write (Perl) POD
+# Assumes that there may already be POD-ish escapes like I<stuff>
+# in the text.
+#
+# Translations:
+# Text lines ('| ') become text blocks
+# Text lines like ('|| ') become verbatim blocks
+# Items become =item
+# Headings at level 0 become =head1
+# Headings at level 1..n become =head2
+#
+# $Id: otl2pod 73 2002-12-19 19:08:59Z ned $
+
+listLevel = 0
+last = nil
+
+ARGF.each do |line|
+  case line
+    when /^#/
+    when /^([^-\t|*].*)/
+      if listLevel > 0
+        print "\n=back\n"
+        listLevel = 0
+      end
+      print "\n=head1 #{$1}\n\n"
+      last = :head
+    when /^\t\t*([^-\t|*].*)/
+      if listLevel > 0
+        print "\n=back\n"
+        listLevel = 0
+      end
+      print "\n=head2 #{$1}\n\n"
+      last = :head
+    when /^\t*\|\| (.*)/
+      print "\n" if last != :verbatim
+      print "  #{$1}\n"
+      last = :verbatim
+    when /^\t*\| (.*)/
+      print "\n" if last != :text
+      print "#{$1}\n"
+      last = :text
+    when /^(\t*)[*-] (.*)/
+      level = $1.length
+      if level > listLevel 
+        print "\n=over 4\n"
+      elsif level < listLevel
+        print "\n=back\n"
+      end
+      listLevel = level
+      print "\n=item #{$2}\n\n\n"
+      last = :item
+    when /^\s*([-\t|*]\s*)$/
+      print "\n"
+      last = :empty
+    else
+      print "??? #{line}\n"
+  end
+end

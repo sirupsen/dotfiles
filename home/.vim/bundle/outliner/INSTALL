@@ -1,0 +1,146 @@
+TVO Installation
+$Id: INSTALL 121 2006-05-16 01:51:54Z ned $
+
+This is repeated in the README.otl file.
+
+=== Extracting the archive
+
+You will want to extract the distribution archive (.tar.gz or .zip) into the
+installation directory described below. Make sure that you use the directories
+in the file, because there are several files with the same filename in
+different directories.
+
+The file MANIFEST contains the list of files that should be in the zip.
+
+=== Installing in a local or global .vim directory
+
+You will want to install TVO into a directory in your Vim
+runtimepath :he 'runtimepath'. Type the command
+
+:set runtimepath
+
+To find out what it is set to. This will display a list of
+directories separated by commas. On my Linux system, these
+directories are:
+
+  ~/.vim
+  /usr/local/share/vim/vimfiles
+  /usr/local/share/vim/vim60
+  /usr/local/share/vim/vimfiles/after
+  ~/.vim/after
+
+I installed TVO into my ~/.vim directory.
+
+I could have also installed it so it would be available to all the
+users on my system by putting it into either the
+/usr/local/share/vim/vimfiles or /usr/local/share/vim/vim60
+directories.
+
+The zip should be unpacked in one of these directories on your
+'runtimepath'. That is, the ftplugin/otl.vim should go in (say)
+the ~/.vim/ftplugin directory.
+
+On a Unix system, you'd do something like:
+
+  cd ~/.vim
+  unzip vimoutliner-120.zip
+
+=== Installing the converter scripts
+
+I've included some Ruby scripts  that I use for conversion of .otl files to
+other formats including HTML, RTF, and Perl POD, as well as some that
+convert from other formats including M$ .doc format and the OPML XML
+outline format into OTL format.
+
+There is also a Perl POD to OTL converter that is written in Perl.
+
+These aren't necessary to run TVO, but they're handy if you need to
+convert to or from TVO's own format.
+
+You will need the Ruby (and/or Perl) language to run these; and to run
+doc2otl you will also need to get the Antiword package.
+
+Ruby:     http://www.ruby-lang.org
+Perl:     http://www.perl.com
+Antiword: http://www.winfield.demon.nl/
+
+You can move these to a directory on your path (you may also have
+to change the shebang (#!) lines).
+
+On my TODO list is integrating these scripts into the TVO menu, but you
+have to run these from a command line at present.
+
+If you're using Windows, you can get a one-click Ruby installer (a full
+programming environment) from http://rubyinstaller.rubyforge.org/wiki/wiki.pl
+
+The conversions include:
+
+OTL to ...
+
+otl2html     OTL to HTML as <h1>..<h6>
+otl2htmlList OTL to HTML as lists
+otl2rtf      OTL to .RTF text file
+otl2trac     OTL to Trac Wiki markup
+otl2pod      OTL to Perl POD
+otl2swiki    OTL to Swiki (Squeak Wiki) markup
+
+OTL from ...
+
+doc2otl     (requires Antiword); converts from M$ .doc format to .otl file
+pod2otl     OTL from Perl POD (requires Perl)
+opml2otl    OTL from OPML (XML outline format)
+
+Most of the otl2* converters are based on a Ruby OTL format parser library
+named otlParser.rb that's easy to build other converters from.
+
+
+=== Installing the help file
+
+TVO comes with a help file doc/otl.txt. See the Vim help:
+
+  :he add-local-help.
+
+After you've put this help file into a 'doc' directory under one
+of the directories on your 'runtimepath', use :he :helptags:
+
+  :helptags ~/.vim/doc
+
+(substitute the name of the directory where you put the otl.txt
+file).
+
+Now you can use the help to find out more about tvo.
+
+  :he tvo
+
+My .vimrc settings
+
+	" defaults:
+	let otl_install_menu=1
+	let no_otl_maps=0
+	let no_otl_insert_maps=0
+
+	" overrides:
+	let otl_bold_headers=0
+	let otl_use_thlnk=0
+
+	" au BufWinLeave *.otl mkview
+	" au BufWinEnter *.otl silent loadview
+	let maplocalleader = ","
+
+
+=== Overriding TVO settings
+
+You can make changes to the way that TVO starts up by making a file called
+after/ftplugin/otl.vim under your ~/.vim directory (see above about runtimepath)
+(on my system it would be called ~/.vim/after/ftplugin/otl.vim).
+
+For instance, if you want to make it so that you open outlines showing only the
+first level, you could put in that file
+
+	set foldlevel=0
+
+However, most interesting settings have associated variables that you
+can set in your .vimrc file.
+
+See the README.otl file for more on the variables you can set in your
+.vimrc file to affect the operation of TVO.
