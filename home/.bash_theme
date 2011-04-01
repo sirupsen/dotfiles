@@ -12,8 +12,12 @@ function rvm_version_prompt {
 
   local full="$version$gemset"
 
-  [ "$full" != "" ] && echo "$full"
+  [ "$full" != "" ] && echo " $full"
+}
+
+function hg_branch {
+  hg prompt " ({branch}{status})" 2> /dev/null
 }
 
 # Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff(http://ubuntuforums.org/showthread.php?t=234232)
-PS1='\[$BLUE\]\W/\[$YELLOW\]$(rvm_version_prompt)\[$GREEN\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
+PS1='\[$BLUE\]\W/\[$YELLOW\]$(rvm_version_prompt)\[$GREEN\]$(__git_ps1 " (%s)")$(hg_branch) \[${NORMAL}\]$ '
