@@ -1,2 +1,2 @@
 require 'rubygems' # only needed in 1.8
-require 'irbtools'
+begin require 'irbtools' rescue LoadError; end
