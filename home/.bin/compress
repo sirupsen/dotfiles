@@ -1,3 +1,0 @@
-#!/bin/bash
-
-tar cvzf temp.tgz $1
