@@ -19,15 +19,19 @@
 
 # Vi Bash command mode
 set -o vi
+
 # Notify immediatly on bg job completion
 set -o notify
+
 # Case insensitive
 shopt -s nocaseglob
+
 # Ignore case while completing
 set completion-ignore-case on
 
 # Setting up editor 
 export EDITOR=/usr/bin/vim
+
 # Add user bins to path
 export PATH=$PATH:~/.bin:/usr/local/bin:/usr/local/lib/node
 
