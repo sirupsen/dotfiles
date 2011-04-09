@@ -19,6 +19,8 @@
 
 # Vi Bash command mode
 set -o vi
+# Notify immediatly on bg job completion
+set -o notify
 # Case insensitive
 shopt -s nocaseglob
 # Ignore case while completing
