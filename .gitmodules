@@ -73,3 +73,6 @@
 [submodule "home/.vim/bundle/easymotion"]
 	path = home/.vim/bundle/easymotion
 	url = https://github.com/Lokaltog/vim-easymotion.git
+[submodule "home/.vim/bundle/vividchalk"]
+	path = home/.vim/bundle/vividchalk
+	url = https://github.com/tpope/vim-vividchalk.git
