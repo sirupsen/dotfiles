@@ -25,10 +25,9 @@ shopt -s nocaseglob
 set completion-ignore-case on
 
 # Setting up editor 
-EDITOR=/usr/bin/vim
-
+export EDITOR=/usr/bin/vim
 # Add user bins to path
-PATH=$PATH:~/.bin:/usr/local/bin:/usr/local/lib/node
+export PATH=$PATH:~/.bin:/usr/local/bin:/usr/local/lib/node
 
 # Load Git completion
 . ~/.git_completion

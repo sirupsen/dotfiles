@@ -21,7 +21,7 @@ alias ....='cd ../../../'
 #
 # Git
 #
-#alias git='hub'
+alias git='hub'
 
 # Commiting
 alias gp='git push'
