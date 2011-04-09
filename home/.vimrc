@@ -51,7 +51,7 @@
 
   " GVim {
     if has("gui_running")
-      color railscasts " GUI Colorscheme
+      color vividchalk " GUI Colorscheme
       set guifont=Monaco\ 9 " Set the font:
 
       " GVIm options {
@@ -208,4 +208,8 @@
   " Command-T {
     nmap <Leader>f :CommandTFlush<CR>
     nmap <Leader>t :CommandT<CR>
+  " }
+
+  " Rainbow {
+    runtime plugin/RainbowParenthsis.vim 
   " }
