@@ -24,9 +24,9 @@
 " }
 
 " Vim UI {
-  syntax on " Enable syntax highlightation.¨
-
-  color mustang " Default colorscheme
+  syntax enable " Enable syntax highlightation.¨
+  set background=dark
+  colorscheme solarized " Default colorscheme
 
   set t_Co=256 " Terminal colors
 
@@ -51,7 +51,7 @@
 
   " GVim {
     if has("gui_running")
-      color vividchalk " GUI Colorscheme
+      color solarized " GUI Colorscheme
       set guifont=Monaco\ 9 " Set the font:
 
       " GVIm options {
@@ -99,14 +99,9 @@
   set smarttab
   set expandtab " Tabs are spaces
 
-  "set sw=2
-  "set sts=2
   set tabstop=2 " Tabs are 2 spaces
   set backspace=2 " Backspace back 2 spaces
   set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
-
-  " Man pager
-  let $PAGER=''
 " }
 
 " Key Mapping {
@@ -135,8 +130,6 @@
 
   " Key mappings
   :noremap ,d :bd<CR>
-  cmap w!! w !sudo tee %
-  map ,c :cd %:p:h<CR>
 " }
 
 
@@ -166,7 +159,7 @@
   " }
 
   " Jekyll {
-    let g:jekyll_path = "~/Code/projects/sirupsen.com"
+    let g:jekyll_path = "~/code/projects/sirupsen.com"
     let g:jekyll_post_suffix = "md"
   " }
 
