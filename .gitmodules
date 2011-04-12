@@ -76,3 +76,9 @@
 [submodule "home/.vim/bundle/vividchalk"]
 	path = home/.vim/bundle/vividchalk
 	url = https://github.com/tpope/vim-vividchalk.git
+[submodule "home/.vim/bundle/vimpager"]
+	path = home/.vim/bundle/vimpager
+	url = https://github.com/rkitover/vimpager.git
+[submodule "home/.vim/bundle/solarized"]
+	path = home/.vim/bundle/solarized
+	url = https://github.com/altercation/vim-colors-solarized.git
