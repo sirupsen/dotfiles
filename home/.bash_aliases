@@ -81,3 +81,6 @@ alias sc='./script/console'
 alias sg='./script/generate'
 alias ss='./script/server'
 alias hydra='env RUBYLIB=test RAILS_ENV=test rake hydra'
+
+# OS X
+alias dontsleep='pmset noidle'
