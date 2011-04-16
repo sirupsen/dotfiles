@@ -1,0 +1,69 @@
+#!/bin/bash
+# Checks if you're on a trusted network, if not, it'll launch sshuttle
+# dependencies:
+#   ack, 
+#   awk, 
+#   sshuttle (in sshuttle-src in same dir as this script),
+#   curl (if you use -i flag)
+
+# works on os x, remember to get the airport cli in path by issueing:
+# sudo ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/sbin/airport
+
+help_pvpn() {
+  echo "Usage for pvpn"
+  echo "Optional arguments:"
+  echo " -i show ip before and after launch of sshutle"
+  echo " -s server to tunnel through"
+  echo " -h show this"
+  echo " -t comma seperated list of trusted networks"
+  exit 1
+}
+
+check_ip() {
+  if [ $SHOW_IP == true ]; then
+    echo "pvpn: getting remote ip.."
+    [[ $1 == 'sleep' ]] && sleep 1 # let sshuttle do its magic first
+    echo "pvpn: current remote ip: `curl -s ip.appspot.com`"
+  fi
+}
+
+SERVER=''
+SSID_NAME=`airport -I | awk '/[^B]SSID/ { print $2 }'`
+ALLOWED_SSIDS=()
+SHOW_IP=false
+
+while getopts "ht:s:i" OPTION
+do
+  case $OPTION in
+    s) SERVER=$OPTARG ;;
+    i) SHOW_IP=true ;;
+    h) help_pvpn ;;
+    t) ALLOWED_SSIDS=( ${ALLOWED_SSIDS[@]-} $(echo $OPTARG) ) ;;
+  esac
+done
+
+echo "pvpn: network name: $SSID_NAME"
+echo "pvpn: allowed networks: ${ALLOWED_SSIDS[*]}"
+
+# By default, network's not allowed
+ALLOW=false
+
+# Check if network is allowed
+for ssid in ${ALLOWED_SSIDS[@]}; do
+  [[ $ssid == $SSID_NAME ]] && ALLOW=true;
+done
+
+if [ $SERVER == '' ]; then
+  echo 'oh shit'
+fi
+
+# If not allowed, sshuttle us!
+if [ $ALLOW == false ]; then
+  check_ip
+  echo 'pvpn: in unallowed network! sshutling..'
+  sshuttle-src/sshuttle -r $SERVER 0.0.0.0/0 -D
+
+  check_ip 'sleep'
+else
+  echo 'pvpn: on allowed network'
+fi
