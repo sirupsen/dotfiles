@@ -9,3 +9,4 @@
 .config/vlc/*
 .gitconfig
 .vim/.netrwhist
+.credentials
