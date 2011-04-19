@@ -62,22 +62,12 @@
         set guioptions-=L
       " }
 
-      " Title {
-        if has('title')
-          set titlestring=
-          set titlestring+=%f\                                              " file name
-          set titlestring+=%h%m%r%w                                         " flags
-          set titlestring+=\ -\ %{v:progname}                               " program name
-          set titlestring+=\ -\ %{substitute(getcwd(),\ $HOME,\ '~',\ '')}  " working directory
-        endif
-      " }
-
       " Autoload NERDTree in Gui
       autocmd VimEnter * NERDTree ~/Dropbox/code
 
       " Window {
         set lines=65
-        set columns=115
+        set columns=130
         winpos 1270 0
       " }
     endif
