@@ -13,6 +13,7 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls'
 alias c='clear'
+alias bitch,=sudo
 
 alias ..='cd ..'
 alias ...='cd ../..'

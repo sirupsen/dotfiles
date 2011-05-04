@@ -30,8 +30,8 @@ shopt -s nocaseglob
 export EDITOR=/usr/bin/vim
 
 # Setting pager to the vimpager
-# export PAGER=vimpager
-# alias less=$PAGER
+export PAGER=vimpager
+alias less=$PAGER
 
 # Add user bins to path
 export PATH=$PATH:~/.bin:/usr/local/bin:/usr/local/lib/node
