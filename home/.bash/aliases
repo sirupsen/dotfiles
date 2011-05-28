@@ -23,6 +23,7 @@ alias ....='cd ../../../'
 # Git
 #
 alias git='hub'
+alias ga='git add'
 
 # Commiting
 alias gp='git push'
@@ -73,6 +74,7 @@ alias hgl='hg slog | head -n 10'
 #
 
 alias gems='gem list'
+alias rbxc='find . -name "*.rbc" -print0 | xargs -0 rm'
 
 #
 # Rails
