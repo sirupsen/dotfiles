@@ -36,7 +36,9 @@ alias less=$PAGER
 # Add user bins to path
 export PATH=$PATH:~/.bin:/usr/local/bin:/usr/local/lib/node
 
-# Load Git completion
+# Term
+export TERM=screen-256color
+
 . ~/.git_completion
 
 # Load PS1 theme
