@@ -39,7 +39,7 @@ export PATH=$PATH:~/.bin:/usr/local/bin:/usr/local/lib/node
 # Term
 export TERM=screen-256color
 
-. ~/.git_completion
+. ~/.bash/completion/git
 
 # Load PS1 theme
 . ~/.bash/theme
