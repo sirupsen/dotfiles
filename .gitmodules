@@ -67,3 +67,6 @@
 [submodule "home/.vim/bundle/coffee"]
 	path = home/.vim/bundle/coffee
 	url = https://github.com/kchmck/vim-coffee-script.git
+[submodule "home/.vim/bundle/surround"]
+	path = home/.vim/bundle/surround
+	url = https://github.com/tpope/vim-surround.git

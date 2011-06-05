@@ -43,12 +43,32 @@ macro index ,r "T~N | ~O\nN^T~A\n" "mark all read"
 macro index M "T.*\n;WN" "Mark all messages as read"
 
 # Ignore some headers
-ignore "Authentication-Results:"
-ignore "DomainKey-Signature:"
-ignore "DKIM-Signature:"
-hdr_order Date From To Cc
-alternative_order text/plain text/html *
-auto_view text/html
+unignore Date User-Agent X-Mailer
+ignore Envelope-to X-OriginalArrivalTime X-ClientAddr X-Originating-IP X-UID
+ignore Importance X-Keywords Delivery-date X-Apparently-To X-Apparently-From
+ignore X-Authentication-Info List- Mailing-List X-IMAPbase Old-Content-Type
+ignore X-Message-Info X-gotmail-version X-Virus-Scanned Authentication-Results
+ignore X-Spam-Flag X-Spam-Level X-Spam-Checker-Version X-Spam-Prev
+ignore X-All-Your-Base-Are-Belong-To X-BFI X-HotPOP-Delivered-To X-Return-Path
+ignore X-eGroups- X-Yahoo-Profile X-Juno-Line-Breaks X-Mailman- X-BeenThere
+ignore X-YahooFilteredBulk X-Header-Overseas X-Header-NoReverseIP
+ignore X-MS- Thread- X-Priority X-ASG- X-ORBL X-Barracuda-Spam-
+ignore X-DMCA X-Abuse X-AntiAbuse X-RFC2646 X-Postfilter X-Received
+ignore X-ML- X-MLServer X-Mail-Count Posted X-Complaints-To Complaints-To
+ignore Newsgroups NNTP- X-From-Usenet X-Trace Injection-Info X-rubymirror
+ignore Return-Path Message-ID Received Mime-Version Content-Disposition Path
+ignore Content-Type Content-Length Status Lines "From ""
+
+# Bindings
+bind pager , previous-line
+bind pager _ previous-line
+bind pager < previous-line
+bind pager > next-line
+bind pager + next-line
+bind pager 0 next-page
+bind generic 0 next-page
+bind index <Esc>N search-opposite
+bind attach i exit
 
 set markers=no # No + at beginning of wrapped lines
 
