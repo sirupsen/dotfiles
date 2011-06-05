@@ -58,3 +58,6 @@
 [submodule "home/.vim/bundle/sparkup"]
 	path = home/.vim/bundle/sparkup
 	url = https://github.com/rstacruz/sparkup.git
+[submodule "home/.vim/bundle/tcomment"]
+	path = home/.vim/bundle/tcomment
+	url = https://github.com/tomtom/tcomment_vim.git
