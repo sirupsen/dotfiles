@@ -49,9 +49,6 @@
 [submodule "home/.vim/bundle/rainbow"]
 	path = home/.vim/bundle/rainbow
 	url = https://github.com/vim-scripts/Rainbow-Parenthesis.git
-[submodule "home/.vim/bundle/vividchalk"]
-	path = home/.vim/bundle/vividchalk
-	url = https://github.com/tpope/vim-vividchalk.git
 [submodule "home/.vim/bundle/solarized"]
 	path = home/.vim/bundle/solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
