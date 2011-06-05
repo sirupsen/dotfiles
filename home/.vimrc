@@ -34,7 +34,6 @@
   set showcmd  " Show incomplete CMDS at the bottom
   
   set showmatch " Show matching of: () [] {}
-  set matchpairs+=<:> " Match <> (HTML)
 
   " Searching {
     set ignorecase " Case insensitive search
@@ -82,7 +81,8 @@
   " }
 " }
 
-" Formatting {
+  inoremap jk <esc>
+  " Formatting {
   " Be smart, and awesome, about indentation
   set autoindent " Indent at the same level as previous line
   set smartindent
