@@ -56,5 +56,5 @@
 	path = home/.vim/bundle/solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
 [submodule "home/.vim/bundle/command-t"]
-	path = home/.vim/bundle/command-t
+	path = home/.vim/bundle/commandt
 	url = git://git.wincent.com/command-t.git
