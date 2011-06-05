@@ -1,6 +1,6 @@
 [submodule "home/.vim/bundle/ack"]
 	path = home/.vim/bundle/ack
-	url = http://github.com/mileszs/ack.vim.git
+	url = https://github.com/mileszs/ack.vim.git
 [submodule "home/.vim/bundle/endwise"]
 	path = home/.vim/bundle/endwise
 	url = https://github.com/tpope/vim-endwise.git
@@ -9,31 +9,31 @@
 	url = https://github.com/tpope/vim-fugitive.git
 [submodule "home/.vim/bundle/gist"]
 	path = home/.vim/bundle/gist
-	url = http://github.com/mattn/gist-vim.git
+	url = https://github.com/mattn/gist-vim.git
 [submodule "home/.vim/bundle/liquid"]
 	path = home/.vim/bundle/liquid
-	url = http://github.com/tpope/vim-liquid.git
+	url = https://github.com/tpope/vim-liquid.git
 [submodule "home/.vim/bundle/markdown"]
 	path = home/.vim/bundle/markdown
-	url = http://github.com/tpope/vim-markdown.git
+	url = https://github.com/tpope/vim-markdown.git
 [submodule "home/.vim/bundle/rails"]
 	path = home/.vim/bundle/rails
-	url = http://github.com/tpope/vim-rails.git
+	url = https://github.com/tpope/vim-rails.git
 [submodule "home/.vim/bundle/snipmate"]
 	path = home/.vim/bundle/snipmate
-	url = http://github.com/msanders/snipmate.vim.git
+	url = https://github.com/msanders/snipmate.vim.git
 [submodule "home/.vim/bundle/supertab"]
 	path = home/.vim/bundle/supertab
-	url = http://github.com/tsaleh/vim-supertab.git
+	url = https://github.com/tsaleh/vim-supertab.git
 [submodule "home/.vim/bundle/nerdtree"]
 	path = home/.vim/bundle/nerdtree
-	url = http://github.com/scrooloose/nerdtree.git
+	url = https://github.com/scrooloose/nerdtree.git
 [submodule "home/.vim/bundle/delimitmate"]
 	path = home/.vim/bundle/delimitmate
-	url = http://github.com/Raimondi/delimitMate.git
+	url = https://github.com/Raimondi/delimitMate.git
 [submodule "home/.vim/bundle/javascript"]
 	path = home/.vim/bundle/javascript
-	url = http://github.com/pangloss/vim-javascript.git
+	url = https://github.com/pangloss/vim-javascript.git
 [submodule "home/.vim/bundle/haml"]
 	path = home/.vim/bundle/haml
 	url = https://github.com/tpope/vim-haml.git
