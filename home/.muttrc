@@ -22,16 +22,21 @@ set hostname = gmail.com
 set mail_check = 40
 set timeout = 300
 set imap_keepalive = 300
-
-# Cache it!
-set header_cache=~/.mutt/cache/headers
-set message_cachedir=~/.mutt/cache/bodies
-set certificate_file=~/.mutt/certificates
+set meta_key
+set allow_ansi
+set noconfirmappend
+set fast_reply
+set markers=no # No + at beginning of wrapped lines
 set move = no
 set include
 set sort = 'threads'
 set sort_aux = 'reverse-last-date-received'
 set auto_tag = yes
+
+# files
+set header_cache=~/.mutt/cache/headers
+set message_cachedir=~/.mutt/cache/bodies
+set certificate_file=~/.mutt/certificates
 
 # Macros 
 
@@ -59,18 +64,6 @@ ignore Newsgroups NNTP- X-From-Usenet X-Trace Injection-Info X-rubymirror
 ignore Return-Path Message-ID Received Mime-Version Content-Disposition Path
 ignore Content-Type Content-Length Status Lines "From ""
 
-# Bindings
-bind pager , previous-line
-bind pager _ previous-line
-bind pager < previous-line
-bind pager > next-line
-bind pager + next-line
-bind pager 0 next-page
-bind generic 0 next-page
-bind index <Esc>N search-opposite
-bind attach i exit
-
-set markers=no # No + at beginning of wrapped lines
 
 # Gmail-style keyboard shortcuts
 macro index,pager y "<enter-command>unset trash\n <delete-message>" "Gmail archive message"
