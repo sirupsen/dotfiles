@@ -6,7 +6,7 @@
 	url = https://github.com/tpope/vim-endwise.git
 [submodule "home/.vim/bundle/fugitive"]
 	path = home/.vim/bundle/fugitive
-	url = http://github.com/tpope/vim-fugitive.git
+	url = https://github.com/tpope/vim-fugitive.git
 [submodule "home/.vim/bundle/gist"]
 	path = home/.vim/bundle/gist
 	url = http://github.com/mattn/gist-vim.git
