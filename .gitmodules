@@ -61,3 +61,9 @@
 [submodule "home/.vim/bundle/tcomment"]
 	path = home/.vim/bundle/tcomment
 	url = https://github.com/tomtom/tcomment_vim.git
+[submodule "home/.vim/bundle/ruby"]
+	path = home/.vim/bundle/ruby
+	url = https://github.com/vim-ruby/vim-ruby.git
+[submodule "home/.vim/bundle/coffee"]
+	path = home/.vim/bundle/coffee
+	url = https://github.com/kchmck/vim-coffee-script.git
