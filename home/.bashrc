@@ -12,7 +12,7 @@
 . ~/.credentials
 
 # Load colors
-. ~/.colors
+. ~/.bash/colors
 
 # Load functions
 . ~/.bash/functions
