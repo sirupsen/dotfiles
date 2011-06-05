@@ -28,15 +28,9 @@
 [submodule "home/.vim/bundle/nerdtree"]
 	path = home/.vim/bundle/nerdtree
 	url = http://github.com/scrooloose/nerdtree.git
-[submodule "home/.vim/bundle/jekyll"]
-	path = home/.vim/bundle/jekyll
-	url = http://github.com/csexton/jekyll.vim.git
 [submodule "home/.vim/bundle/delimitmate"]
 	path = home/.vim/bundle/delimitmate
 	url = http://github.com/Raimondi/delimitMate.git
-[submodule "home/.vim/bundle/tcomment"]
-	path = home/.vim/bundle/tcomment
-	url = http://github.com/tomtom/tcomment_vim.git
 [submodule "home/.vim/bundle/javascript"]
 	path = home/.vim/bundle/javascript
 	url = http://github.com/pangloss/vim-javascript.git
@@ -52,27 +46,9 @@
 [submodule "home/.vim/bundle/js"]
 	path = home/.vim/bundle/js
 	url = https://github.com/pangloss/vim-javascript.git
-[submodule "home/.vim/bundle/ruby"]
-	path = home/.vim/bundle/ruby
-	url = git://github.com/vim-ruby/vim-ruby.git
-[submodule "home/.vim/bundle/txt"]
-	path = home/.vim/bundle/txt
-	url = git://github.com/vim-scripts/txt.vim--xu.git
-[submodule "home/.vim/bundle/sparkup"]
-	path = home/.vim/bundle/sparkup
-	url = git://github.com/rstacruz/sparkup.git
 [submodule "home/.vim/bundle/rainbow"]
 	path = home/.vim/bundle/rainbow
 	url = https://github.com/vim-scripts/Rainbow-Parenthesis.git
-[submodule "home/.vim/bundle/molokai"]
-	path = home/.vim/bundle/molokai
-	url = https://github.com/mrtazz/molokai.vim.git
-[submodule "home/.vim/bundle/mercurial"]
-	path = home/.vim/bundle/mercurial
-	url = https://github.com/DasIch/vim-mercurial.git
-[submodule "home/.vim/bundle/easymotion"]
-	path = home/.vim/bundle/easymotion
-	url = https://github.com/Lokaltog/vim-easymotion.git
 [submodule "home/.vim/bundle/vividchalk"]
 	path = home/.vim/bundle/vividchalk
 	url = https://github.com/tpope/vim-vividchalk.git
