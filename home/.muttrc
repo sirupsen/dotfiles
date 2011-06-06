@@ -1,3 +1,109 @@
+# stolen from steve losh: https://bitbucket.org/sjl/dotfiles/
+# set alias_file          = ~/.mutt/alias                       # alias file
+set header_cache        = ~/.mutt/cache/headers                 # where to store headers        
+set message_cachedir    = ~/.mutt/cache/bodies                  # where to store bodies
+set certificate_file    = ~/.mutt/certificates                  # where to store certs
+# set mailcap_path        = ~/.mutt/mailcap                     # entrys for filetypes
+set signature           = ~/.mutt/signature                     # my signature file
+set tmpdir              = ~/.mutt/tmp                          # where to keep temp files
+set editor              = "vim +/^$ +:noh"                      # use vim and skip to first blank line
+set print_command       = /usr/bin/enscript                     # print with enscript
+
+# main options
+set timeout             = 3                                     # idle time before scanning
+set mail_check          = 0                                     # minimum time between scans
+set sort_alias          = alias                                 # sort alias file by alias
+set reverse_alias                                               # show names from alias file in index
+unset move                                                      # gmail does that
+set delete                                                      # don't ask, just do
+unset confirmappend                                             # don't ask, just do!
+set quit                                                        # don't ask, just do!!
+unset mark_old                                                  # read/new is good enough for me
+set beep_new                                                    # bell on new mails
+set pipe_decode                                                 # strip headers and eval mimes when piping
+set thorough_search                                             # strip headers and eval mimes before searching
+
+# index options
+set sort                = threads                               # like gmail 
+set sort_aux            = reverse-last-date-received            # like gmail
+set uncollapse_jump                                             # don't collapse on an unread message 
+set sort_re                                                     # thread based on regex
+set reply_regexp        = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*")
+
+# pager options
+set pager_index_lines   = 10                                    # number of index lines to show 
+set pager_context       = 5                                     # number of context lines to show
+set pager_stop                                                  # don't go to next message automatically
+set menu_scroll                                                 # scroll in menus 
+set smart_wrap                                                  # don't split words
+set tilde                                                       # show tildes like in vim
+unset markers                                                   # no ugly plus signs
+auto_view text/html                                             # view html automatically
+alternative_order text/plain text/enriched text/html            # save html for last
+set quote_regexp        = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+")
+
+# formats
+set date_format         = "%m/%d/%y at %I:%M%P"
+set index_format        = "[%Z]  %D  %-20.20F  %s"
+set status_format       = "-%r- %v ---[ Folder: %f, Msgs: %m%?n? New: %n?%?d? Del: %d?%?t? Tag: %t?%?l? %l? ]%?p?---- .: %p waiting to send :. ?--%>- (%P) ---"
+set alias_format        = "%4n %t %-20a  %r"]
+
+# composing mail
+set realname            = $FULLNAME                          # who am i?
+set envelope_from                                               # which from?
+set sig_dashes                                                  # dashes before my sig... sweet
+set edit_headers                                                # show headers when composing
+set fast_reply                                                  # skip to compose when replying
+set sendmail_wait       = -1                                    # don't wait for sending... to complete
+set askcc                                                       # ask for CC:
+set fcc_attach                                                  # save attachments with the body
+unset mime_forward                                              # forward attachments as part of body
+set forward_format      = "Fwd: %s"                             # format for subject when forwarding
+set forward_decode                                              # decode when forwarding
+set attribution         = "On %d, %n wrote:"                    # set the attribution
+set reply_to                                                    # reply to Reply to: field
+set reverse_name                                                # reply as whomever it was to
+set include                                                     # include message in replies
+set forward_quote                                               # include message in forwards"
+
+# headers to show
+ignore *                                                        # ignore all headers
+unignore from: to: cc: date: subject:                           # show only these
+hdr_order from: to: cc: date: subject:                          # and in this order
+
+# these just give me headaches
+bind index,pager \# noop
+bind index i        noop
+bind index w        noop
+
+# bindings
+bind index <tab>    sync-mailbox
+bind index k        previous-entry
+bind index j        next-entry
+bind pager i        exit
+bind pager /        search
+bind pager k        previous-line
+bind pager j        next-line
+bind pager gg       top
+bind pager G        bottom
+bind index gg       first-entry
+bind index G        last-entry
+bind pager K        previous-undeleted
+bind pager J        next-undeleted
+bind index K        previous-unread
+bind index J        next-unread
+bind index,pager R  group-reply
+bind index \Cp      recall-message
+bind index <space>  collapse-thread
+
+# macros
+macro index \Cr   "<tag-prefix><clear-flag>N"                                          "mark tagged messages as read"
+macro index \CR   "T.<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>"          "mark all messages as read"
+macro index B     "<limit>~b "                                                         "search message bodies"
+macro index I     "<change-folder>!<enter>"                                            "go to Inbox"
+macro pager \Cu   "|urlview<enter>"                                                    "call urlview to extract URLs out of a message"
+macro index,pager o     "|mvim -c 'setlocal ft=mail' -c 'setlocal buftype=nofile' -<enter>"  "open in vim""
+
 # Don't sheep our fires!
 set ssl_force_tls = yes
 
@@ -10,67 +116,14 @@ set smtp_url="smtp://$imap_user:$imap_pass@smtp.gmail.com:587/"
 set smtp_pass=$PASSWORD
 
 set from=$EMAIL
-set realname=$FULLNAME
-
-set editor=vim
 
 # Basic config
 set folder = "imaps://imap.gmail.com:993"
 set spoolfile = "+INBOX"
 set imap_check_subscribed
-set hostname = gmail.com
 set mail_check = 40
 set timeout = 300
-set imap_keepalive = 300
-set meta_key
-set allow_ansi
-set noconfirmappend
-set fast_reply
-set markers=no # No + at beginning of wrapped lines
-set move = no
-set include
-set sort = 'threads'
-set sort_aux = 'reverse-last-date-received'
-set auto_tag = yes
-
-# files
-set header_cache=~/.mutt/cache/headers
-set message_cachedir=~/.mutt/cache/bodies
-set certificate_file=~/.mutt/certificates
-
-# Macros 
-
-# Mark as read didn't really turn out how I wanted it to, I recommend
-# you (if you are using Gmail) to just go there, select all, and then
-# it asks if you want to select ALL mails, say yes, and then hit mark
-# as read.
-macro index ,r "T~N | ~O\nN^T~A\n" "mark all read"
-macro index M "T.*\n;WN" "Mark all messages as read"
-
-# Ignore some headers
-unignore Date User-Agent X-Mailer
-ignore Envelope-to X-OriginalArrivalTime X-ClientAddr X-Originating-IP X-UID
-ignore Importance X-Keywords Delivery-date X-Apparently-To X-Apparently-From
-ignore X-Authentication-Info List- Mailing-List X-IMAPbase Old-Content-Type
-ignore X-Message-Info X-gotmail-version X-Virus-Scanned Authentication-Results
-ignore X-Spam-Flag X-Spam-Level X-Spam-Checker-Version X-Spam-Prev
-ignore X-All-Your-Base-Are-Belong-To X-BFI X-HotPOP-Delivered-To X-Return-Path
-ignore X-eGroups- X-Yahoo-Profile X-Juno-Line-Breaks X-Mailman- X-BeenThere
-ignore X-YahooFilteredBulk X-Header-Overseas X-Header-NoReverseIP
-ignore X-MS- Thread- X-Priority X-ASG- X-ORBL X-Barracuda-Spam-
-ignore X-DMCA X-Abuse X-AntiAbuse X-RFC2646 X-Postfilter X-Received
-ignore X-ML- X-MLServer X-Mail-Count Posted X-Complaints-To Complaints-To
-ignore Newsgroups NNTP- X-From-Usenet X-Trace Injection-Info X-rubymirror
-ignore Return-Path Message-ID Received Mime-Version Content-Disposition Path
-ignore Content-Type Content-Length Status Lines "From ""
-
-
-# Gmail-style keyboard shortcuts
-macro index,pager y "<enter-command>unset trash\n <delete-message>" "Gmail archive message"
-macro index,pager d "<enter-command>set trash=\"imaps://imap.googlemail.com/[GMail]/Bin\"\n <delete-message>" "Gmail delete message"
-macro index,pager gi "<change-folder>=INBOX<enter>" "Go to inbox"
-macro index,pager ga "<change-folder>=[Gmail]/All Mail<enter>" "Go to all mail"
-macro index,pager gs "<change-folder>=[Gmail]/Starred<enter>" "Go to starred messages"
-macro index,pager gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to drafts">
+set imap_keepalive = 300"
+set hostname = gmail.com
 
 source ~/code/projects/solarized/mutt-colors-solarized/mutt-colors-solarized-dark-16.muttrc
