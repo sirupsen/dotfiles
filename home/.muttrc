@@ -43,7 +43,7 @@ alternative_order text/plain text/enriched text/html            # save html for 
 set quote_regexp        = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+")
 
 # formats
-set date_format         = "%m/%d/%y at %I:%M%P"
+set date_format         = "%m/%d/%y"
 set index_format        = "[%Z]  %D  %-20.20F  %s"
 set status_format       = "-%r- %v ---[ Folder: %f, Msgs: %m%?n? New: %n?%?d? Del: %d?%?t? Tag: %t?%?l? %l? ]%?p?---- .: %p waiting to send :. ?--%>- (%P) ---"
 set alias_format        = "%4n %t %-20a  %r"]

@@ -13,6 +13,7 @@
 
 " General {
   filetype plugin indent on " Automatically change file types.
+  autocmd BufNewFile,BufRead *.erb set filetype=html
 
   "set autochdir " Automatically always switch to the current files directory.
   set shortmess=filmnrxoOtT      " abbrev. of messages (avoids 'hit enter')
@@ -137,6 +138,7 @@
   " }
 
   " Gist {
+    let g:gist_clip_command = 'pbcopy'
     let g:gist_detect_filetype = 1
     let g:gist_open_browser_after_post = 1
   " }
