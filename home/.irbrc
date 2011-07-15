@@ -4,3 +4,9 @@ begin
 rescue LoadError
   puts 'IRBtools not installed -- ohai IRB!'
 end
+# Easily print methods local to an object's class
+class Object
+  def local_methods
+    (methods - Object.instance_methods).sort
+  end
+end
