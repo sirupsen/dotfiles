@@ -126,4 +126,4 @@ set timeout = 300
 set imap_keepalive = 300"
 set hostname = gmail.com
 
-source ~/code/projects/solarized/mutt-colors-solarized/mutt-colors-solarized-dark-16.muttrc
+source ~/.mutt/solarized.muttrc
