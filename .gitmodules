@@ -73,3 +73,6 @@
 [submodule "home/.vim/bundle/easymotion"]
 	path = home/.vim/bundle/easymotion
 	url = https://github.com/Lokaltog/vim-easymotion.git
+[submodule "home/.vim/bundle/commandt"]
+	path = home/.vim/bundle/commandt
+	url = https://github.com/wincent/Command-T.git

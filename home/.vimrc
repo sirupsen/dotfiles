@@ -48,41 +48,8 @@
   set hidden " Hide buffers, rather than close them
 
   set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
-
-  " GVim {
-    if has("gui_running")
-      color solarized " GUI Colorscheme
-      set guifont=Monaco\ 9 " Set the font:
-
-      " GVIm options {
-        set guioptions-=m " Remove menu bar
-        set guioptions-=T " Remove toolbar with icons
-        set guioptions-=r " Remove scrollbars (http://vimdoc.sourceforge.net/htmldoc/options.html#%27guioptions%27)
-        set guioptions-=l
-        set guioptions-=L
-      " }
-
-      " Autoload NERDTree in Gui
-      autocmd VimEnter * NERDTree ~/Dropbox/code
-
-      " Window {
-        set lines=65
-        set columns=130
-        winpos 1270 0
-      " }
-    endif
-  " }
-
-  " MVIM {
-    if has("gui_macvim")
-      macmenu &File.New\ Tab key=<nop>
-      map <D-t> :CommandT<CR>
-      set guifont=Monaco:h10
-    endif
-  " }
 " }
 
-  inoremap jk <esc>
   " Formatting {
   " Be smart, and awesome, about indentation
   set autoindent " Indent at the same level as previous line
@@ -109,15 +76,14 @@
   map <S-H> gT
   map <S-L> gt
 
+  " Use jk as escape
+  inoremap jk <esc>
+
   " Shift key fixes
   cmap W w
   cmap WQ wq
   cmap wQ wq
   cmap Q q
-
-  " Quickly edit/reload the vimrc file
-  omap <silent> <leader>ev :e $MYVIMRC<CR>
-  nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
   " Key mappings
   :noremap ,d :bd<CR>
@@ -125,11 +91,6 @@
 
 
 " Plugins {
-  " Surround {
-    let g:surround_{char2nr('-')} = "<% \r %>"
-    let g:surround_{char2nr('=')} = "<%= \r %>"
-  " }
-  
   " NerdTree {
     let NERDTreeChDirMode = 1
     let NERDTreeWinSize=20
@@ -150,9 +111,6 @@
   " SnipMate {
     " Author var
     let g:snips_author = 'Simon Hørup Eskildsen <<a class="linkclass" href="mailto:sirup@sirupsen.com">sirup@sirupsen.com</a>>'
-
-    " Shortcut for reloading snippets
-    nnoremap ,smr <esc>:exec ReloadAllSnippets()<cr>
   " }
 
   " Jekyll {
@@ -176,28 +134,9 @@
     endif
   " }
 
-  " Outliner {
-    " defaults
-    let otl_install_menu=1
-    let no_otl_maps=0
-    let no_otl_insert_maps=0
-
-    " overrides:
-    let otl_bold_headers=0
-    let otl_use_thlnk=0
-
-    " au BufWinLeave *.otl mkview
-    " au BufWinEnter *.otl silent loadview
-    let maplocalleader = ","
-  " }
-
-  " Ri {
-  "source ~/.vim/bundle/ri/ftplugin/ri.vim
-  " }
-  
   " Command-T {
     nmap <Leader>f :CommandTFlush<CR>
-    nmap <Leader>t :CommandT<CR>
+    nmap <C-T> :CommandT<CR>
   " }
 
   " Rainbow {
