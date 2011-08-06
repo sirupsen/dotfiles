@@ -1,0 +1,23 @@
+#!/bin/bash
+
+echo "Updating Vim plugins.."
+cd ~/Dropbox/config
+git submodule foreach git pull origin master
+cd ~
+
+echo "Updating Homebrew.."
+brew update
+
+echo "Upgrading Homebrew.."
+brew upgrade
+
+echo "Removing Homebrew cache.."
+rm -rf ~/Library/Caches/Homebrew/*
+
+echo "Taking out the trash.."
+sudo rm -Rf ~/.Trash/*
+
+echo "Removing old RVM sources.."
+rm -rf ~/.rvm/src/*
+rm -rf ~/.rvm/archives/*
+rm -rf ~/.rvm/repos/*
