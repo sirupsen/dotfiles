@@ -89,3 +89,6 @@ alias be='bundle exec'
 
 # OS X
 alias dontsleep='pmset noidle'
+
+# Typo correctors
+alias kilall='killall'
