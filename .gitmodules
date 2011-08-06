@@ -46,9 +46,6 @@
 [submodule "home/.vim/bundle/solarized"]
 	path = home/.vim/bundle/solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
-[submodule "home/.vim/bundle/command-t"]
-	path = home/.vim/bundle/commandt
-  url = https://github.com/wincent/Command-T.git
 [submodule "home/.vim/bundle/sparkup"]
 	path = home/.vim/bundle/sparkup
 	url = https://github.com/rstacruz/sparkup.git

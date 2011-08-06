@@ -33,8 +33,8 @@ export EDITOR=/usr/bin/vim
 export PAGER=vimpager
 alias less=$PAGER
 
-# Add user bins to path
-export PATH=$PATH:~/.bin:/usr/local/bin:/usr/local/lib/node
+# Add user bins to path, prioritize Homebrew's above anything else
+export PATH=/usr/local/bin:$PATH:~/.bin:/usr/local/lib/node:/usr/local/sbin
 
 # Term
 export TERM=screen-256color

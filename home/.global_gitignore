@@ -44,5 +44,4 @@ setuptools-*
 .rvmrc*
 log/*.log  
 tmp/**/*  
-vendor/*
 script/*

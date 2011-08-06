@@ -13,7 +13,6 @@
 
 " General {
   filetype plugin indent on " Automatically change file types.
-  autocmd BufNewFile,BufRead *.erb set filetype=html
 
   "set autochdir " Automatically always switch to the current files directory.
   set shortmess=filmnrxoOtT      " abbrev. of messages (avoids 'hit enter')
@@ -26,8 +25,8 @@
 
 " Vim UI {
   syntax enable " Enable syntax highlightation.¨
-  set background=dark
   colorscheme solarized " Default colorscheme
+  set background=dark
 
   set t_Co=256 " Terminal colors
 
