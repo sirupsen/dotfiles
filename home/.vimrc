@@ -86,6 +86,10 @@
 
   " Key mappings
   :noremap ,d :bd<CR>
+
+  " Make keys work as expected for wrapped lines
+  inoremap <Down> <C-o>gj
+  inoremap <Up> <C-o>gk
 " }
 
 

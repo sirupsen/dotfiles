@@ -21,3 +21,9 @@ echo "Removing old RVM sources.."
 rm -rf ~/.rvm/src/*
 rm -rf ~/.rvm/archives/*
 rm -rf ~/.rvm/repos/*
+
+echo "Updating RVM.."
+rvm get head
+
+echo "Cleaning desktop.."
+rm -rf ~/Desktop/*
