@@ -12,7 +12,7 @@ class Object
     (methods - Object.instance_methods).sort
   end
 
-  alias_method :local_methods, :lm
+  alias_method :lm, :local_methods
 end
 
 if defined? ActiveRecord
