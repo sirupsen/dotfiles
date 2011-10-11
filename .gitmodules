@@ -73,3 +73,6 @@
 [submodule "home/.vim/bundle/commandt"]
 	path = home/.vim/bundle/commandt
 	url = https://github.com/wincent/Command-T.git
+[submodule "home/.vim/bundle/vimroom"]
+	path = home/.vim/bundle/vimroom
+	url = https://github.com/mikewest/vimroom.git
