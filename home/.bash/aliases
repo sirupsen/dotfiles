@@ -76,6 +76,7 @@ alias hgl='hg slog | head -n 10'
 alias gems='gem list'
 alias rbxc='find . -name "*.rbc" -print0 | xargs -0 rm'
 alias be='bundle exec'
+alias rt='bundle exec ruby -Itest'
 
 #
 # Rails
@@ -92,3 +93,5 @@ alias dontsleep='pmset noidle'
 
 # Typo correctors
 alias kilall='killall'
+
+alias te='/Applications/TextEdit.app/Contents/MacOS/TextEdit'
