@@ -13,7 +13,8 @@ function rvm_version_prompt {
   # local full="$version$gemset"
 
   # [ "$full" != "" ] && echo "$full"
-  echo $(rvm-prompt i v g)
+  #echo $(rvm-prompt i v g)
+  rbenv version | ruby -e "puts STDIN.read.split(' ').first"
 }
 
 

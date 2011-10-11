@@ -47,4 +47,4 @@ export TERM=screen-256color
 # Load aliases at end to not conflict with anything
 . ~/.bash/aliases
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
