@@ -21,6 +21,9 @@
   " No needs for backups, I have Git for that
   set noswapfile 
   set nobackup
+
+  " 80 columns
+  set textwidth=80
 " }
 
 " Vim UI {
@@ -119,6 +122,9 @@
   " Jekyll {
     let g:jekyll_path = "~/code/projects/sirupsen.com"
     let g:jekyll_post_suffix = "md"
+  " }
+  
+  " VimRoom {
   " }
 
   " Fugitive {
