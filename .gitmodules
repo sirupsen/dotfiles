@@ -34,9 +34,6 @@
 [submodule "home/.vim/bundle/tabular"]
 	path = home/.vim/bundle/tabular
 	url = https://github.com/godlygeek/tabular.git
-[submodule "home/.vim/bundle/sinatra"]
-	path = home/.vim/bundle/sinatra
-	url = https://github.com/hallison/vim-ruby-sinatra.git
 [submodule "home/.vim/bundle/js"]
 	path = home/.vim/bundle/js
 	url = https://github.com/pangloss/vim-javascript.git
@@ -70,9 +67,3 @@
 [submodule "home/.vim/bundle/easymotion"]
 	path = home/.vim/bundle/easymotion
 	url = https://github.com/Lokaltog/vim-easymotion.git
-[submodule "home/.vim/bundle/commandt"]
-	path = home/.vim/bundle/commandt
-	url = https://github.com/wincent/Command-T.git
-[submodule "home/.vim/bundle/vimroom"]
-	path = home/.vim/bundle/vimroom
-	url = https://github.com/mikewest/vimroom.git

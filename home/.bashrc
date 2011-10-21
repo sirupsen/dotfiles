@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/bin/bash 
 # Load credentials, sets a few environment variables
 # used e.g. in the Mutt config.
 #
@@ -47,4 +46,9 @@ export TERM=screen-256color
 # Load aliases at end to not conflict with anything
 . ~/.bash/aliases
 
+# rvm
 #[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+# rbenv
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"

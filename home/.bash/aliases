@@ -55,28 +55,16 @@ complete -o default -o nospace -F _git_merge gm
 alias gco='git checkout'
 complete -o default -o nospace -F _git_checkout gco
 
-#
-# Mercurial
-#
-
-alias hgc='hg commit -m'
-alias hgpl='hg pull'
-alias hgp='hg push'
-alias hgd='hg diff'
-alias hgs='hg status'
-alias hgu='hg update'
-alias hgbr='hg branches'
-alias hgb='hg branch'
-alias hgl='hg slog | head -n 10'
-
 # 
 # Ruby
 #
 
+alias r='ruby -w'
 alias gems='gem list'
 alias rbxc='find . -name "*.rbc" -print0 | xargs -0 rm'
 alias be='bundle exec'
 alias rt='bundle exec ruby -Itest'
+alias st='testdrb -Itest'
 
 #
 # Rails

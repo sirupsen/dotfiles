@@ -21,9 +21,6 @@
   " No needs for backups, I have Git for that
   set noswapfile 
   set nobackup
-
-  " 80 columns
-  set textwidth=80
 " }
 
 " Vim UI {
@@ -32,6 +29,12 @@
   set background=dark
 
   set t_Co=256 " Terminal colors
+
+  " 80 columns
+  set textwidth=80
+
+  " Minimum lines to keep above and below the cursor
+  set scrolloff=3
 
   set ruler " Enable cursor position
   set showcmd  " Show incomplete CMDS at the bottom
