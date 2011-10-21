@@ -67,3 +67,6 @@
 [submodule "home/.vim/bundle/easymotion"]
 	path = home/.vim/bundle/easymotion
 	url = https://github.com/Lokaltog/vim-easymotion.git
+[submodule "home/.vim/bundle/ctrlp"]
+	path = home/.vim/bundle/ctrlp
+	url = https://github.com/kien/ctrlp.vim.git
