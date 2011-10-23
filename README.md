@@ -1,76 +1,66 @@
 # Sirupsen's Dotfiles
 
-These are my dotfiles. Use them as you like! 
+These are my dotfiles, that I have tweaked and used for the past two years.
 
-# Packages
+# Software
 
-My packages of choice relevant to these configurations.
+Relevant to these configuration files are..
 
+* OS
+  - OS X Lion
 * Terminal
-  - Unicode Rxvt
+  - iTerm 2
 * Shell
-  - Bash
-* Window Manager
-  - Openbox
+  - `bash`
 * Text editor
-  - Vim
+  - `vim`
 * Version control
-  - Git
+  - `git`
+* Terminal multiplexer (basically what I use as my in-terminal tiling)
+  - `tmux`
+* Email client
+  - `mutt`
 
-# Misc
+# How I store my dotfiles
 
-## PS1
+Here's how I sync my dotfiles across machines.
 
-### Format
+They're all in `~/Dropbox/dotfiles`.
 
-* Current directory
-* Ruby version and Gemset (If not 1.9.2@default)
-* Git branch (If in a Git repository)
-    + Colors
-        - Red (dirty tree, uncomitted changes)
-        - Green (clear tree)
-
-### Screenshot
-
-![PS1](http://imgur.com/oCKTw.png)
-
-# Using my Dotfiles
-
-You can install my dotfiles easily with [Homesick][homesick]:
-
-    homesick clone Sirupsen/dotfiles
-    homesick symlink Sirupsen/dotfiles
-
-## Keyboard layouts
-
-I use a custom keyboard layout for my danish Apple keyboard, here's how to get it working in Linux:
-
-    $ cd /usr/share/X11/xkb/symbols
-    $ cp dk dk.backup
-    $ cp latin latin.backup
-    $ ln -s ~/.config/.dk_layout .
-    $ ln -s ~/.config/.latin_layout .
-
-## Syncing with Dropbox
-
-If you have your own local dotfiles syncing across computers, here's a tip on how to sync your dotfiles.
-
-Start by moving your dotfiles to your Dropbox, e.g. `~/Dropbox/dotfiles`.
-
-I use [Homesick][homesick] to handle the symlinking for two reasons:
+Then I use [Homesick][homesick] to handle the symlinking from this directory to
+`~/` for two reasons:
 
 * I don't have to reinvent the wheel
 * I can easily share my configuration
     - And get up and running remotely in a matter of seconds
 
-We start by feeding `homesick` with our dotfiles:
+I cheat `homesick` into thinking I cloned my dotfiles via `git` (which it can do
+automatically for you with a `git` url, more on that in a second):
 
     $ ln -s ~/Dropbox/dotfiles ~/.homesick/repos
 
-And then we perform the linking:
+Perform the symlinking:
 
     $ homesick symlink dotfiles
 
-I advise you to push your dotfiles to Github as well, to share with others (and for your own use on virtual machines).
+I have them on Github for easy sharing with others, you can install them via
+`homesick` with the command:
+
+    $ homesick clone sirupsen/dotfiles
+    $ homesick symlink sirupsen/dotfiles
 
 [homesick]: http://github.com/technicalpickles/homesick
+
+# Screenshots
+
+Clean iTerm 2 in `vim`:
+
+![](http://f.cl.ly/items/1o1M3j3i062B2v2S111N/Screen%20Shot%202011-10-23%20at%206.15.13%20PM.png)
+
+Tabbed iTerm 2 showing a blank `bash` session:
+
+![](http://f.cl.ly/items/3C40001M0I2f0g1U3x3m/Screen%20Shot%202011-10-23%20at%206.16.11%20PM.png)
+
+`tmux` hacking session:
+
+![](http://f.cl.ly/items/1y0h1f3D080E2O423w0k/Screen%20Shot%202011-10-23%20at%206.21.52%20PM.png)
