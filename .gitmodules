@@ -58,9 +58,6 @@
 [submodule "home/.vim/bundle/snipmate"]
 	path = home/.vim/bundle/snipmate
 	url = https://github.com/msanders/snipmate.vim.git
-[submodule "home/.vim/bundle/surround"]
-	path = home/.vim/bundle/surround
-	url = https://github.com/tpope/vim-surround.git
 [submodule "home/.vim/bundle/easymotion"]
 	path = home/.vim/bundle/easymotion
 	url = https://github.com/Lokaltog/vim-easymotion.git
