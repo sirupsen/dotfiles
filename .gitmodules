@@ -22,9 +22,6 @@
 [submodule "home/.vim/bundle/nerdtree"]
 	path = home/.vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree.git
-[submodule "home/.vim/bundle/delimitmate"]
-	path = home/.vim/bundle/delimitmate
-	url = https://github.com/Raimondi/delimitMate.git
 [submodule "home/.vim/bundle/javascript"]
 	path = home/.vim/bundle/javascript
 	url = https://github.com/pangloss/vim-javascript.git
@@ -70,3 +67,6 @@
 [submodule "home/.vim/bundle/ctrlp"]
 	path = home/.vim/bundle/ctrlp
 	url = https://github.com/kien/ctrlp.vim.git
+[submodule "home/.vim/bundle/autoclose"]
+	path = home/.vim/bundle/autoclose
+	url = https://github.com/vim-scripts/AutoClose.git

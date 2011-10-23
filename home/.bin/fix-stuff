@@ -17,10 +17,10 @@ rm -rf ~/Library/Caches/Homebrew/*
 echo "Taking out the trash.."
 sudo rm -Rf ~/.Trash/*
 
-echo "Removing old RVM sources.."
-rm -rf ~/.rvm/src/*
-rm -rf ~/.rvm/archives/*
-rm -rf ~/.rvm/repos/*
+echo "Update rbenv.."
+cd ~/.rbenv
+git pull
+cd
 
 echo "Cleaning desktop.."
 rm -rf ~/Desktop/*
