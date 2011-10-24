@@ -67,3 +67,6 @@
 [submodule "home/.vim/bundle/autoclose"]
 	path = home/.vim/bundle/autoclose
 	url = https://github.com/vim-scripts/AutoClose.git
+[submodule "home/.vim/bundle/surroundvim"]
+	path = home/.vim/bundle/surroundvim
+	url = https://github.com/tpope/vim-surround.git

@@ -42,6 +42,7 @@ setuptools-*
 .sass-cache
 .DS_Store
 .rvmrc*
+.rbenv-version
 log/*.log  
 tmp/**/*  
 script/*
