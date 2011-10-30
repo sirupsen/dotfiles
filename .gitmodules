@@ -55,9 +55,6 @@
 [submodule "home/.vim/bundle/ruby"]
 	path = home/.vim/bundle/ruby
 	url = https://github.com/vim-ruby/vim-ruby.git
-[submodule "home/.vim/bundle/snipmate"]
-	path = home/.vim/bundle/snipmate
-	url = https://github.com/msanders/snipmate.vim.git
 [submodule "home/.vim/bundle/easymotion"]
 	path = home/.vim/bundle/easymotion
 	url = https://github.com/Lokaltog/vim-easymotion.git
@@ -70,3 +67,6 @@
 [submodule "home/.vim/bundle/io"]
 	path = home/.vim/bundle/io
 	url = https://github.com/vim-scripts/Io-programming-language-syntax.git
+[submodule "home/.vim/bundle/delimitmate"]
+	path = home/.vim/bundle/delimitmate
+	url = https://github.com/Raimondi/delimitMate.git
