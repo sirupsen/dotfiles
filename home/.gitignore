@@ -1,3 +1,5 @@
 .gitconfig
 .vim/.netrwhist
 .credentials
+.mutt/certificates
+.mutt/cache/*
