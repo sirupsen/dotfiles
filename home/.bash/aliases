@@ -14,6 +14,7 @@ alias la='ls -A'
 alias l='ls'
 alias c='clear'
 alias bitch,=sudo
+alias j=jobs
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -63,6 +64,7 @@ alias r='ruby -w'
 alias gems='gem list'
 alias rbxc='find . -name "*.rbc" -print0 | xargs -0 rm'
 alias be='bundle exec'
+alias beer='bundle exec rake'
 alias rt='bundle exec ruby -Itest'
 alias st='testdrb -Itest'
 

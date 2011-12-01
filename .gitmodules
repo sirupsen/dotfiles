@@ -16,9 +16,6 @@
 [submodule "home/.vim/bundle/rails"]
 	path = home/.vim/bundle/rails
 	url = https://github.com/tpope/vim-rails.git
-[submodule "home/.vim/bundle/supertab"]
-	path = home/.vim/bundle/supertab
-	url = https://github.com/tsaleh/vim-supertab.git
 [submodule "home/.vim/bundle/nerdtree"]
 	path = home/.vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree.git
