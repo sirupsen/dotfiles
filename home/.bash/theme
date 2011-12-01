@@ -26,6 +26,6 @@ function rbenv_version_prompt {
 
 
 # Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff(http://ubuntuforums.org/showthread.php?t=234232)
-PS1='\[$GREEN\]\w/\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
+PS1='\[$LIGHT_RED\]\w/\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
 #export PS1='\n${PINK}\u${NORMAL} ${YELLOW}\h${NORMAL}: ${GREEN}\w${BLUE}$(__git_ps1 "${NORMAL} ${BLUE}%s") ${NORMAL}${RED}$(rbenv_version_prompt) ${NORMAL}\n$ '
 #export PS1='${YELLOW}\w${BLUE}$(__git_ps1 "${NORMAL} ${BLUE}%s") ${NORMAL}$ '
