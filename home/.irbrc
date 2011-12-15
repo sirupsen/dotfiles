@@ -17,7 +17,14 @@ end
 
 if defined? ActiveRecord
   def explain(query)
-    ActiveRecord::Base.connection.execute("EXPLAIN #{query}")
+    query = query.to_sql if query.is_a?(ActiveRecord::Relation)
+
+    ActiveRecord::Base.connection
+      .execute("EXPLAIN ANALYZE #{query}") 
+      .to_a
+      .each { |hash| puts hash["QUERY PLAN"] }
+
+    nil
   end
 end
 
@@ -29,3 +36,4 @@ def time(times = 1)
   Benchmark.bm { |x| x.report { times.times { ret = yield } } }
   ret
 end
+
