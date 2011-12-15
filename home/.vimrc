@@ -150,21 +150,18 @@
     let g:ctrlp_map = '<c-t>'
     " Set working directory to nearest ancester that has a .git directory
     let g:ctrlp_working_path_mode = 2
-    " Don't search in version control directories
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
   " }
   
   " Fugitive {
-    nnoremap <leader>gd :Gdiff<cr>
-    nnoremap <leader>gs :Gstatus<cr>
-    nnoremap <leader>gw :Gwrite<cr>
-    nnoremap <leader>ga :Gadd<cr>
-    nnoremap <leader>gb :Gblame<cr>
-    nnoremap <leader>gco :Gcheckout<cr>
-    nnoremap <leader>gc :Gcommit<cr>
-    nnoremap <leader>gm :Gmove<cr>
-    nnoremap <leader>gr :Gremove<cr>
-    nnoremap <leader>gl :Shell git gl -18<cr>:wincmd \|<cr>
+    nnoremap <leader>gd :Gdiff<CR>
+    nnoremap <leader>gs :Gstatus<CR>
+    nnoremap <leader>gw :Gwrite<CR>
+    nnoremap <leader>ga :Gadd<CR>
+    nnoremap <leader>gb :Gblame<CR>
+    nnoremap <leader>gco :Gcheckout<CR>
+    nnoremap <leader>gc :Gcommit<CR>
+    nnoremap <leader>gm :Gmove<CR>
+    nnoremap <leader>gr :Gremove<CR>
   " }
 
   " Tabular {
