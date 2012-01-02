@@ -85,3 +85,7 @@ alias dontsleep='pmset noidle'
 alias kilall='killall'
 
 alias te='/Applications/TextEdit.app/Contents/MacOS/TextEdit'
+
+alias password="cat /usr/share/dict/words | perl -MList::Util -e 'print
+List::Util::shuffle <>' | head -n 4 | ruby -e 'puts [gets,gets,gets].join(\"
+ \").gsub(\"\n\", \"\").downcase'"
