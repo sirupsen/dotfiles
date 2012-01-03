@@ -26,10 +26,10 @@
 " Vim UI {
   syntax enable
   colorscheme solarized
-  set background=dark
-  set t_Co=256 
-  set textwidth=80
-  set scrolloff=3
+  set background=dark " Set dark solarized theme
+  set t_Co=256 " 256 colors"
+  set textwidth=80 " Auto-jump down at 80 columns"
+  set scrolloff=3 " Keep some distance to the bottom"
   set ruler
   set showcmd  " Show incomplete CMDS at the bottom
   set showmatch " Show matching of: () [] {}
