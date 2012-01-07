@@ -9,9 +9,6 @@ elif [[ $platform == 'darwin' ]]; then
 fi
 
 # General aliases
-alias ll='ls -l'
-alias la='ls -A'
-alias l='ls'
 alias c='clear'
 alias bitch,=sudo
 alias j=jobs
@@ -66,23 +63,6 @@ alias rbxc='find . -name "*.rbc" -print0 | xargs -0 rm'
 alias be='bundle exec'
 alias beer='bundle exec rake'
 alias rt='bundle exec ruby -Itest'
-alias st='testdrb -Itest'
-
-#
-# Rails
-#
-
-alias sc='./script/console'
-alias sg='./script/generate'
-alias ss='./script/server'
-alias hydra='env RUBYLIB=test RAILS_ENV=test rake hydra'
-alias be='bundle exec'
-
-# OS X
-alias dontsleep='pmset noidle'
-
-# Typo correctors
-alias kilall='killall'
 
 alias te='/Applications/TextEdit.app/Contents/MacOS/TextEdit'
 
