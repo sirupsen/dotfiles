@@ -52,8 +52,8 @@
 [submodule "home/.vim/bundle/ctrlp"]
 	path = home/.vim/bundle/ctrlp
 	url = https://github.com/kien/ctrlp.vim.git
-[submodule "home/.vim/bundle/surroundvim"]
-	path = home/.vim/bundle/surroundvim
+[submodule "home/.vim/bundle/surround"]
+	path = home/.vim/bundle/surround
 	url = https://github.com/tpope/vim-surround.git
 [submodule "home/.vim/bundle/io"]
 	path = home/.vim/bundle/io
