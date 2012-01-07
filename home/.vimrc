@@ -1,6 +1,5 @@
 " A lot stolen from 'The Ultimate .Vimrc File'
 " http://spf13.com/post/ultimate-vim-config
-"
 
 " Setup Bundle Support {
   call pathogen#infect()
@@ -9,16 +8,11 @@
 " Basics {
   set nocompatible " No vi compatility
   let mapleader="," " Mapleader
-
-  set encoding=utf-8
-
   filetype plugin indent on " Automatically change file types.
-
-  "set autochdir " Automatically always switch to the current files directory.
-  set shortmess=filmnrxoOtT      " abbrev. of messages (avoids 'hit enter')
+  set encoding=utf-8
   set history=1000 " Keep (a lot) more history
 
-  " No needs for backups, I have Git for that
+  " No need for backups, I have Git and Dropbox for that
   set noswapfile 
   set nobackup
 " }
@@ -28,55 +22,20 @@
   colorscheme solarized
   set background=dark " Set dark solarized theme
   set t_Co=256 " 256 colors"
-  set textwidth=80 " Auto-jump down at 80 columns"
-  set scrolloff=3 " Keep some distance to the bottom"
-  set ruler
-  set showcmd  " Show incomplete CMDS at the bottom
+
+  set textwidth=80 " Switch line at 80 characters
+  set scrolloff=5 " Keep some distance to the bottom"
+
   set showmatch " Show matching of: () [] {}
 
   " Searching {
     set ignorecase " Case insensitive search
     set smartcase " Case sensitive when uppercase is present
     set incsearch " Search as you type
-    "set hlsearch " Highlight search matches
   " }
-
-  set autoread " Auto read when file is changed
-  set hidden " Hide buffers, rather than close them
 " }
 
 " Statusline {
-  " augroup ft_statuslinecolor
-  "   au!
-
-  "   au InsertEnter * hi StatusLine ctermfg=196 guifg=#FF3145
-  "   au InsertLeave * hi StatusLine ctermfg=130 guifg=#CD5907
-  " augroup END
-
-  " set statusline=%f    " Path.
-  " set statusline+=%m   " Modified flag.
-  " set statusline+=%r   " Readonly flag.
-  " set statusline+=%w   " Preview window flag.
-
-  " set statusline+=\    " Space.
-
-  " set statusline+=%#redbar#                " Highlight the following as a warning.
-  " set statusline+=%{SyntasticStatuslineFlag()} " Syntastic errors.
-  " set statusline+=%*                           " Reset highlighting.
-
-  " set statusline+=%=   " Right align.
-
-  " File format, encoding and type.  Ex: "(unix/utf-8/python)"
-  " set statusline+=(
-  " set statusline+=%{&ff}                        " Format (unix/DOS).
-  " set statusline+=/
-  " set statusline+=%{strlen(&fenc)?&fenc:&enc}   " Encoding (utf-8).
-  " set statusline+=/
-  " set statusline+=%{&ft}                        " Type (python).
-  " set statusline+=)
-  "
-  " " Line and column position and counts.
-  " #set statusline+=\ %l\/%L:%03c"
   set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 " }
 
@@ -113,18 +72,8 @@
   " Use jk as escape
   inoremap jk <esc>
 
-  " Shift key fixes
-  cmap W w
-  cmap WQ wq
-  cmap wQ wq
-  cmap Q q
-
   " Key mappings
   :noremap ,d :bd<CR>
-
-  " Make keys work as expected for wrapped lines
-  inoremap <Down> <C-o>gj
-  inoremap <Up> <C-o>gk
 " }
 
 
@@ -153,15 +102,8 @@
   " }
   
   " Fugitive {
-    nnoremap <leader>gd :Gdiff<CR>
     nnoremap <leader>gs :Gstatus<CR>
-    nnoremap <leader>gw :Gwrite<CR>
-    nnoremap <leader>ga :Gadd<CR>
-    nnoremap <leader>gb :Gblame<CR>
-    nnoremap <leader>gco :Gcheckout<CR>
     nnoremap <leader>gc :Gcommit<CR>
-    nnoremap <leader>gm :Gmove<CR>
-    nnoremap <leader>gr :Gremove<CR>
   " }
 
   " Tabular {
@@ -173,9 +115,5 @@
       nmap <Leader>t: :Tab /:\zs<CR>
       vmap <Leader>t: :Tab /:\zs<CR>
     endif
-  " }
-
-  " Rainbow {
-    runtime plugin/RainbowParenthsis.vim 
   " }
 " }
