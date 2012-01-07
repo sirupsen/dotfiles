@@ -22,18 +22,12 @@
 [submodule "home/.vim/bundle/javascript"]
 	path = home/.vim/bundle/javascript
 	url = https://github.com/pangloss/vim-javascript.git
-[submodule "home/.vim/bundle/haml"]
-	path = home/.vim/bundle/haml
-	url = https://github.com/tpope/vim-haml.git
 [submodule "home/.vim/bundle/tabular"]
 	path = home/.vim/bundle/tabular
 	url = https://github.com/godlygeek/tabular.git
 [submodule "home/.vim/bundle/js"]
 	path = home/.vim/bundle/js
 	url = https://github.com/pangloss/vim-javascript.git
-[submodule "home/.vim/bundle/rainbow"]
-	path = home/.vim/bundle/rainbow
-	url = https://github.com/vim-scripts/Rainbow-Parenthesis.git
 [submodule "home/.vim/bundle/solarized"]
 	path = home/.vim/bundle/solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
