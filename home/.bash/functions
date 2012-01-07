@@ -9,15 +9,6 @@ elif [[ "$unamestr" == 'Darwin' ]]; then
    platform='darwin'
 fi
 
-mkcd () {
-  mkdir -p $1
-  cd $1
-}
-
-tarit () {
-  tar cvzf temp.tgz $1
-}
-
 extract () {
   if [ -f $1 ]; then
     case $1 in
