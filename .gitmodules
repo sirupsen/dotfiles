@@ -31,9 +31,6 @@
 [submodule "home/.vim/bundle/solarized"]
 	path = home/.vim/bundle/solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
-[submodule "home/.vim/bundle/sparkup"]
-	path = home/.vim/bundle/sparkup
-	url = https://github.com/rstacruz/sparkup.git
 [submodule "home/.vim/bundle/tcomment"]
 	path = home/.vim/bundle/tcomment
 	url = https://github.com/tomtom/tcomment_vim.git
@@ -46,9 +43,6 @@
 [submodule "home/.vim/bundle/ruby"]
 	path = home/.vim/bundle/ruby
 	url = https://github.com/vim-ruby/vim-ruby.git
-[submodule "home/.vim/bundle/easymotion"]
-	path = home/.vim/bundle/easymotion
-	url = https://github.com/Lokaltog/vim-easymotion.git
 [submodule "home/.vim/bundle/ctrlp"]
 	path = home/.vim/bundle/ctrlp
 	url = https://github.com/kien/ctrlp.vim.git
