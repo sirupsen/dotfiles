@@ -1,31 +1,6 @@
-# For unstaged(*) and staged(+) values next to branch name in __git_ps1
-GIT_PS1_SHOWDIRTYSTATE="enabled"
-GIT_PS1_SHOWSTASHSTATE="enabled"
-GIT_PS1_SHOWUNTRACKEDFILES="enabled"
-GIT_PS1_SHOWUPSTREAM="auto"
-
-# function rvm_version_prompt {
-#   # local gemset=$(echo $GEM_HOME | awk -F'@' '{print $2}')
-#   # [ "$gemset" != "" ] && gemset="@$gemset"
-# 
-#   # local version=$(echo $MY_RUBY_HOME | awk -F'-' '{print $2}')
-# 
-#   # # Don't show for default Ruby
-#   # #[ "$version" == "1.9.2" ] && version=""
-# 
-#   # local full="$version$gemset"
-# 
-#   # [ "$full" != "" ] && echo "$full"
-#   #echo $(rvm-prompt i v g)
-#   # rbenv version | ruby -e "puts STDIN.read.split(' ').first"
-# }
-
 function rbenv_version_prompt {
   echo $(rbenv version-name)
 }
 
-
 # Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff(http://ubuntuforums.org/showthread.php?t=234232)
 PS1='\[$LIGHT_RED\]\w/\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
-#export PS1='\n${PINK}\u${NORMAL} ${YELLOW}\h${NORMAL}: ${GREEN}\w${BLUE}$(__git_ps1 "${NORMAL} ${BLUE}%s") ${NORMAL}${RED}$(rbenv_version_prompt) ${NORMAL}\n$ '
-#export PS1='${YELLOW}\w${BLUE}$(__git_ps1 "${NORMAL} ${BLUE}%s") ${NORMAL}$ '
