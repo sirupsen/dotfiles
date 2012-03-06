@@ -54,20 +54,13 @@
 " Key Mapping {
   " Easier to type
   noremap H ^
-  noremap L $
+  noremap L g_
 
-  map <S-C-J> <C-W>j<C-W>_
-  map <S-C-K> <C-W>k<C-W>_
-  map <S-C-L> <C-W>l<C-W>_
-  map <S-C-H> <C-W>h<C-W>_
-  map <S-C-K> <C-W>k<C-W>_
   map <C-J> <C-W>j
   map <C-K> <C-W>k
   map <C-L> <C-W>l
   map <C-H> <C-W>h
   map <C-K> <C-W>k
-  map <S-H> gT
-  map <S-L> gt
 
   " Use jk as escape
   inoremap jk <esc>

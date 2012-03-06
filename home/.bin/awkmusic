@@ -27,5 +27,5 @@ awk 'function wl() {
             c=int(c);
             while(c!=128) {
                 c<128?c++:c--;
-                printf("%c",c)};};}' | sox -t raw -r 64k -c 1 -e unsigned -b 8 - -d
+                printf("%c",c)};};}' | /dev/dsp #sox -t raw -r 64k -c 1 -e unsigned -b 8 - -d
 
