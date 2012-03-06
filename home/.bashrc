@@ -27,6 +27,7 @@ export PATH=/usr/local/bin:$PATH:~/.bin:/usr/local/lib/node:/usr/local/sbin
 # Term
 export TERM=screen-256color
 
+# Git completion
 . ~/.bash/completion/git
 
 # Load PS1 theme
@@ -34,9 +35,6 @@ export TERM=screen-256color
 
 # Load aliases at end to not conflict with anything
 . ~/.bash/aliases
-
-# rvm
-#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
 # rbenv
 export PATH="$HOME/.rbenv/bin:$PATH"
