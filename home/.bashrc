@@ -1,15 +1,4 @@
 #!/bin/bash 
-# Load credentials, sets a few environment variables
-# used e.g. in the Mutt config.
-#
-# Sets the following variables (not in the Git tree :-)
-# USERNAME=""
-# PASSWORD1=""
-# PASSWORD2=""
-# EMAIL=""
-# FULLNAME=""
-. ~/.credentials
-
 # Load colors
 . ~/.bash/colors
 
