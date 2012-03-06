@@ -15,6 +15,7 @@
   " No need for backups, I have Git and Dropbox for that
   set noswapfile 
   set nobackup
+  set backupskip=/tmp/*,/private/tmp/* " Allow editing crontabs http://vim.wikia.com/wiki/Editing_crontab
 " }
 
 " Vim UI {
