@@ -11,6 +11,9 @@ brew update
 echo "Upgrading Homebrew.."
 brew upgrade
 
+echo "Let Homebrew clean up.."
+brew cleanup
+
 echo "Removing Homebrew cache.."
 rm -rf ~/Library/Caches/Homebrew/*
 
