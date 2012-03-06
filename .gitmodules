@@ -61,9 +61,3 @@
 [submodule "home/.vim/bundle/puppet"]
 	path = home/.vim/bundle/puppet
 	url = https://github.com/puppetlabs/puppet-syntax-vim.git
-[submodule "home/.vim/bundle/tslime"]
-	path = home/.vim/bundle/tslime
-	url = https://github.com/kikijump/tslime.vim.git
-[submodule "home/.vim/bundle/turbox"]
-	path = home/.vim/bundle/turbox
-	url = https://github.com/jgdavey/vim-turbux.git
