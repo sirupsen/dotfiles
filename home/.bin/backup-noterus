@@ -1,8 +1,6 @@
 #!/bin/bash
 
-echo "Creating backup.."
 ssh root@noter.us 'pg_dump noterus_production -U noterus > ~/noterus_backup'
 
 NOW=$(date "+%H")
-echo "Downloading backup to Dropbox.."
 scp root@noter.us:~/noterus_backup.sql ~/Dropbox/backups/noterus/$NOW.sql
