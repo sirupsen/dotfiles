@@ -24,6 +24,3 @@ echo "Update rbenv.."
 cd ~/.rbenv
 git pull
 cd
-
-echo "Cleaning desktop.."
-rm -rf ~/Desktop/*
