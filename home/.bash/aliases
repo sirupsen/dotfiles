@@ -63,7 +63,7 @@ alias gems='gem list'
 alias rbxc='find . -name "*.rbc" -print0 | xargs -0 rm'
 alias be='bundle exec'
 alias beer='bundle exec rake'
-alias rt='bundle exec ruby -Itest'
+alias rt='ruby -Itest'
 
 alias te='/Applications/TextEdit.app/Contents/MacOS/TextEdit'
 
@@ -72,3 +72,7 @@ List::Util::shuffle <>' | head -n 4 | ruby -e 'puts [gets,gets,gets].join(\"
  \").gsub(\"\n\", \"\").downcase'"
 
 alias todo="vim ~/Dropbox/tasks/tasks.txt"
+
+#
+# Informatics
+# 
