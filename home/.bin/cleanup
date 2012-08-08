@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+require 'colored'
+
+def header(header)
+  puts "------> ".blue + "#{header}"
+end
+
+def cmd(cmd)
+  puts "\t$ #{cmd}".green
+  system cmd
+end
+
+header "Updating Vim plugins"
+cmd "cd ~/.homesick/repos/Sirupsen/dotfiles && git submodule --quiet foreach git pull origin master"
+
+header "Updating Homebrew"
+cmd "brew update -s"
+
+header "Upgrading Homebrew"
+cmd "brew upgrade -s"
+
+header "Let Homebrew clean up"
+cmd "brew cleanup -s"
+
+header "Removing Homebrew cache"
+cmd "rm -rf ~/Library/Caches/Homebrew/*"
+
+header "Updating npm"
+cmd "npm update npm -g -s"
+
+header "Updating hub"
+cmd "curl http://defunkt.io/hub/standalone -sLo ~/.bin/hub && chmod +x ~/.bin/hub"
+
+header "Updating gist"
+cmd "curl -s https://raw.github.com/defunkt/gist/master/gist > ~/.bin/gist && chmod +x ~/.bin/gist"
+
+header "Updating ack"
+cmd "curl -s http://betterthangrep.com/ack-standalone > ~/.bin/ack && chmod +x ~/.bin/ack"
+
+header "Update rbenv.."
+cmd "cd ~/.rbenv && git pull"
+
+header "Taking out the trash.."
+cmd "rm -Rf ~/.Trash/*"
