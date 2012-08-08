@@ -67,3 +67,6 @@
 [submodule "home/.vim/bundle/turbox"]
 	path = home/.vim/bundle/turbox
 	url = https://github.com/jgdavey/vim-turbux.git
+[submodule "home/.vim/bundle/webapi"]
+	path = home/.vim/bundle/webapi
+	url = https://github.com/mattn/webapi-vim.git
