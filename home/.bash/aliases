@@ -63,6 +63,11 @@ alias gems='gem list'
 alias rbxc='find . -name "*.rbc" -print0 | xargs -0 rm'
 alias be='bundle exec'
 alias beer='bundle exec rake'
+
+function rt {
+  ruby -Itest $1 --progress-row-max=8- --user-color=true
+}
+
 alias rt='ruby -Itest'
 
 alias te='/Applications/TextEdit.app/Contents/MacOS/TextEdit'
@@ -76,3 +81,6 @@ alias todo="vim ~/Dropbox/tasks/tasks.txt"
 #
 # Informatics
 # 
+# Helpful tmux aliases for interacting with the system clipboard.
+alias tmux_to_clip='tmux save-buffer -|pbcopy'
+alias tmux_from_clip='tmux set-buffer "$(pbpaste)"'

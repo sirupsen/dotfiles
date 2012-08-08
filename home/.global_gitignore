@@ -45,4 +45,3 @@ setuptools-*
 .rbenv-version
 log/*.log  
 tmp/**/*  
-script/*
