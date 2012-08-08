@@ -25,6 +25,9 @@ cmd "brew cleanup -s"
 header "Removing Homebrew cache"
 cmd "rm -rf ~/Library/Caches/Homebrew/*"
 
+header "Removing Homebrew orphans"
+cmd "brew rm $(join <(brew leaves) <(brew deps $1))"
+
 header "Updating npm"
 cmd "npm update npm -g -s"
 
@@ -40,5 +43,9 @@ cmd "curl -s http://betterthangrep.com/ack-standalone > ~/.bin/ack && chmod +x ~
 header "Update rbenv.."
 cmd "cd ~/.rbenv && git pull"
 
-header "Taking out the trash.."
+header "Remove screenshots from desktop"
+cmd "rm -rfv ~/Desktop/*Screen\ Shot*.png"
+
+
+header "Taking out the trash"
 cmd "rm -Rf ~/.Trash/*"
