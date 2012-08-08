@@ -1,6 +1,0 @@
-#!/bin/bash
-scrot -s "temp.png"
-url=`curl -s -F "image=@temp.png;type=image/png" -F "private=true" http://anyhub.net/api/upload | grep -E -o "http://ahb.me/([^\"]+)"`
-echo $url | xclip -selection c
-rm temp.png
-notify-send $url
