@@ -1,41 +1,12 @@
 #!/bin/bash 
-# Load colors
-. ~/.bash/colors
+source ~/.bash/colors # Load color aliases
+source ~/.bash/functions # Load functions
+source ~/.bash/shell # Shell behavior
+source ~/.bash/path # Add the right things to the path
 
-# Load functions
-. ~/.bash/functions
+source ~/.bash/completion/git # Git completion
 
-# Vi Bash command mode
-set -o vi
+source ~/.bash/theme # Load PS1 theme
+source ~/.bash/aliases # Load aliases at end to not conflict with anything
 
-# Notify immediatly on bg job completion
-set -o notify
-
-# Case insensitive
-shopt -s nocaseglob
-
-# Setting up editor 
-export EDITOR=/usr/bin/vim
-
-# Setting pager to the vimpager
-export PAGER=vimpager
-alias less=$PAGER
-
-# Add user bins to path, prioritize Homebrew's above anything else
-export PATH=/usr/local/bin:$PATH:~/.bin:/usr/local/lib/node:/usr/local/sbin
-
-# Term
-export TERM=screen-256color
-
-# Git completion
-. ~/.bash/completion/git
-
-# Load PS1 theme
-. ~/.bash/theme
-
-# Load aliases at end to not conflict with anything
-. ~/.bash/aliases
-
-# rbenv
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
+source ~/.bash/rbenv # Load rbenv

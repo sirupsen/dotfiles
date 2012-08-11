@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -o vi # Vi Bash command mode
+set -o notify # Notify immediatly on bg job completion
+
+shopt -s nocaseglob # Case insensitive autocompletion
+export EDITOR=/usr/bin/vim # Vim as default editor
+
+export PAGER=vimpager # Setting pager to the vimpager in bin
+alias less=$PAGER # Many scripts explicitly use less, workaround
+
+# Add user bins to path, prioritize Homebrew's above anything else
+
+export TERM=screen-256color

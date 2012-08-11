@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-PWD=`pwd`
-tmux split-window $1
-tmux send-keys " cd $PWD;clear"
-tmux send-keys "Enter"
