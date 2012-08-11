@@ -2,7 +2,7 @@
 require 'colored'
 
 def header(header)
-  puts "------> ".blue + "#{header}"
+  puts "------> ".blue + "#{header}.."
 end
 
 def cmd(cmd)
@@ -11,7 +11,10 @@ def cmd(cmd)
 end
 
 header "Updating Vim plugins"
-cmd "cd ~/.homesick/repos/Sirupsen/dotfiles && git submodule --quiet foreach git pull origin master"
+cmd "cd ~/.homesick/repos/Sirupsen/dotfiles && git submodule --quiet foreach 'git pull origin master &'"
+
+header "Waiting for Vim plugin updates"
+cmd "wait"
 
 header "Updating Homebrew"
 cmd "brew update -s"
@@ -32,9 +35,13 @@ header "Updating npm"
 cmd "npm update npm -g -s"
 
 header "Updating tmux-MacOSX-pasteboard"
-cmd "git clone git://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git /tmp/pasteboard && cd /tmp/pasteboard"
-cmd "make reattach-to-user-namespace && cp reattach-to-user-namespace ~/bin"
-cmd "chmod +x ~/.bin/reattach-to-user-namespace"
+cmd <<-CMD
+  rm -rf /tmp/pasteboard && \
+  git clone git://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git /tmp/pasteboard && \
+  cd /tmp/pasteboard && make reattach-to-user-namespace > /dev/null && \
+  cp reattach-to-user-namespace ~/bin && \
+  chmod +x ~/.bin/reattach-to-user-namespace && rm -rf /tmp/pasteboard
+CMD
 
 header "Updating hub"
 cmd "curl http://defunkt.io/hub/standalone -sLo ~/.bin/hub && chmod +x ~/.bin/hub"
@@ -50,7 +57,6 @@ cmd "cd ~/.rbenv && git pull"
 
 header "Remove screenshots from desktop"
 cmd "rm -rfv ~/Desktop/*Screen\ Shot*.png"
-
 
 header "Taking out the trash"
 cmd "rm -Rf ~/.Trash/*"
