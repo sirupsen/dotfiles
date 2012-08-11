@@ -12,10 +12,9 @@
 [core]
 	editor = /usr/bin/vim
 	excludesfile = ~/.global_gitignore
-[help]
-  autocorrect = 1
-[alias]
-  co = checkout
-  br = branch
 [interactive]
 	singlekey = true
+[push]
+	default = tracking
+[credential]
+	helper = osxkeychain
