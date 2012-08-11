@@ -1,53 +1,38 @@
 # Sirupsen's Dotfiles
 
-These are my dotfiles, that I have tweaked and used for the past two years.
+These are my dotfiles, that I have tweaked and used for the past couple of years.
 
-# Software
+# Packages
 
-Relevant to these configuration files are..
+<table>
+  <tr>
+    <th>OS</th>
+    <th>Terminal</th>
+    <th>Shell</th>
+    <th>Editor</th>
+    <th>Version control</th>
+    <th>Multiplexer</th>
+  </tr>
+  <tr>
+    <td>OS X Mountain Lion</td>
+    <td>iTerm 2</td>
+    <td>`bash`</td>
+    <td>`vim`</td>
+    <td>`git`</td>
+    <td>`tmux`</td>
+  </tr>
+</table>
 
-* OS
-  - OS X Lion
-* Terminal
-  - iTerm 2
-* Shell
-  - `bash`
-* Text editor
-  - `vim`
-* Version control
-  - `git`
-* Terminal multiplexer (basically what I use as my in-terminal tiling)
-  - `tmux`
-* Email client
-  - `mutt`
+# Installing
 
-# How I store my dotfiles
+I use [homesick][homesick] to clone and symlink my dotfiles across machines.
+It's as easy as:
 
-Here's how I sync my dotfiles across machines.
-
-They're all in `~/Dropbox/dotfiles`.
-
-Then I use [Homesick][homesick] to handle the symlinking from this directory to
-`~/` for two reasons:
-
-* I don't have to reinvent the wheel
-* I can easily share my configuration
-    - And get up and running remotely in a matter of seconds
-
-I cheat `homesick` into thinking I cloned my dotfiles via `git` (which it can do
-automatically for you with a `git` url, more on that in a second):
-
-    $ ln -s ~/Dropbox/dotfiles ~/.homesick/repos
-
-Perform the symlinking:
-
-    $ homesick symlink dotfiles
-
-I have them on Github for easy sharing with others, you can install them via
-`homesick` with the command:
-
-    $ homesick clone sirupsen/dotfiles
-    $ homesick symlink sirupsen/dotfiles
+```bash
+$ gem install homesick
+$ homesick clone Sirupsen/dotfiles
+$ homeiskc symlink Sirupsen/dotfiles
+```
 
 [homesick]: http://github.com/technicalpickles/homesick
 
@@ -55,12 +40,12 @@ I have them on Github for easy sharing with others, you can install them via
 
 Clean iTerm 2 in `vim`:
 
-![](http://f.cl.ly/items/1o1M3j3i062B2v2S111N/Screen%20Shot%202011-10-23%20at%206.15.13%20PM.png)
+![](http://f.cl.ly/items/17070e1m3v2o2Q0b1K0b/Screen%20Shot%202012-08-11%20at%209.23.12%20PM.png)
 
 Tabbed iTerm 2 showing a blank `bash` session:
 
 ![](http://f.cl.ly/items/3C40001M0I2f0g1U3x3m/Screen%20Shot%202011-10-23%20at%206.16.11%20PM.png)
 
-`tmux` hacking session:
+iTerm 2 fullscreen `tmux` hacking session:
 
-![](http://f.cl.ly/items/1y0h1f3D080E2O423w0k/Screen%20Shot%202011-10-23%20at%206.21.52%20PM.png)
+![](http://f.cl.ly/items/010H27313W0F2y1g2u47/Screen%20Shot%202012-08-11%20at%209.28.53%20PM.png)
