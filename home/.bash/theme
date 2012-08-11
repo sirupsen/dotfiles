@@ -1,6 +1,3 @@
-function rbenv_version_prompt {
-  echo $(rbenv version-name)
-}
-
-# Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff(http://ubuntuforums.org/showthread.php?t=234232)
+# Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff
+# (http://ubuntuforums.org/showthread.php?t=234232)
 PS1='\[$LIGHT_RED\]\w/\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
