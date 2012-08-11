@@ -31,14 +31,19 @@ cmd "brew rm $(join <(brew leaves) <(brew deps $1))"
 header "Updating npm"
 cmd "npm update npm -g -s"
 
+header "Updating tmux-MacOSX-pasteboard"
+cmd "git clone git://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git /tmp/pasteboard && cd /tmp/pasteboard"
+cmd "make reattach-to-user-namespace && cp reattach-to-user-namespace ~/bin"
+cmd "chmod +x ~/.bin/reattach-to-user-namespace"
+
 header "Updating hub"
 cmd "curl http://defunkt.io/hub/standalone -sLo ~/.bin/hub && chmod +x ~/.bin/hub"
 
 header "Updating gist"
 cmd "curl -s https://raw.github.com/defunkt/gist/master/gist > ~/.bin/gist && chmod +x ~/.bin/gist"
 
-header "Updating ack"
-cmd "curl -s http://betterthangrep.com/ack-standalone > ~/.bin/ack && chmod +x ~/.bin/ack"
+header "Updating vimpager"
+cmd "curl -s https://raw.github.com/rkitover/vimpager/master/vimpager > ~/.bin/vimpager && chmox +x ~/.bin/vimpager"
 
 header "Update rbenv.."
 cmd "cd ~/.rbenv && git pull"

@@ -17,12 +17,8 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../../'
 
-#
 # Git
-#
-alias git='hub'
-alias g='hub'
-alias ga='git add'
+hub --help > /dev/null 2>&1 && alias git='hub'
 
 # Commiting
 alias gp='git push'
@@ -64,23 +60,11 @@ alias rbxc='find . -name "*.rbc" -print0 | xargs -0 rm'
 alias be='bundle exec'
 alias beer='bundle exec rake'
 
+# alias rt='be ruby -Itest'
+# 
 function rt {
-  ruby -Itest $1 --progress-row-max=8- --user-color=true
+  bundle exec ruby -Itest $1 #--progress-row-max=8- --user-color=true
 }
 
-alias rt='ruby -Itest'
-
-alias te='/Applications/TextEdit.app/Contents/MacOS/TextEdit'
-
-alias password="cat /usr/share/dict/words | perl -MList::Util -e 'print
-List::Util::shuffle <>' | head -n 4 | ruby -e 'puts [gets,gets,gets].join(\"
- \").gsub(\"\n\", \"\").downcase'"
-
-alias todo="vim ~/Dropbox/tasks/tasks.txt"
-
-#
-# Informatics
-# 
-# Helpful tmux aliases for interacting with the system clipboard.
 alias tmux_to_clip='tmux save-buffer -|pbcopy'
 alias tmux_from_clip='tmux set-buffer "$(pbpaste)"'
