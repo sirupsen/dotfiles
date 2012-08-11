@@ -16,10 +16,10 @@ These are my dotfiles, that I have tweaked and used for the past couple of years
   <tr>
     <td>OS X Mountain Lion</td>
     <td>iTerm 2</td>
-    <td>`bash`</td>
-    <td>`vim`</td>
-    <td>`git`</td>
-    <td>`tmux`</td>
+    <td>bash</td>
+    <td>vim</td>
+    <td>git</td>
+    <td>tmux</td>
   </tr>
 </table>
 
@@ -44,7 +44,7 @@ Clean iTerm 2 in `vim`:
 
 Tabbed iTerm 2 showing a blank `bash` session:
 
-![](http://f.cl.ly/items/3C40001M0I2f0g1U3x3m/Screen%20Shot%202011-10-23%20at%206.16.11%20PM.png)
+![](http://f.cl.ly/items/1b2i1w240h043U3I3L3z/Screen%20Shot%202012-08-11%20at%209.31.27%20PM.png)
 
 iTerm 2 fullscreen `tmux` hacking session:
 
