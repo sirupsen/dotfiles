@@ -1,20 +1,20 @@
 [user]
-	name = Simon H. Eskildsen
-	email = sirup@sirupsen.com
+  name = Simon H. Eskildsen
+  email = sirup@sirupsen.com
 [color]
   branch = auto
   diff = auto
   interactive = auto
   status = auto
-	ui = auto
+  ui = auto
 [merge]
   tool = vimdiff
 [core]
-	editor = /usr/bin/vim
-	excludesfile = ~/.global_gitignore
+  editor = /usr/bin/vim
+  excludesfile = ~/.global_gitignore
 [interactive]
-	singlekey = true
+  singlekey = true
 [push]
-	default = tracking
+  default = tracking
 [credential]
-	helper = osxkeychain
+  helper = osxkeychain
