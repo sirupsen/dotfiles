@@ -31,7 +31,7 @@ It's as easy as:
 ```bash
 $ gem install homesick
 $ homesick clone Sirupsen/dotfiles
-$ homeiskc symlink Sirupsen/dotfiles
+$ homesick symlink Sirupsen/dotfiles
 ```
 
 [homesick]: http://github.com/technicalpickles/homesick
