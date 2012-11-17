@@ -50,18 +50,6 @@ map <leader>d :bd<CR>
 
 " PLUGINS
 
-" NerdTree.vim
-let NERDTreeChDirMode = 1
-let NERDTreeWinSize=20
-
-let NERDTreeHighlightCursorline=1
-map <leader>n :NERDTreeToggle<CR>
-
-" Gist.vim
-let g:gist_clip_command = 'pbcopy'
-let g:gist_detect_filetype = 1
-let g:gist_open_browser_after_post = 0
-
 " CtrlP.vim
 let g:ctrlp_map = '<c-t>'
 " Set working directory to nearest ancester that has a .git directory
@@ -79,11 +67,9 @@ map <Leader>t> :Tab /=><CR>
 map <Leader>t: :Tab /:\zs<CR>
 map <Leader>t: :Tab /:\zs<CR>
 
-" Be nice to long lines
-nmap  <buffer> <silent> k gk
-nmap  <buffer> <silent> j gj
-nmap  <buffer> <silent> 0 g0
-nmap  <buffer> <silent> $ g$
+" K and J behaves as expected for long lines.
+nmap k gk
+nmap j gj
 
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
