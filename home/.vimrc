@@ -46,7 +46,7 @@ map <C-H> <C-W>h
 map <C-K> <C-W>k
 
 inoremap jk <esc>
-nnoremap <leader>d :bd<CR>
+map <leader>d :bd<CR>
 
 " PLUGINS
 
@@ -55,7 +55,7 @@ let NERDTreeChDirMode = 1
 let NERDTreeWinSize=20
 
 let NERDTreeHighlightCursorline=1
-nnoremap ,n :NERDTreeToggle<CR>
+map <leader>n :NERDTreeToggle<CR>
 
 " Gist.vim
 let g:gist_clip_command = 'pbcopy'
@@ -68,19 +68,32 @@ let g:ctrlp_map = '<c-t>'
 let g:ctrlp_working_path_mode = 2
   
 " Fugitive
-nnoremap <leader>gs :Gstatus<CR>
-nnoremap <leader>gc :Gcommit<CR>
+map <leader>gs :Gstatus<CR>
+map <leader>gc :Gcommit<CR>
 
 " Tabular {
-nmap <Leader>t= :Tab /=<CR>
-nmap <Leader>t= :Tab /=<CR>
-vmap <Leader>t> :Tab /=><CR>
-vmap <Leader>t> :Tab /=><CR>
-nmap <Leader>t: :Tab /:\zs<CR>
-vmap <Leader>t: :Tab /:\zs<CR>
+map <Leader>t= :Tab /=<CR>
+map <Leader>t= :Tab /=<CR>
+map <Leader>t> :Tab /=><CR>
+map <Leader>t> :Tab /=><CR>
+map <Leader>t: :Tab /:\zs<CR>
+map <Leader>t: :Tab /:\zs<CR>
 
 " Be nice to long lines
-noremap  <buffer> <silent> k gk
-noremap  <buffer> <silent> j gj
-noremap  <buffer> <silent> 0 g0
-noremap  <buffer> <silent> $ g$
+nmap  <buffer> <silent> k gk
+nmap  <buffer> <silent> j gj
+nmap  <buffer> <silent> 0 g0
+nmap  <buffer> <silent> $ g$
+
+" Rename current file, thanks Gary Bernhardt via Ben Orenstein
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+
+map <leader>r :call RenameFile()<cr>
