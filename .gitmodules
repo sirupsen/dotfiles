@@ -34,9 +34,6 @@
 [submodule "home/.vim/bundle/coffee"]
 	path = home/.vim/bundle/coffee
 	url = https://github.com/kchmck/vim-coffee-script.git
-[submodule "home/.vim/bundle/gist"]
-	path = home/.vim/bundle/gist
-	url = https://github.com/mattn/gist-vim.git
 [submodule "home/.vim/bundle/ruby"]
 	path = home/.vim/bundle/ruby
 	url = https://github.com/vim-ruby/vim-ruby.git
@@ -46,24 +43,9 @@
 [submodule "home/.vim/bundle/surround"]
 	path = home/.vim/bundle/surround
 	url = https://github.com/tpope/vim-surround.git
-[submodule "home/.vim/bundle/io"]
-	path = home/.vim/bundle/io
-	url = https://github.com/vim-scripts/Io-programming-language-syntax.git
-[submodule "home/.vim/bundle/delimitmate"]
-	path = home/.vim/bundle/delimitmate
-	url = https://github.com/Raimondi/delimitMate.git
 [submodule "home/.vim/bundle/supertab"]
 	path = home/.vim/bundle/supertab
 	url = https://github.com/ervandew/supertab.git
 [submodule "home/.vim/bundle/puppet"]
 	path = home/.vim/bundle/puppet
 	url = https://github.com/puppetlabs/puppet-syntax-vim.git
-[submodule "home/.vim/bundle/tslime"]
-	path = home/.vim/bundle/tslime
-	url = https://github.com/xaviershay/tslime.vim.git
-[submodule "home/.vim/bundle/turbox"]
-	path = home/.vim/bundle/turbox
-	url = https://github.com/jgdavey/vim-turbux.git
-[submodule "home/.vim/bundle/webapi"]
-	path = home/.vim/bundle/webapi
-	url = https://github.com/mattn/webapi-vim.git

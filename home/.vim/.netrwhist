@@ -1,0 +1,9 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =7
+let g:netrw_dirhist_1='/Users/sirup/.rbenv/versions/1.9.3-p194/lib/ruby/gems/1.9.1/gems/state_machine-1.1.2'
+let g:netrw_dirhist_2='/Users/sirup/.rbenv/versions/1.9.3-p194/lib/ruby/gems/1.9.1/gems/to_google_spreadsheet-0.1.1'
+let g:netrw_dirhist_3='/Users/sirup/Dropbox/code/informatics/ioi'
+let g:netrw_dirhist_4='/Users/sirup/Dropbox/code/todo'
+let g:netrw_dirhist_5='/Users/sirup/Dropbox/code/librodrop'
+let g:netrw_dirhist_6='/Users/sirup/Dropbox/shared/walri/cheaterpress/cpp'
+let g:netrw_dirhist_7='/Users/sirup/Dropbox/code/tutorial/src/tutorial'
