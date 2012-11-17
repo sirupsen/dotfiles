@@ -18,6 +18,3 @@
   default = tracking
 [credential]
   helper = osxkeychain
-[github]
-	user = Sirupsen
-	password = styled mango tree 72

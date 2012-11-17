@@ -8,19 +8,21 @@ elif [[ $platform == 'darwin' ]]; then
    alias ls='ls -G'
 fi
 
+# Clear screen with ^-L like in bash
+bind -m vi-insert "\C-l":clear-screen
+
 # General aliases
-alias c='clear'
 alias bitch,=sudo
 alias j=jobs
 
 alias ..='cd ..'
 alias ...='cd ../..'
-alias ....='cd ../../../'
 
 # Git
 hub --help > /dev/null 2>&1 && alias git='hub'
 
 # Commiting
+# Complete stuff is for auto-completion to work with the aliases
 alias gp='git push'
 complete -o default -o nospace -F _git_push gp
 
@@ -47,7 +49,6 @@ complete -o default -o nospace -F _git_checkout gco
 
 # Ruby
 alias be='bundle exec'
-alias beer='bundle exec rake'
 
 function rt { 
   bundle exec ruby -Itest $1 #--progress-row-max=8 --use-color=true 
