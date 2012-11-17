@@ -46,7 +46,7 @@ map <C-H> <C-W>h
 map <C-K> <C-W>k
 
 inoremap jk <esc>
-:noremap <leader>d :bd<CR>
+nnoremap <leader>d :bd<CR>
 
 " PLUGINS
 
@@ -55,7 +55,7 @@ let NERDTreeChDirMode = 1
 let NERDTreeWinSize=20
 
 let NERDTreeHighlightCursorline=1
-:noremap ,n :NERDTreeToggle<CR>
+nnoremap ,n :NERDTreeToggle<CR>
 
 " Gist.vim
 let g:gist_clip_command = 'pbcopy'
@@ -78,3 +78,9 @@ vmap <Leader>t> :Tab /=><CR>
 vmap <Leader>t> :Tab /=><CR>
 nmap <Leader>t: :Tab /:\zs<CR>
 vmap <Leader>t: :Tab /:\zs<CR>
+
+" Be nice to long lines
+noremap  <buffer> <silent> k gk
+noremap  <buffer> <silent> j gj
+noremap  <buffer> <silent> 0 g0
+noremap  <buffer> <silent> $ g$

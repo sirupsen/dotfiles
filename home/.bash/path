@@ -3,7 +3,9 @@
 # Homebrew, high priority
 if [ -d /usr/local/Cellar ]; then
   export PATH=/usr/local/bin:$PATH
+  export PATH=$PATH:/usr/local/sbin
 fi
+
 
 # Local bin, low priority
 if [ -d ~/.bin ]; then

@@ -50,7 +50,7 @@ alias be='bundle exec'
 alias beer='bundle exec rake'
 
 function rt { 
-  bundle exec ruby -Itest $1 #--progress-row-max=8- --user-color=true 
+  bundle exec ruby -Itest $1 #--progress-row-max=8 --use-color=true 
 }
 
 alias tmux_to_clip='tmux save-buffer -|pbcopy'

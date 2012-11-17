@@ -4,7 +4,6 @@ nbproject
 *.rbc
 *.pyc
 *.log
-*.gem
 *.db
 *.sqlite3
 *.bak
@@ -14,7 +13,6 @@ nbproject
 *.swp
 *.tmproj
 *.a
-*.bundle
 *.dSYM
 *.dylib
 *.la
@@ -36,7 +34,6 @@ autom4te.cache
 code-cache
 coverage
 tmp
-build
 dist
 setuptools-*
 .sass-cache
