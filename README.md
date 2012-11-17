@@ -1,6 +1,6 @@
 # Sirupsen's Dotfiles
 
-These are my dotfiles, that I have tweaked and used for the past couple of years.
+Dotfiles I have used and tweaked for the past couple of years.
 
 # Packages
 
