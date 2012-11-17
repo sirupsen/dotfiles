@@ -13,9 +13,6 @@
 [submodule "home/.vim/bundle/rails"]
 	path = home/.vim/bundle/rails
 	url = https://github.com/tpope/vim-rails.git
-[submodule "home/.vim/bundle/nerdtree"]
-	path = home/.vim/bundle/nerdtree
-	url = https://github.com/scrooloose/nerdtree.git
 [submodule "home/.vim/bundle/javascript"]
 	path = home/.vim/bundle/javascript
 	url = https://github.com/pangloss/vim-javascript.git
@@ -49,3 +46,6 @@
 [submodule "home/.vim/bundle/puppet"]
 	path = home/.vim/bundle/puppet
 	url = https://github.com/puppetlabs/puppet-syntax-vim.git
+[submodule "home/.vim/bundle/ruby-test"]
+	path = home/.vim/bundle/ruby-test
+	url = git://github.com/janx/vim-rubytest.git
