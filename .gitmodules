@@ -19,9 +19,6 @@
 [submodule "home/.vim/bundle/tabular"]
 	path = home/.vim/bundle/tabular
 	url = https://github.com/godlygeek/tabular.git
-[submodule "home/.vim/bundle/js"]
-	path = home/.vim/bundle/js
-	url = https://github.com/pangloss/vim-javascript.git
 [submodule "home/.vim/bundle/solarized"]
 	path = home/.vim/bundle/solarized
 	url = https://github.com/altercation/vim-colors-solarized.git
@@ -43,9 +40,3 @@
 [submodule "home/.vim/bundle/supertab"]
 	path = home/.vim/bundle/supertab
 	url = https://github.com/ervandew/supertab.git
-[submodule "home/.vim/bundle/puppet"]
-	path = home/.vim/bundle/puppet
-	url = https://github.com/puppetlabs/puppet-syntax-vim.git
-[submodule "home/.vim/bundle/ruby-test"]
-	path = home/.vim/bundle/ruby-test
-	url = git://github.com/janx/vim-rubytest.git
