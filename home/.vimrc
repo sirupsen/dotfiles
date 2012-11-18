@@ -65,9 +65,30 @@ map <Leader>t> :Tab /=><CR>
 map <Leader>t: :Tab /:\zs<CR>
 map <Leader>t: :Tab /:\zs<CR>
 
-" Run code
-map <Leader>cl :!clj %<CR>
-map <leader>cp :!clang++ % && ./a.out<CR>
+map <C-E> :call Run()<CR>
+
+function! Run()
+  if match(expand('%'), '\.rb') != -1
+    if filereadable("./Gemfile")
+      exec "!bundle exec ruby -Itest %"
+    else
+      exec "!ruby -Itest %"
+    end
+  elseif match(expand('%'), '\.clj') != -1
+    exec "!clj %"
+  elseif match(expand('%'), '\.cpp') != -1
+    let executeable = substitute(@%, ".cpp", "", "")
+    let aftermath = "./" . executeable
+
+    if filereadable("input")
+      let aftermath = aftermath . " < input"
+    endif
+
+    exec "!clang++ % -o " . executeable . " && " . aftermath
+  elseif match(expand('%'), '\.vimrc') != -1
+    exec "source $MYVIMRC"
+  endif
+endfunction
 
 " K and J behaves as expected for long lines.
 nmap k gk
