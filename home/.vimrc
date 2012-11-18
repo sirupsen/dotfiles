@@ -49,10 +49,9 @@ map <leader>d :bd<CR>
 
 " PLUGINS
 
-" CtrlP.vim
+" Ctrlp
 let g:ctrlp_map = '<c-t>'
-" Set working directory to nearest ancester that has a .git directory
-let g:ctrlp_working_path_mode = 2
+let g:ctrlp_working_path_mode = 2 " Be smart about working dir
   
 " Fugitive
 map <leader>gs :Gstatus<CR>
@@ -65,6 +64,10 @@ map <Leader>t> :Tab /=><CR>
 map <Leader>t> :Tab /=><CR>
 map <Leader>t: :Tab /:\zs<CR>
 map <Leader>t: :Tab /:\zs<CR>
+
+" Run code
+map <Leader>cl :!clj %<CR>
+map <leader>cp :!clang++ % && ./a.out<CR>
 
 " K and J behaves as expected for long lines.
 nmap k gk
