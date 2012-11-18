@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+require 'colored'
+require 'pry'
+
+program = ARGV[0]
+
+here = `pwd`.strip
+
+Dir["#{here}/input.*"].sort.each do |input|
+  number = input.scan(/\d+/).last
+
+  past = Time.now
+  program_output = `#{here}/#{program} < #{input}`.strip
+  elapsed = Time.now - past
+
+  expected_output = File.read("#{here}/output.#{number}").strip
+
+  if program_output == expected_output
+    puts "---> Test #{number} (#{elapsed}s)".green
+  else
+    puts "---> Test #{number} (#{elapsed}s)".red
+    puts "Expected:".yellow
+    puts expected_output
+    puts
+      
+    puts "Got:".yellow
+    puts program_output
+  end
+end

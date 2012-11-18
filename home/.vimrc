@@ -80,8 +80,10 @@ function! Run()
     let executeable = substitute(@%, ".cpp", "", "")
     let aftermath = "./" . executeable
 
-    if filereadable("input")
-      let aftermath = aftermath . " < input"
+    if filereadable("input.1")
+      if filereadable("output.1")
+        let aftermath = "informatics_tester " . executeable
+      end
     endif
 
     exec "!clang++ % -o " . executeable . " && " . aftermath
