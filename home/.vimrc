@@ -10,7 +10,9 @@ set history=1000 " Keep (a lot) more history
 " BACKUP
 set noswapfile 
 set nobackup
-set backupskip=/tmp/*,/private/tmp/* " Allow editing crontabs http://vim.wikia.com/wiki/Editing_crontab
+" Allow editing crontabs http://vim.wikia.com/wiki/Editing_crontab
+set backupskip=/tmp/*,/private/tmp/* "
+set undodir=~/.vim/undo
 
 " PRETTY COLORS
 syntax enable
@@ -20,11 +22,11 @@ set t_Co=256 " 256 colors
 
 set textwidth=80 " Switch line at 80 characters
 set scrolloff=5 " Keep some distance to the bottom"
+set sidescrolloff=5
 
 set showmatch " Show matching of: () [] {}
 
 " SEARCHING
-set ignorecase " Case insensitive search
 set smartcase " Case sensitive when uppercase is present
 set incsearch " Search as you type
 
@@ -44,8 +46,9 @@ map <C-K> <C-W>k
 map <C-L> <C-W>l
 map <C-H> <C-W>h
 
-inoremap jk <esc>
+imap jk <esc>
 map <leader>d :bd<CR>
+map <leader>cd :cd %:p:h<CR>
 
 " PLUGINS
 
@@ -65,36 +68,65 @@ map <Leader>t> :Tab /=><CR>
 map <Leader>t: :Tab /:\zs<CR>
 map <Leader>t: :Tab /:\zs<CR>
 
-map <C-E> :call Run()<CR>
+map <C-E> :call Execute()<CR>
 
-function! Run()
+function! Execute()
+  exec ":w"
+
+  let informatics = 0
+  let runner = 0
+
+  if filereadable("input.1") && filereadable("output.1")
+    let informatics = 1
+  endif
+
   if match(expand('%'), '\.rb') != -1
-    if filereadable("./Gemfile")
-      exec "!bundle exec ruby -Itest %"
+    if !informatics
+      if match(expand('%'), '_test') != -1
+        if filereadable("./Gemfile")
+          exec "!bundle exec ruby -Itest % --use-color=true"
+        else
+          exec "!ruby -Itest % --use-color=true"
+        end
+      else
+        exec "!ruby %"
+      end
     else
-      exec "!ruby -Itest %"
+      let runner = "ruby " . @%
     end
   elseif match(expand('%'), '\.clj') != -1
-    exec "!clj %"
+    if !informatics
+      exec "!clj %"
+    else
+      let runner = "clj " . @%
+    end
   elseif match(expand('%'), '\.cpp') != -1
     let executeable = substitute(@%, ".cpp", "", "")
-    let aftermath = "./" . executeable
+    let compile = "!clang++ % -o " . executeable . " -O2"
 
-    if filereadable("input.1")
-      if filereadable("output.1")
-        let aftermath = "informatics_tester " . executeable
-      end
+    if !informatics
+      exec "!" . compile . " && ./" . executeable
+    else
+      let runner = "./" . executeable
     endif
-
-    exec "!clang++ % -o " . executeable . " && " . aftermath
   elseif match(expand('%'), '\.vimrc') != -1
     exec "source $MYVIMRC"
+  endif
+
+  if informatics
+    if compile
+      exec "!" . compile . " && informatics_tester '" . runner . "'"
+    else
+      exec "!informatics_tester '" . runner . "'"
+    end
   endif
 endfunction
 
 " K and J behaves as expected for long lines.
 nmap k gk
 nmap j gj
+vmap k gk
+vmap k gk
 
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
