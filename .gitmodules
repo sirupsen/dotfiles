@@ -40,3 +40,12 @@
 [submodule "home/.vim/bundle/supertab"]
 	path = home/.vim/bundle/supertab
 	url = https://github.com/ervandew/supertab.git
+[submodule "home/.vim/bundle/ack"]
+	path = home/.vim/bundle/ack
+	url = git://github.com/mileszs/ack.vim.git
+[submodule "home/.vim/bundle/gist"]
+	path = home/.vim/bundle/gist
+	url = git://github.com/mattn/gist-vim.git
+[submodule "home/.vim/bundle/webapi"]
+	path = home/.vim/bundle/webapi
+	url = git://github.com/mattn/webapi-vim.git
