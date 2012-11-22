@@ -25,6 +25,7 @@ set scrolloff=5 " Keep some distance to the bottom"
 set sidescrolloff=5
 
 set showmatch " Show matching of: () [] {}
+set showlol
 
 " SEARCHING
 set smartcase " Case sensitive when uppercase is present
@@ -69,14 +70,16 @@ map <Leader>t: :Tab /:\zs<CR>
 map <Leader>t: :Tab /:\zs<CR>
 
 map <C-E> :call Execute()<CR>
+map <C-S> :call SpecialExecute()<CR>
 
 function! Execute()
   exec ":w"
 
   let informatics = 0
   let runner = 0
+  let compile_command = 0
 
-  if filereadable("input.1") && filereadable("output.1")
+  if match(expand('%:p'), 'informatics') != -1
     let informatics = 1
   endif
 
@@ -102,23 +105,35 @@ function! Execute()
     end
   elseif match(expand('%'), '\.cpp') != -1
     let executeable = substitute(@%, ".cpp", "", "")
-    let compile = "!clang++ % -o " . executeable . " -O2"
+    let compile_command = "clang++ % -o " . executeable . " -O2"
+    let runner = "./" . executeable
 
     if !informatics
-      exec "!" . compile . " && ./" . executeable
-    else
-      let runner = "./" . executeable
+      exec "!" . compile_command . " && " . runner
     endif
   elseif match(expand('%'), '\.vimrc') != -1
     exec "source $MYVIMRC"
   endif
 
+
   if informatics
-    if compile
-      exec "!" . compile . " && informatics_tester '" . runner . "'"
+    if compile_command != -1
+      exec "!" . compile_command . " && informatics_tester '" . runner . "'"
     else
       exec "!informatics_tester '" . runner . "'"
     end
+  endif
+endfunction
+
+function! SpecialExecute()
+  if match(expand('%'), '_test.rb') != -1
+    exec "!rake test"
+  elseif match(expand('%'), '\.cpp') != -1
+    let executeable = substitute(@%, ".cpp", "", "")
+    let compile_command = "clang++ % -o " . executeable . " -O2"
+    let runner = "./" . executeable
+
+    exec "!" . compile_command . " && " . runner
   endif
 endfunction
 

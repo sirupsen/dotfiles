@@ -37,9 +37,6 @@
 [submodule "home/.vim/bundle/surround"]
 	path = home/.vim/bundle/surround
 	url = https://github.com/tpope/vim-surround.git
-[submodule "home/.vim/bundle/supertab"]
-	path = home/.vim/bundle/supertab
-	url = https://github.com/ervandew/supertab.git
 [submodule "home/.vim/bundle/ack"]
 	path = home/.vim/bundle/ack
 	url = git://github.com/mileszs/ack.vim.git
