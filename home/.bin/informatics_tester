@@ -6,7 +6,7 @@ program = ARGV[0]
 
 here = `pwd`.strip
 
-tests = Dir["#{here}/input.*"].sort { |a,b| a.scan(/\d+/).last.to_i <=> b.scan(/\d+/).last.to_i }
+tests = Dir["#{here}/input*"].sort { |a,b| a.scan(/\d+/).last.to_i <=> b.scan(/\d+/).last.to_i }
 
 all_good = true
 
@@ -28,12 +28,10 @@ tests.each do |input|
 
   expected_output = File.read("#{here}/output.#{number}").strip
 
-
   if program_output.split("\n").map(&:strip) == expected_output.split("\n").map(&:strip)
     puts "---> Test #{number} (#{elapsed}s, #{ram_usage})".send(color)
   else
     puts "---> Test #{number} (#{elapsed}s, #{ram_usage})".red
-
 
     input = File.read(input)
 
