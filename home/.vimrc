@@ -1,11 +1,35 @@
-call pathogen#infect() " Setup Bundle Support
-
 " BASIC
 set nocompatible " No vi compatility
 let mapleader="," " Mapleader
-filetype plugin indent on " Automatically change file types
+filetype off
 set encoding=utf-8
-set history=1000 " Keep (a lot) more history
+set history=100 " Keep more history
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" Vundle
+Bundle 'gmarik/vundle'
+Bundle 'tpope/vim-endwise'
+Bundle 'mileszs/ack.vim'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'kien/ctrlp.vim'
+Bundle 'tpope/vim-fugitive'
+Bundle 'mattn/gist-vim'
+Bundle 'pangloss/vim-javascript'
+Bundle 'tpope/vim-liquid'
+Bundle 'tpope/vim-markdown''
+Bundle 'tpope/vim-rails'
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'tpope/vim-surround'
+Bundle 'godlygeek/tabular'
+Bundle 'tomtom/tcomment_vim'
+Bundle 'mattn/webapi-vim'
+
+" Enable after Vundle.. in the README,
+" dunno what happens if you don't do this.
+filetype plugin indent on
 
 " BACKUP
 set noswapfile 
@@ -16,7 +40,7 @@ set undodir=~/.vim/undo
 
 " PRETTY COLORS
 syntax enable
-colorscheme solarized
+colorscheme desert
 set background=dark " Set dark solarized theme
 set t_Co=256 " 256 colors
 
@@ -25,7 +49,6 @@ set scrolloff=5 " Keep some distance to the bottom"
 set sidescrolloff=5
 
 set showmatch " Show matching of: () [] {}
-set showlol
 
 " SEARCHING
 set smartcase " Case sensitive when uppercase is present
@@ -50,6 +73,12 @@ map <C-H> <C-W>h
 imap jk <esc>
 map <leader>d :bd<CR>
 map <leader>cd :cd %:p:h<CR>
+
+" K and J behaves as expected for long lines.
+nmap k gk
+nmap j gj
+vmap k gk
+vmap k gk
 
 " PLUGINS
 
@@ -87,7 +116,8 @@ function! Execute()
     if !informatics
       if match(expand('%'), '_test') != -1
         if filereadable("./Gemfile")
-          exec "!bundle exec ruby -Itest % --use-color=true"
+          " exec "!bundle exec ruby -Itest % --use-color=true"
+          exec "!bundle exec ruby -Itest %"
         else
           exec "!ruby -Itest % --use-color=true"
         end
@@ -97,15 +127,23 @@ function! Execute()
     else
       let runner = "ruby " . @%
     end
+  elseif match(expand('%'), 'Gemfile') != -1 || match(expand('%'), '\.gemspec') != -1
+    exec "!bundle install"
   elseif match(expand('%'), '\.clj') != -1
     if !informatics
       exec "!clj %"
     else
       let runner = "clj " . @%
     end
+  elseif match(expand('%'), '\.js') != -1
+    if match(expand('%'), 'test') != -1
+      exec "!nodeunit --reporter default %"
+    else
+      exec "!node %"
+    end
   elseif match(expand('%'), '\.cpp') != -1
     let executeable = substitute(@%, ".cpp", "", "")
-    let compile_command = "clang++ % -o " . executeable . " -O2"
+    let compile_command = "clang++ % -o " . executeable . " -O2 -std=c++0x -stdlib=libc++ -pedantic"
     let runner = "./" . executeable
 
     if !informatics
@@ -118,9 +156,9 @@ function! Execute()
 
   if informatics
     if compile_command != -1
-      exec "!" . compile_command . " && informatics_tester '" . runner . "'"
+      exec "!" . compile_command . " && testrus " . runner
     else
-      exec "!informatics_tester '" . runner . "'"
+      exec "!testrus " . runner
     end
   endif
 endfunction
@@ -137,12 +175,6 @@ function! SpecialExecute()
   endif
 endfunction
 
-" K and J behaves as expected for long lines.
-nmap k gk
-nmap j gj
-vmap k gk
-vmap k gk
-
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
   let old_name = expand('%')
@@ -155,3 +187,18 @@ function! RenameFile()
 endfunction
 
 map <leader>r :call RenameFile()<cr>
+
+" Sane default tab-key, I basically used
+" Supertab for this functionality before, but this is all I need.
+" Stolen from Gary Bernhardt's Vim config
+function! InsertTabWrapper()
+  let col = col('.') - 1
+  if !col || getline('.')[col - 1] !~ '\k'
+    return "\<tab>"
+  else
+    return "\<c-p>"
+  endif
+endfunction
+
+imap <tab> <c-r>=InsertTabWrapper()<cr>
+imap <s-tab> <c-n>

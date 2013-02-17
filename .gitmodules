@@ -46,3 +46,6 @@
 [submodule "home/.vim/bundle/webapi"]
 	path = home/.vim/bundle/webapi
 	url = git://github.com/mattn/webapi-vim.git
+[submodule "home/.vim/bundle/js"]
+	path = home/.vim/bundle/js
+	url = git://github.com/pangloss/vim-javascript.git
