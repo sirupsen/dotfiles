@@ -6,12 +6,17 @@ program = ARGV[0]
 
 here = `pwd`.strip
 
-tests = Dir["#{here}/input*"].sort { |a,b| a.scan(/\d+/).last.to_i <=> b.scan(/\d+/).last.to_i }
+def name(path)
+  path.scan(/\w+$/).last
+end
+
+tests = Dir["#{here}/in*"].sort.sort { |a,b| name(a) <=> name(b) }
+output = Dir["#{here}/out*"].sort.sort { |a,b| name(a) <=> name(b) }
 
 all_good = true
 
 tests.each do |input|
-  number = input.scan(/\d+/).last
+  number = name(input)
 
   past = Time.now
   program_output = `/usr/bin/time -l #{here}/#{program} < #{input} 2> /tmp/informatics`.strip
@@ -26,7 +31,10 @@ tests.each do |input|
 
   ram_usage = "#{ram_usage.round(2)}mb"
 
-  expected_output = File.read("#{here}/output.#{number}").strip
+  expected_output = File.read(output.find { |output| name(output) == number })
+
+  index = output.index { |output| name(output) == number }
+  output.delete_at(index)
 
   if program_output.split("\n").map(&:strip) == expected_output.split("\n").map(&:strip)
     puts "---> Test #{number} (#{elapsed}s, #{ram_usage})".send(color)
@@ -35,7 +43,7 @@ tests.each do |input|
 
     input = File.read(input)
 
-    if input.size < 200
+    # if input.size < 200 && program_output.size < 200
       puts "Input:".yellow
       puts input
       puts
@@ -46,7 +54,7 @@ tests.each do |input|
         
       puts "Got:".yellow
       puts program_output
-    end
+    # end
 
     all_good = false
   end

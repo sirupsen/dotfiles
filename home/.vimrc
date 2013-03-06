@@ -18,7 +18,7 @@ Bundle 'tpope/vim-fugitive'
 Bundle 'mattn/gist-vim'
 Bundle 'pangloss/vim-javascript'
 Bundle 'tpope/vim-liquid'
-Bundle 'tpope/vim-markdown''
+Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-rails'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'altercation/vim-colors-solarized'
@@ -40,7 +40,7 @@ set undodir=~/.vim/undo
 
 " PRETTY COLORS
 syntax enable
-colorscheme desert
+colorscheme solarized
 set background=dark " Set dark solarized theme
 set t_Co=256 " 256 colors
 
@@ -146,21 +146,22 @@ function! Execute()
     let compile_command = "clang++ % -o " . executeable . " -O2 -std=c++0x -stdlib=libc++ -pedantic"
     let runner = "./" . executeable
 
-    if !informatics
-      exec "!" . compile_command . " && " . runner
-    endif
+    " if !informatics
+    exec "!" . compile_command . " && time " . runner
+    " exec "!" . compile_command
+    " endif
   elseif match(expand('%'), '\.vimrc') != -1
     exec "source $MYVIMRC"
   endif
 
 
-  if informatics
-    if compile_command != -1
-      exec "!" . compile_command . " && testrus " . runner
-    else
-      exec "!testrus " . runner
-    end
-  endif
+  " if informatics
+  "   if compile_command != -1
+  "     exec "!" . compile_command . " && testrus " . runner
+  "   else
+  "     exec "!testrus " . runner
+  "   end
+  " endif
 endfunction
 
 function! SpecialExecute()
@@ -202,3 +203,6 @@ endfunction
 
 imap <tab> <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
+
+set completeopt-=preview
+map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>

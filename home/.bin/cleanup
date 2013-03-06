@@ -11,7 +11,7 @@ def cmd(cmd)
 end
 
 header "Updating Vim plugins"
-cmd "cd ~/.homesick/repos/Sirupsen/dotfiles && git submodule --quiet foreach 'git pull origin master &' && wait"
+cmd "vim +BundleInstall +qall"
 
 header "Updating Homebrew"
 cmd "brew update -s"
@@ -53,7 +53,7 @@ header "Update rbenv.."
 cmd "cd ~/.rbenv && git pull"
 
 header "Updating ruby-build.."
-cmd "cd ~/.rbenc/plugins/ruby-build && git pull"
+cmd "cd ~/.rbenv/plugins/ruby-build && git pull"
 
 header "Remove screenshots from desktop"
 cmd "rm ~/Desktop/Screen*.png"
