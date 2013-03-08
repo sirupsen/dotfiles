@@ -3,7 +3,6 @@ source ~/.bash/colors # Load color aliases
 source ~/.bash/functions # Load functions
 source ~/.bash/shell # Shell behavior
 source ~/.bash/path # Add the right things to the path
-source ~/.bash/credentials
 
 source ~/.bash/completion/git # Git completion
 
