@@ -26,13 +26,18 @@ Bundle 'tpope/vim-surround'
 Bundle 'godlygeek/tabular'
 Bundle 'tomtom/tcomment_vim'
 Bundle 'mattn/webapi-vim'
+Bundle 'sirupsen/vim-execrus'
 
 " Enable after Vundle.. in the README,
 " dunno what happens if you don't do this.
 filetype plugin indent on
 
+" Warn trailing whitespace, thx @metamorfos
+set list
+set listchars=tab:>-,trail:.,extends:❯,precedes:❮
+
 " BACKUP
-set noswapfile 
+set noswapfile
 set nobackup
 " Allow editing crontabs http://vim.wikia.com/wiki/Editing_crontab
 set backupskip=/tmp/*,/private/tmp/* "
@@ -85,7 +90,7 @@ vmap k gk
 " Ctrlp
 let g:ctrlp_map = '<c-t>'
 let g:ctrlp_working_path_mode = 2 " Be smart about working dir
-  
+
 " Fugitive
 map <leader>gs :Gstatus<CR>
 map <leader>gc :Gcommit<CR>
@@ -98,83 +103,7 @@ map <Leader>t> :Tab /=><CR>
 map <Leader>t: :Tab /:\zs<CR>
 map <Leader>t: :Tab /:\zs<CR>
 
-map <C-E> :call Execute()<CR>
-map <C-S> :call SpecialExecute()<CR>
-
-function! Execute()
-  exec ":w"
-
-  let informatics = 0
-  let runner = 0
-  let compile_command = 0
-
-  if match(expand('%:p'), 'informatics') != -1
-    let informatics = 1
-  endif
-
-  if match(expand('%'), '\.rb') != -1
-    if !informatics
-      if match(expand('%'), '_test') != -1
-        if filereadable("./Gemfile")
-          " exec "!bundle exec ruby -Itest % --use-color=true"
-          exec "!bundle exec ruby -Itest %"
-        else
-          exec "!ruby -Itest % --use-color=true"
-        end
-      else
-        exec "!ruby %"
-      end
-    else
-      let runner = "ruby " . @%
-    end
-  elseif match(expand('%'), 'Gemfile') != -1 || match(expand('%'), '\.gemspec') != -1
-    exec "!bundle install"
-  elseif match(expand('%'), '\.clj') != -1
-    if !informatics
-      exec "!clj %"
-    else
-      let runner = "clj " . @%
-    end
-  elseif match(expand('%'), '\.js') != -1
-    if match(expand('%'), 'test') != -1
-      exec "!nodeunit --reporter default %"
-    else
-      exec "!node %"
-    end
-  elseif match(expand('%'), '\.cpp') != -1
-    let executeable = substitute(@%, ".cpp", "", "")
-    let compile_command = "clang++ % -o " . executeable . " -O2 -std=c++0x -stdlib=libc++ -pedantic"
-    let runner = "./" . executeable
-
-    " if !informatics
-    exec "!" . compile_command . " && time " . runner
-    " exec "!" . compile_command
-    " endif
-  elseif match(expand('%'), '\.vimrc') != -1
-    exec "source $MYVIMRC"
-  endif
-
-
-  " if informatics
-  "   if compile_command != -1
-  "     exec "!" . compile_command . " && testrus " . runner
-  "   else
-  "     exec "!testrus " . runner
-  "   end
-  " endif
-endfunction
-
-function! SpecialExecute()
-  if match(expand('%'), '_test.rb') != -1
-    exec "!rake test"
-  elseif match(expand('%'), '\.cpp') != -1
-    let executeable = substitute(@%, ".cpp", "", "")
-    let compile_command = "clang++ % -o " . executeable . " -O2"
-    let runner = "./" . executeable
-
-    exec "!" . compile_command . " && " . runner
-  endif
-endfunction
+" :so ~/.vim/execrus.vim
 
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
@@ -206,3 +135,6 @@ imap <s-tab> <c-n>
 
 set completeopt-=preview
 map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+
+map <C-E> :call g:Execrus()<CR>
+map <C-\> :call g:Execrus('walrus')<CR>
