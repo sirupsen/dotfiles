@@ -11,7 +11,7 @@ def cmd(cmd)
 end
 
 header "Updating Vim plugins"
-cmd "vim +BundleInstall +qall"
+cmd "vim +BundleInstall! +qall"
 
 header "Updating Homebrew"
 cmd "brew update -s"
@@ -51,9 +51,6 @@ cmd "curl -s https://raw.github.com/rkitover/vimpager/master/vimpager > ~/.bin/v
 
 header "Update rbenv.."
 cmd "cd ~/.rbenv && git pull"
-
-header "Updating ruby-build.."
-cmd "cd ~/.rbenv/plugins/ruby-build && git pull"
 
 header "Remove screenshots from desktop"
 cmd "rm ~/Desktop/Screen*.png"
