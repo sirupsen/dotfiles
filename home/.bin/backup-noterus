@@ -1,6 +1,0 @@
-#!/bin/bash
-
-ssh root@noter.us 'pg_dump noterus_production -U noterus > ~/noterus_backup' > /dev/null
-
-NOW=$(date "+%H")
-scp root@noter.us:~/noterus_backup.sql ~/Dropbox/backups/noterus/$NOW.sql
