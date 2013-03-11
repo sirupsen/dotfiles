@@ -55,6 +55,9 @@ group :upgrade do
 
   header "Update rbenv.."
   cmd "cd ~/.rbenv && git pull"
+
+  header "Update ack"
+  cmd "curl http://betterthangrep.com/ack-standalone > ~/.bin/ack && chdmox +x ~/.bin/ack"
 end
 
 
