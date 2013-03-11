@@ -1,2 +1,2 @@
 #! /bin/bash
-ctags -R --exclude=.git --exclude=log *
+ctags -R --exclude=.git --exclude=log --exclude=tmp --exclude=vendor * 2> /dev/null

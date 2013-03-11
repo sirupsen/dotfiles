@@ -51,11 +51,11 @@ set t_Co=256 " 256 colors
 
 set textwidth=80 " Switch line at 80 characters
 set scrolloff=5 " Keep some distance to the bottom"
-set sidescrolloff=5
 
 set showmatch " Show matching of: () [] {}
 
 " SEARCHING
+set ignorecase " Required for smartcase to work
 set smartcase " Case sensitive when uppercase is present
 set incsearch " Search as you type
 
@@ -82,8 +82,9 @@ map <leader>cd :cd %:p:h<CR>
 " K and J behaves as expected for long lines.
 nmap k gk
 nmap j gj
-vmap k gk
-vmap k gk
+
+" Set spelling in Markdown
+autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
 " PLUGINS
 
@@ -102,8 +103,6 @@ map <Leader>t> :Tab /=><CR>
 map <Leader>t> :Tab /=><CR>
 map <Leader>t: :Tab /:\zs<CR>
 map <Leader>t: :Tab /:\zs<CR>
-
-" :so ~/.vim/execrus.vim
 
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
@@ -133,8 +132,6 @@ endfunction
 imap <tab> <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
 
-set completeopt-=preview
-map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
-
 map <C-E> :call g:Execrus()<CR>
-map <C-\> :call g:Execrus('walrus')<CR>
+map <C-\> :call g:Execrus('alternative')<CR>
+
