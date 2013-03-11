@@ -1,2 +1,3 @@
-#! /bin/bash
-ctags -R --exclude=.git --exclude=log --exclude=tmp --exclude=vendor * 2> /dev/null
+#!/bin/bash
+
+ctags -R --exclude=.git --exclude=log --exclude=tmp --exclude=vendor --languages=-javascript,sql *
