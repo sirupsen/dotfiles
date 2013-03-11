@@ -12,6 +12,7 @@ Dotfiles I have used and tweaked for the past couple of years.
     <th>Editor</th>
     <th>Version control</th>
     <th>Multiplexer</th>
+    <th>Font</th>
   </tr>
   <tr>
     <td>OS X Mountain Lion</td>
@@ -20,6 +21,7 @@ Dotfiles I have used and tweaked for the past couple of years.
     <td>vim</td>
     <td>git</td>
     <td>tmux</td>
+    <td><a href="http://www.levien.com/type/myfonts/inconsolata.html">Inconsolata</a></td>
   </tr>
 </table>
 
