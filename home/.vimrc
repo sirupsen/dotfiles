@@ -10,23 +10,30 @@ call vundle#rc()
 
 " Vundle
 Bundle 'gmarik/vundle'
+
+" Utility
+Bundle 'sirupsen/vim-execrus'
+Bundle 'mattn/webapi-vim'
 Bundle 'tpope/vim-endwise'
 Bundle 'mileszs/ack.vim'
-Bundle 'kchmck/vim-coffee-script'
 Bundle 'kien/ctrlp.vim'
 Bundle 'tpope/vim-fugitive'
 Bundle 'mattn/gist-vim'
+Bundle 'godlygeek/tabular'
+Bundle 'tomtom/tcomment_vim'
+Bundle 'tpope/vim-surround'
+
+" Environments
 Bundle 'pangloss/vim-javascript'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-liquid'
 Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-rails'
-Bundle 'vim-ruby/vim-ruby'
+
+" Colors
 Bundle 'altercation/vim-colors-solarized'
-Bundle 'tpope/vim-surround'
-Bundle 'godlygeek/tabular'
-Bundle 'tomtom/tcomment_vim'
-Bundle 'mattn/webapi-vim'
-Bundle 'sirupsen/vim-execrus'
+
 
 " Enable after Vundle.. in the README,
 " dunno what happens if you don't do this.
