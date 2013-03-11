@@ -1,6 +1,14 @@
 #!/usr/bin/env ruby
 require 'colored'
 
+# I use this because I forgot to run these commands. Because I even forget to
+# run this command, I have the following in my crontab:
+#
+# 0 * * * * cleanup housework > /dev/null
+# 0 18 */3 * * cleanup cleaning > /dev/null
+
+@groups = {}
+
 def header(header)
   puts "------> ".blue + "#{header}.."
 end
@@ -10,50 +18,78 @@ def cmd(cmd)
   system cmd
 end
 
-header "Updating Vim plugins"
-cmd "vim +BundleInstall! +qall"
+def group(name, &block)
+  @groups[name] = block
+end
 
-header "Updating Homebrew"
-cmd "brew update -s"
+group :upgrade do
+  header "Updating Homebrew"
+  cmd "brew update -s"
 
-header "Upgrading Homebrew"
-cmd "brew upgrade -s"
+  header "Updating Vim plugins"
+  cmd "vim +BundleInstall! +qall"
 
-header "Let Homebrew clean up"
-cmd "brew cleanup -s"
+  header "Upgrading Homebrew"
+  cmd "brew upgrade -s"
 
-header "Removing Homebrew cache"
-cmd "rm -rf ~/Library/Caches/Homebrew/*"
+  header "Updating npm"
+  cmd "npm update npm -g -s"
 
-header "Removing Homebrew orphans"
-cmd "brew rm $(join <(brew leaves) <(brew deps $1))"
+  header "Updating tmux-MacOSX-pasteboard"
+  cmd <<-CMD
+    rm -rf /tmp/pasteboard && \
+    git clone git://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git /tmp/pasteboard && \
+    cd /tmp/pasteboard && make reattach-to-user-namespace > /dev/null && \
+    cp reattach-to-user-namespace ~/bin && \
+    chmod +x ~/.bin/reattach-to-user-namespace && rm -rf /tmp/pasteboard
+  CMD
 
-header "Updating npm"
-cmd "npm update npm -g -s"
+  header "Updating hub"
+  cmd "curl http://defunkt.io/hub/standalone -sLo ~/.bin/hub && chmod +x ~/.bin/hub"
 
-header "Updating tmux-MacOSX-pasteboard"
-cmd <<-CMD
-  rm -rf /tmp/pasteboard && \
-  git clone git://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git /tmp/pasteboard && \
-  cd /tmp/pasteboard && make reattach-to-user-namespace > /dev/null && \
-  cp reattach-to-user-namespace ~/bin && \
-  chmod +x ~/.bin/reattach-to-user-namespace && rm -rf /tmp/pasteboard
-CMD
+  header "Updating gist"
+  cmd "curl -s https://raw.github.com/defunkt/gist/master/gist > ~/.bin/gist && chmod +x ~/.bin/gist"
 
-header "Updating hub"
-cmd "curl http://defunkt.io/hub/standalone -sLo ~/.bin/hub && chmod +x ~/.bin/hub"
+  header "Updating vimpager"
+  cmd "curl -s https://raw.github.com/rkitover/vimpager/master/vimpager > ~/.bin/vimpager && chmod +x ~/.bin/vimpager"
 
-header "Updating gist"
-cmd "curl -s https://raw.github.com/defunkt/gist/master/gist > ~/.bin/gist && chmod +x ~/.bin/gist"
+  header "Update rbenv.."
+  cmd "cd ~/.rbenv && git pull"
+end
 
-header "Updating vimpager"
-cmd "curl -s https://raw.github.com/rkitover/vimpager/master/vimpager > ~/.bin/vimpager && chmod +x ~/.bin/vimpager"
 
-header "Update rbenv.."
-cmd "cd ~/.rbenv && git pull"
+group :cleaning do
+  header "Removing Homebrew cache"
+  cmd "rm -rf ~/Library/Caches/Homebrew/*"
 
-header "Remove screenshots from desktop"
-cmd "rm ~/Desktop/Screen*.png"
+  header "Removing logs"
+  cmd "rm -f ~/Code/**/log/*"
 
-header "Taking out the trash"
-cmd "rm -Rf ~/.Trash/*"
+  header "Let Homebrew clean up"
+  cmd "brew cleanup -s"
+
+  header "Removing danid.log"
+  cmd "rm -f ~/danid.log"
+
+  header "Remove screenshots from desktop"
+  cmd "rm ~/Desktop/Screen*.png"
+
+  header "Taking out the trash"
+  cmd "rm -Rf ~/.Trash/*"
+end
+
+group :housework do
+  header "Generating ctags"
+  cmd "for dir in ~/Code/*; do cd $dir 2> /dev/null; tagz; done"
+
+  header "Index Evernotes"
+  cmd "mdimport -r /Applications/Evernote.app/Contents/Library/Spotlight/EvernoteSpotlightImporter.mdimporter"
+end
+
+if ARGV[0] == "all"
+  @groups.each do |key, value|
+    value.call
+  end
+else
+  @groups[ARGV[0].to_sym].call
+end
