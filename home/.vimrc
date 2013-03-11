@@ -142,3 +142,6 @@ imap <s-tab> <c-n>
 map <C-E> :call g:Execrus()<CR>
 map <C-\> :call g:Execrus('alternative')<CR>
 
+" Ctag options
+set tags=tags,gems.tags " Since i ctag for gems
+map <C-[> :sp <CR>:exec("tag ".expand("<cword>"))<CR>

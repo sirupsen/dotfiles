@@ -14,7 +14,6 @@ bind -m vi-insert "\C-l":clear-screen
 # General aliases
 alias bitch,=sudo
 alias j=jobs
-alias todo="vim ~/Dropbox/todo.md"
 
 alias ..='cd ..'
 alias ...='cd ../..'
