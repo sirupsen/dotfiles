@@ -1,11 +1,23 @@
 #!/usr/bin/env ruby
-require 'colored'
-
 # I use this because I forgot to run these commands. Because I even forget to
 # run this command, I have the following in my crontab:
 #
 # 0 * * * * cleanup housework > /dev/null
 # 0 18 */3 * * cleanup cleaning > /dev/null
+
+class String
+  {
+    :red => 31,
+    :green => 32,
+    :yellow => 33,
+    :blue => 34,
+    :pink => 35
+  }.each do |color, code|
+    define_method color do
+      "\e[#{code}m#{self}\e[0m"
+    end
+  end
+end
 
 @groups = {}
 
@@ -57,7 +69,7 @@ group :upgrade do
   cmd "cd ~/.rbenv && git pull"
 
   header "Update ack"
-  cmd "curl http://betterthangrep.com/ack-standalone > ~/.bin/ack && chdmox +x ~/.bin/ack"
+  cmd "curl -s http://betterthangrep.com/ack-standalone > ~/.bin/ack && chdmox +x ~/.bin/ack"
 end
 
 
@@ -75,7 +87,7 @@ group :cleaning do
   cmd "rm -f ~/danid.log"
 
   header "Remove screenshots from desktop"
-  cmd "rm ~/Desktop/Screen*.png"
+  cmd "rm -f ~/Desktop/Screen*.png"
 
   header "Taking out the trash"
   cmd "rm -Rf ~/.Trash/*"
@@ -89,10 +101,11 @@ group :housework do
   cmd "mdimport -r /Applications/Evernote.app/Contents/Library/Spotlight/EvernoteSpotlightImporter.mdimporter"
 end
 
-if ARGV[0] == "all"
+if !ARGV[0] || ARGV[0] == "all"
   @groups.each do |key, value|
     value.call
   end
 else
   @groups[ARGV[0].to_sym].call
 end
+
