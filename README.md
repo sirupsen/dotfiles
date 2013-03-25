@@ -3,11 +3,11 @@
 Dotfiles I have used and tweaked for the past couple of years. They're simple
 and optimized for a 13" laptop.
 
-# Packages
+# Setup
 
 <table>
   <tr>
-    <th>OS</th>
+    <th>Hardware</th>
     <th>Terminal</th>
     <th>Shell</th>
     <th>Editor</th>
@@ -16,13 +16,13 @@ and optimized for a 13" laptop.
     <th>Font</th>
   </tr>
   <tr>
-    <td>OS X Mountain Lion</td>
+    <td>Retina Macbook 13", OS X</td>
     <td>iTerm 2</td>
     <td>bash</td>
     <td>vim</td>
     <td>git</td>
     <td>tmux</td>
-    <td><a href="http://www.levien.com/type/myfonts/inconsolata.html">Inconsolata</a></td>
+    <td><a href="http://www.levien.com/type/myfonts/inconsolata.html">Inconsolata</a> 14pt</td>
   </tr>
 </table>
 
