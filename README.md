@@ -1,6 +1,7 @@
 # Sirupsen's Dotfiles
 
-Dotfiles I have used and tweaked for the past couple of years.
+Dotfiles I have used and tweaked for the past couple of years. They're simple
+and optimized for a 13" laptop.
 
 # Packages
 
