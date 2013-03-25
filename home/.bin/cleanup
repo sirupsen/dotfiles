@@ -45,18 +45,18 @@ group :upgrade do
   cmd "vim +BundleClean! +qall"
 
   header "Upgrading Homebrew"
-  cmd "brew upgrade -s > /dev/null"
+  cmd "brew upgrade -s"
 
   header "Updating npm"
   cmd "npm update npm -g -s"
 
   header "Updating tmux-MacOSX-pasteboard"
   cmd <<-CMD
-  rm -rf /tmp/pasteboard && \
-  git clone git://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git /tmp/pasteboard >/dev/null 2>&1 && \
-  cd /tmp/pasteboard && make reattach-to-user-namespace > /dev/null 2>&1 && \
-  cp reattach-to-user-namespace ~/.bin && \
-  chmod +x ~/.bin/reattach-to-user-namespace && rm -rf /tmp/pasteboard
+rm -rf /tmp/pasteboard && \
+git clone git://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard.git /tmp/pasteboard > /dev/null 2>&1 && \
+cd /tmp/pasteboard && make reattach-to-user-namespace > /dev/null 2>&1 && \
+cp reattach-to-user-namespace ~/.bin && \
+chmod +x ~/.bin/reattach-to-user-namespace && rm -rf /tmp/pasteboard
   CMD
 
   header "Updating hub"

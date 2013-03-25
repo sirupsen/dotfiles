@@ -14,14 +14,15 @@ Bundle 'gmarik/vundle'
 " Utility
 Bundle 'sirupsen/vim-execrus'
 Bundle 'mattn/webapi-vim'
-Bundle 'tpope/vim-endwise'
 Bundle 'mileszs/ack.vim'
 Bundle 'kien/ctrlp.vim'
-Bundle 'tpope/vim-fugitive'
 Bundle 'mattn/gist-vim'
 Bundle 'godlygeek/tabular'
 Bundle 'tomtom/tcomment_vim'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-endwise'
 Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-rake'
 
 " Environments
 Bundle 'pangloss/vim-javascript'
@@ -30,6 +31,7 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-liquid'
 Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-rails'
+Bundle 'vim-scripts/VimClojure'
 
 " Colors
 Bundle 'altercation/vim-colors-solarized'
@@ -141,7 +143,8 @@ imap <s-tab> <c-n>
 
 map <C-E> :call g:Execrus()<CR>
 map <C-\> :call g:Execrus('alternative')<CR>
+map <C-P> :call g:Execrus('repl')<CR>
 
 " Ctag options
 set tags=tags,gems.tags " Since i ctag for gems
-map <C-[> :sp <CR>:exec("tag ".expand("<cword>"))<CR>
+" map <C-[> :sp <CR>:exec("tag ".expand("<cword>"))<CR>
