@@ -95,6 +95,11 @@ nmap j gj
 " Set spelling in Markdown
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
+set laststatus=0 " Remove statusbar
+" Set mandatory status bar in vert splits to -
+" autocmd BufNewFile,BufRead * let &l:stl="%#Normal#".repeat('───',winwidth(0))
+autocmd BufNewFile,BufRead * let &l:stl="%#Normal#".repeat('─',winwidth(0))
+
 " PLUGINS
 
 " Ctrlp
