@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+colors = [:red, :magenta, :white, :green, :blue, :cyan]
