@@ -42,12 +42,12 @@ $ homesick symlink Sirupsen/dotfiles
 
 Clean iTerm 2 in `vim`:
 
-![](http://f.cl.ly/items/17070e1m3v2o2Q0b1K0b/Screen%20Shot%202012-08-11%20at%209.23.12%20PM.png)
+![](http://i.imgur.com/dCCtqGy.png)
 
-Blank `bash`, about as complicated the prompt gets.
+Blank `bash`, only shows current dir, about as complicated the prompt gets.
 
-![](http://f.cl.ly/items/1b2i1w240h043U3I3L3z/Screen%20Shot%202012-08-11%20at%209.31.27%20PM.png)
+![](http://i.imgur.com/yLrooPJ.png)
 
 iTerm 2 fullscreen `tmux` hacking session:
 
-![](http://f.cl.ly/items/010H27313W0F2y1g2u47/Screen%20Shot%202012-08-11%20at%209.28.53%20PM.png)
+![](http://i.imgur.com/Xfr6tbI.png)
