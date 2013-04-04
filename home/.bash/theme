@@ -2,4 +2,7 @@
 # (http://ubuntuforums.org/showthread.php?t=234232)
 PS1='\[$LIGHT_RED\]\W\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
 
+# Set window names in TMUX
+if { [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; } then
 f(){ if [ "$PWD" != "$LPWD" ];then LPWD="$PWD"; tmux rename-window ${PWD//*\//}; fi }; export PROMPT_COMMAND=f;
+fi
