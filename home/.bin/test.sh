@@ -1,10 +1,44 @@
-UPPER=$(ls | grep -o '[0-9]\{1,\}' | sort -gr | head -n 1)
+RUN=$1
+TEST=$2
 
-echo "Running $UPPER tests.."
+function input_file()
+{
+  echo "malcolm.in.$1"
+}
 
-for i in $(seq $UPPER)
-do
-  echo "Test $i: "
-  time ./$1 < input.$i | sed "s/\s+$//g" | git diff --no-index output.$i -
+function output_file()
+{
+  echo "malcolm.out.$1"
+}
+
+function run_test()
+{
+  echo "Test #$1:"
+  time ./$RUN < $(input_file $1) | diff -wa $(output_file $1) -
   echo ""
-done
+}
+
+function fix_run()
+{
+  if [ -z $RUN ]; then
+    RUN=$(ls | grep *.cpp | head -n 1 | sed "s/.cpp//g")
+  fi
+}
+
+fix_run
+
+if [ -z $RUN ]; then
+  echo "No program to test."
+fi
+
+if [ -z $TEST ]; then
+  UPPER=$(ls | grep -o '[0-9]\{1,\}' | sort -gr | head -n 1)
+
+  for i in $(seq $UPPER)
+  do
+    run_test $i
+  done
+else
+  run_test $2
+fi
+

@@ -96,15 +96,12 @@ nmap j gj
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
 set laststatus=0 " Remove statusbar
-" Set mandatory status bar in vert splits to -
-" autocmd BufNewFile,BufRead * let &l:stl="%#Normal#".repeat('───',winwidth(0))
 autocmd BufNewFile,BufRead * let &l:stl="%#Normal#".repeat('─',winwidth(0))
 
 " PLUGINS
 
 " Ctrlp
 let g:ctrlp_map = '<c-t>'
-let g:ctrlp_working_path_mode = 2 " Be smart about working dir
 
 " Fugitive
 map <leader>gs :Gstatus<CR>
@@ -152,4 +149,5 @@ map <C-P> :call g:Execrus('repl')<CR>
 
 " Ctag options
 set tags=tags,gems.tags " Since i ctag for gems
-" map <C-[> :sp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+hi NonText ctermfg=black guifg=black
