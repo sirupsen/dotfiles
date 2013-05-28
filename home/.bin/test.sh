@@ -3,12 +3,12 @@ TEST=$2
 
 function input_file()
 {
-  echo "malcolm.in.$1"
+  echo "input.$1"
 }
 
 function output_file()
 {
-  echo "malcolm.out.$1"
+  echo "output.$1"
 }
 
 function run_test()
