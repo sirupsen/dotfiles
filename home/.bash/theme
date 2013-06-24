@@ -1,8 +1,15 @@
 # Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff
 # (http://ubuntuforums.org/showthread.php?t=234232)
-PS1='\[$LIGHT_RED\]\W\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
+PS1='\[$LIGHT_RED\]\W\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]Σ '
 
-# Set window names in TMUX
+# Set window names in TMUX coresponding to the current
+# directory.
 if { [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; } then
-f(){ if [ "$PWD" != "$LPWD" ];then LPWD="$PWD"; tmux rename-window ${PWD//*\//}; fi }; export PROMPT_COMMAND=f;
+  set_window_name() {
+    if [ "$PWD" != "$LPWD" ]; then
+      LPWD="$PWD"
+      tmux rename-window ${PWD//*\//}
+    fi
+  }
+  export PROMPT_COMMAND=set_window_name;
 fi
