@@ -13,10 +13,7 @@ Bundle 'gmarik/vundle'
 
 " Utility
 Bundle 'sirupsen/vim-execrus'
-Bundle 'mattn/webapi-vim'
-Bundle 'mileszs/ack.vim'
 Bundle 'kien/ctrlp.vim'
-Bundle 'mattn/gist-vim'
 Bundle 'godlygeek/tabular'
 Bundle 'tomtom/tcomment_vim'
 Bundle 'tpope/vim-fugitive'
