@@ -1,6 +1,6 @@
 [user]
-	name = Simon H. Eskildsen
-	email = sirup@sirupsen.com
+  name = Simon H. Eskildsen
+  email = sirup@sirupsen.com
 [color]
   branch = auto
   diff = auto
@@ -18,3 +18,5 @@
   default = tracking
 [credential]
   helper = osxkeychain
+[pull]
+  rebase = true
