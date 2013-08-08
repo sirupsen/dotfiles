@@ -49,6 +49,7 @@ complete -o default -o nospace -F _git_checkout gco
 
 # Ruby
 alias be='bundle exec'
+alias beer='bundle exec rake'
 
 function rt {
   bundle exec ruby -Itest $1 #--progress-row-max=8 --use-color=true 
