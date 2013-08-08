@@ -3,12 +3,12 @@ TEST=$2
 
 function input_file()
 {
-  echo "input.$1"
+  echo "tablica.in.$1"
 }
 
 function output_file()
 {
-  echo "output.$1"
+  echo "tablica.out.$1"
 }
 
 function run_test()
