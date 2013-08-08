@@ -1,9 +1,9 @@
 " BASIC
-set nocompatible " No vi compatility
+set nocompatible " No vi compatility, this first because it resets some options
 let mapleader="," " Mapleader
 filetype off
 set encoding=utf-8
-set history=100 " Keep more history
+set history=100 " Keep more history, default is 20
 
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
@@ -29,10 +29,10 @@ Bundle 'tpope/vim-liquid'
 Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-rails'
 Bundle 'vim-scripts/VimClojure'
+Bundle 'jnwhiteh/vim-golang'
 
 " Colors
 Bundle 'altercation/vim-colors-solarized'
-
 
 " Enable after Vundle.. in the README,
 " dunno what happens if you don't do this.
