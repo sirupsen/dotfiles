@@ -1,2 +1,0 @@
-#!/bin/bash
-curl -d "username=sirupsen&token=nespuris" http://idiots.popoffka.ru/announce/

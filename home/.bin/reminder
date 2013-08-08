@@ -1,8 +1,0 @@
-#!/bin/bash
-
-at $2 << !!
-say $1
-osascript -e 'tell app "System Events" to display dialog "Reminder: $1"'
-!!
-
-exit 0

@@ -1,6 +1,0 @@
-#!/usr/bin/env ruby
-require 'net/http'
-require 'json'
-require 'uri'
-
-puts JSON.parse(Net::HTTP.get_response(URI.parse("http://rubygems.org/api/v1/versions/#{ARGV[0]}.json")).body).first["number"]
