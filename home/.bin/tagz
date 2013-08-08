@@ -1,3 +1,0 @@
-#!/bin/bash
-
-ctags -R --exclude=.git --exclude=log --exclude=tmp --exclude=vendor --languages=-javascript,sql *
