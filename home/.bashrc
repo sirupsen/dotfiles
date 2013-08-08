@@ -9,4 +9,6 @@ source ~/.bash/completion/git # Git completion
 source ~/.bash/theme # Load PS1 theme
 source ~/.bash/aliases # Load aliases at end to not conflict with anything
 
-source ~/.bash/rbenv # Load rbenv
+source ~/.bash/chruby # Load rbenv
+
+export GOPATH=~/code/skypestats
