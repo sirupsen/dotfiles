@@ -5,4 +5,8 @@ if [ -r /usr/local/share/chruby/chruby.sh ]; then
   RUBIES=(~/.rubies/*)
 
   chruby 2.0.0
+
+  # Allow auto-switching in directories with a .ruby-version # file
+  source /usr/local/share/chruby/auto.sh
 fi
+

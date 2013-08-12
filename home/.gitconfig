@@ -1,6 +1,6 @@
 [user]
-  name = Simon H. Eskildsen
-  email = sirup@sirupsen.com
+	name = Simon Eskildsen
+	email = sirup@sirupsen.com
 [color]
   branch = auto
   diff = auto
@@ -11,12 +11,15 @@
   tool = vimdiff
 [core]
   editor = /usr/bin/vim
-  excludesfile = ~/.global_gitignore
+  excludesfile = /opt/boxen/config/git/gitignore
 [interactive]
   singlekey = true
 [push]
   default = tracking
 [credential]
-  helper = osxkeychain
+	helper = /opt/boxen/bin/boxen-git-credential
 [pull]
   rebase = true
+
+[hub]
+protocol = https

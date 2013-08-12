@@ -12,7 +12,7 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 
 " Utility
-Bundle 'sirupsen/vim-execrus'
+Bundle 'Sirupsen/vim-execrus'
 Bundle 'kien/ctrlp.vim'
 Bundle 'godlygeek/tabular'
 Bundle 'tomtom/tcomment_vim'
@@ -39,8 +39,8 @@ Bundle 'altercation/vim-colors-solarized'
 filetype plugin indent on
 
 " Warn trailing whitespace, thx @metamorfos
-set list
-set listchars=tab:>-,trail:.,extends:❯,precedes:❮
+" set list
+" set listchars=tab:>-,trail:.,extends:❯,precedes:❮
 
 " BACKUP
 set noswapfile
@@ -148,3 +148,7 @@ map <C-P> :call g:Execrus('repl')<CR>
 set tags=tags,gems.tags " Since i ctag for gems
 
 hi NonText ctermfg=black guifg=black
+
+" Force vim to use login shell, ie. for chruby to work right.
+" https://github.com/postmodern/chruby/wiki/Vim
+set shell=$SHELL\ -l
