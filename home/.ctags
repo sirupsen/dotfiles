@@ -1,0 +1,5 @@
+--recurse=yes
+--exclude=.git
+--exclude=log
+--exclude=tmp
+--exclude=vendor

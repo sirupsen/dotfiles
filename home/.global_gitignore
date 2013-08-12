@@ -42,3 +42,5 @@ setuptools-*
 .rbenv-version
 log/*.log  
 tmp/**/*  
+Procfile.simon
+.ruby-version

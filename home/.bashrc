@@ -1,4 +1,6 @@
 #!/bin/bash 
+source /opt/boxen/env.sh
+
 source ~/.bash/colors # Load color aliases
 source ~/.bash/functions # Load functions
 source ~/.bash/shell # Shell behavior
@@ -10,5 +12,6 @@ source ~/.bash/theme # Load PS1 theme
 source ~/.bash/aliases # Load aliases at end to not conflict with anything
 
 source ~/.bash/chruby # Load rbenv
+source ~/.bash/ruby # Set absurdly high GC parameters for Ruby
 
-export GOPATH=~/code/skypestats
+export GOPATH=~/code/godis
