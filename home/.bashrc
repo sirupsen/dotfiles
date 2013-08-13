@@ -1,5 +1,6 @@
 #!/bin/bash 
-source /opt/boxen/env.sh
+
+source ~/.bash/boxen # Load Boxen
 
 source ~/.bash/colors # Load color aliases
 source ~/.bash/functions # Load functions
