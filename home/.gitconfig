@@ -20,6 +20,5 @@
 	helper = /opt/boxen/bin/boxen-git-credential
 [pull]
   rebase = true
-
 [hub]
-protocol = https
+  protocol = https
