@@ -19,7 +19,7 @@ alias ..='cd ..'
 alias ...='cd ../..'
 
 # Git
-hub --help > /dev/null 2>&1 && alias git='hub'
+# hub --help > /dev/null 2>&1 && alias git='hub'
 
 # Commiting
 # Complete stuff is for auto-completion to work with the aliases
@@ -48,11 +48,15 @@ alias gco='git checkout'
 complete -o default -o nospace -F _git_checkout gco
 
 # Ruby
-alias be='bundle exec'
+alias b='bundle exec'
 alias beer='bundle exec rake'
 
 function rt {
-  bundle exec ruby -Itest $1 #--progress-row-max=8 --use-color=true 
+  if [ -e .zeus.sock ]; then
+    zeus test $1
+  else
+    bundle exec ruby -Itest $1
+  fi
 }
 
 alias tmux_to_clip='tmux save-buffer -|pbcopy'

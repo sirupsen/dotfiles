@@ -15,4 +15,10 @@ source ~/.bash/aliases # Load aliases at end to not conflict with anything
 source ~/.bash/chruby # Load rbenv
 source ~/.bash/ruby # Set absurdly high GC parameters for Ruby
 
-export GOPATH=~/code/godis
+# to make vim behave under xterm
+stty -ixon
+
+export GOPATH=~/code/go
+export GOROOT=/opt/boxen/homebrew/Cellar/go/1.1.2/
+
+export MANPATH=$HOME/code/linux/man:$MANPATH
