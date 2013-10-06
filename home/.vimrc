@@ -12,14 +12,16 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 
 " Utility
+Bundle 'mileszs/ack.vim'
 Bundle 'Sirupsen/vim-execrus'
-Bundle 'kien/ctrlp.vim'
+Bundle 'wincent/Command-T'
 Bundle 'godlygeek/tabular'
 Bundle 'tomtom/tcomment_vim'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-endwise'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-rake'
+Bundle 'scrooloose/nerdtree'
 
 " Environments
 Bundle 'pangloss/vim-javascript'
@@ -30,6 +32,7 @@ Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-rails'
 Bundle 'vim-scripts/VimClojure'
 Bundle 'jnwhiteh/vim-golang'
+Bundle 'derekwyatt/vim-scala'
 
 " Colors
 Bundle 'altercation/vim-colors-solarized'
@@ -92,13 +95,10 @@ nmap j gj
 " Set spelling in Markdown
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
-set laststatus=0 " Remove statusbar
-autocmd BufNewFile,BufRead * let &l:stl="%#Normal#".repeat('─',winwidth(0))
+" set laststatus=0 " Remove statusbar
+" autocmd BufNewFile,BufRead * let &l:stl="%#Normal#".repeat('─',winwidth(0))
 
 " PLUGINS
-
-" Ctrlp
-let g:ctrlp_map = '<c-t>'
 
 " Fugitive
 map <leader>gs :Gstatus<CR>
@@ -147,8 +147,22 @@ map <C-P> :call g:Execrus('repl')<CR>
 " Ctag options
 set tags=tags,gems.tags " Since i ctag for gems
 
-hi NonText ctermfg=black guifg=black
-
+" hi NonText ctermfg=black guifg=black
+" 
 " Force vim to use login shell, ie. for chruby to work right.
 " https://github.com/postmodern/chruby/wiki/Vim
 set shell=$SHELL\ -l
+
+let g:ackprg = 'ag --nogroup --nocolor --column'
+map <leader>n :NERDTreeToggle<CR>
+"
+map <C-t> :CommandT<CR>
+map <C-g> :CommandTBuffer<CR>
+map <C-7> :CommandTTag<CR>
+
+let g:CommandTAcceptSelectionSplitMap='<C-x>'
+let g:CommandTMaxHeight=20
+
+let g:ctrlp_clear_cache_on_exit = 1
+
+autocmd BufWrite *.go :Fmt
