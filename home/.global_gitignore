@@ -40,7 +40,7 @@ setuptools-*
 .DS_Store
 .rvmrc*
 .rbenv-version
+.ruby-version
 log/*.log  
 tmp/**/*  
 Procfile.simon
-.ruby-version
