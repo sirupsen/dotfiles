@@ -1,5 +1,0 @@
-#!/bin/bash
-
-if [ -x /opt/boxen/env.sh ]; then
-  source /opt/boxen/env.sh
-fi
