@@ -1,5 +1,8 @@
 # Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff
 # (http://ubuntuforums.org/showthread.php?t=234232)
+
+source /usr/local/etc/bash_completion.d/git-prompt.sh
+
 PS1='\[$LIGHT_RED\]\W\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
 
 # Set window names in TMUX coresponding to the current
