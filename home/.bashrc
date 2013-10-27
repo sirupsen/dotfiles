@@ -4,8 +4,6 @@ source ~/.bash/colors
 source ~/.bash/shell
 source ~/.bash/path
 
-source ~/.bash/completion/git
-
 source ~/.bash/theme
 source ~/.bash/aliases
 
