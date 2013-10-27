@@ -11,13 +11,10 @@
   tool = vimdiff
 [core]
   editor = /usr/bin/vim
-  excludesfile = /opt/boxen/config/git/gitignore
 [interactive]
   singlekey = true
 [push]
   default = tracking
-[credential]
-	helper = /opt/boxen/bin/boxen-git-credential
 [pull]
   rebase = true
 [hub]

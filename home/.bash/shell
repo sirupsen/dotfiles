@@ -6,4 +6,8 @@ set -o notify # Notify immediatly on bg job completion
 shopt -s nocaseglob # Case insensitive autocompletion
 export EDITOR=/usr/bin/vim # Vim as default editor
 
+# To make Vim behave under xterm.
+# Thanks, @teoljungberg
+stty -ixon
+
 export TERM=screen-256color
