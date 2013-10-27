@@ -19,3 +19,5 @@
   rebase = true
 [hub]
   protocol = https
+[credential]
+	helper = osxkeychain
