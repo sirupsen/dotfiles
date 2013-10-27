@@ -1,6 +1,8 @@
 #!/bin/bash 
 
-source ~/.bash/boxen # Load Boxen
+source ~/.bash/colors
+source ~/.bash/shell
+source ~/.bash/path
 
 source ~/.bash/colors # Load color aliases
 source ~/.bash/functions # Load functions
@@ -19,6 +21,4 @@ source ~/.bash/ruby # Set absurdly high GC parameters for Ruby
 stty -ixon
 
 export GOPATH=~/code/go
-export GOROOT=/opt/boxen/homebrew/Cellar/go/1.1.2/
-
 export MANPATH=$HOME/code/linux/man:$MANPATH
