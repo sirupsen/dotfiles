@@ -1,55 +1,23 @@
 #! /bin/bash
 
-# Linux and Darwin/BSD have different ways to get color
-# in `ls`
-if [[ $platform == 'linux' ]]; then
-   alias ls='ls --color=auto'
-elif [[ $platform == 'darwin' ]]; then
-   alias ls='ls -G'
-fi
-
-# Clear screen with ^-L like in bash
+alias ls='ls -G'
 bind -m vi-insert "\C-l":clear-screen
-
-# General aliases
-alias bitch,=sudo
-alias j=jobs
 
 alias ..='cd ..'
 alias ...='cd ../..'
 
-# Git
-# hub --help > /dev/null 2>&1 && alias git='hub'
-
-# Commiting
-# Complete stuff is for auto-completion to work with the aliases
 alias gp='git push'
-complete -o default -o nospace -F _git_push gp
-
 alias gpl='git pull'
-complete -o default -o nospace -F _git_pull gpl
-
 alias gd='git diff'
-complete -o default -o nospace -F _git_diff gd
-
 alias gc='git commit -v'
 alias gca='git commit -av'
 alias gcp='git commit -p'
-
 alias gs='git status -sb'
-
 alias gb='git branch -v'
-complete -o default -o nospace -F _git_branch gb
-
 alias glog='git log --oneline'
-complete -o default -o nospace -F _git_log glog
-
 alias gco='git checkout'
-complete -o default -o nospace -F _git_checkout gco
 
-# Ruby
-alias b='bundle exec'
-alias beer='bundle exec rake'
+alias bx='bundle exec'
 
 function rt {
   if [ -e .zeus.sock ]; then
