@@ -14,8 +14,9 @@
 [interactive]
   singlekey = true
 [push]
-  default = tracking
+  default = current
 [pull]
+  default = current
   rebase = true
 [hub]
   protocol = https
