@@ -34,5 +34,8 @@ alias gco='git checkout'
 
 alias bx='bundle exec'
 
+alias vu='vagrant up'
+alias vs='vagrant suspend'
+
 alias tmux_to_clip='tmux save-buffer -|pbcopy'
 alias tmux_from_clip='tmux set-buffer "$(pbpaste)"'
