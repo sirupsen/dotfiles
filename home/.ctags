@@ -1,5 +1,11 @@
 --recurse=yes
+
 --exclude=.git
 --exclude=log
 --exclude=tmp
 --exclude=vendor
+--exclude=build
+--exclude=libs
+
+--languages=-html
+--languages=-javascript
