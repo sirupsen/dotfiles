@@ -166,3 +166,4 @@ let g:CommandTMaxHeight=20
 let g:ctrlp_clear_cache_on_exit = 1
 
 autocmd BufWrite *.go :Fmt
+set wildignore=log/**,tmp/**,vendor/**
