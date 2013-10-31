@@ -1,4 +1,0 @@
-#!/bin/bash
-
-CODE=`cat`
-curl -s --dump-header - --data "code=$CODE&execute=true" https://eval.in/ | grep -woE "https:\/\/eval.in/[0-9]+"
