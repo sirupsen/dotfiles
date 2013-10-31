@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Git auto-completion
-if [ -f /usr/local/src/bash_completion/git-prompt.sh ]; then
+if [ -r /usr/local/etc/bash_completion.d/git-prompt.sh ]; then
+  # Show a * (unstaged) or + (staged) 
+  export GIT_PS1_SHOWDIRTYSTATE=1
   source /usr/local/etc/bash_completion.d/git-prompt.sh
 fi
 
