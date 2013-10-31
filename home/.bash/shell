@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -o vi # Vi Bash command mode
 set -o notify # Notify immediatly on bg job completion
 
 shopt -s nocaseglob # Case insensitive autocompletion
