@@ -167,3 +167,7 @@ let g:ctrlp_clear_cache_on_exit = 1
 
 autocmd BufWrite *.go :Fmt
 set wildignore=log/**,tmp/**,vendor/**
+
+" Normalized regex, thanks @hornairs
+nnoremap / /\v
+vnoremap / /\v
