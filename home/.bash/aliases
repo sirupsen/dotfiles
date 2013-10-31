@@ -13,6 +13,14 @@ function evalin {
   curl -s --dump-header - --data "code=$CODE&execute=true" https://eval.in/ | grep -woE "https:\/\/eval.in/[0-9]+"
 }
 
+function ag {
+  if command ag 2>/dev/null; then
+    command ag "$@"
+  else
+    grep --exclude-dir .git --exclude-dir vendor -I -R "$1" . ${@:2}
+  fi
+}
+
 alias ls='ls -G'
 bind -m vi-insert "\C-l":clear-screen
 
