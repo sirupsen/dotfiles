@@ -1,6 +1,6 @@
 [user]
-	name = Simon Eskildsen
-	email = sirup@sirupsen.com
+  name = Simon Eskildsen
+  email = sirup@sirupsen.com
 [color]
   branch = auto
   diff = auto
@@ -21,4 +21,4 @@
 [hub]
   protocol = https
 [credential]
-	helper = osxkeychain
+  helper = osxkeychain
