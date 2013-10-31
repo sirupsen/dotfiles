@@ -1,13 +1,17 @@
+#!/bin/bash
+
+# Git auto-completion
+if [ -f /usr/local/src/bash_completion/git-prompt.sh ]; then
+  source /usr/local/etc/bash_completion.d/git-prompt.sh
+fi
+
 # Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff
 # (http://ubuntuforums.org/showthread.php?t=234232)
-
-source /usr/local/etc/bash_completion.d/git-prompt.sh
-
 PS1='\[$LIGHT_RED\]\W\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
 
 # Set window names in TMUX coresponding to the current
 # directory.
-if { [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; } then
+if { [ -n "$TMUX" ]; } then
   set_window_name() {
     if [ "$PWD" != "$LPWD" ]; then
       LPWD="$PWD"
