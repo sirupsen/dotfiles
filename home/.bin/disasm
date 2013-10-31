@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-
-ARGV.each do |f|
-  puts RubyVM::InstructionSequence.compile(File.read(f)).disassemble
-end
