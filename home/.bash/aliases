@@ -1,5 +1,7 @@
 #! /bin/bash
 
+# This is for smart running of tests. If .zeus.sock exists, then we run the
+# tests with Zeus, otherwise, fall back to Ruby.
 function rt {
   if [ -e .zeus.sock ]; then
     zeus test $1
@@ -8,21 +10,28 @@ function rt {
   fi
 }
 
+# Paste code via stdin to eval.in. It relies on the language auto-detecting
+# feature.
 function evalin {
   CODE=`cat`
   curl -s --dump-header - --data "code=$CODE&execute=true" https://eval.in/ | grep -woE "https:\/\/eval.in/[0-9]+"
 }
 
+# So I can always type ag without caring about what is actually present on the
+# system I am using the dotfiles on.
 function ag {
   if command ag 2>/dev/null; then
-    command ag "$@"
+    command ag $@
+  elif command ack 2>/dev/null; then
+    ack $@
   else
     grep --exclude-dir .git --exclude-dir vendor -I -R "$1" . ${@:2}
   fi
 }
 
-alias ls='ls -G'
 bind -m vi-insert "\C-l":clear-screen
+
+alias ls='ls -G'
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -33,11 +42,9 @@ alias gp='git push'
 alias gpl='git pull'
 alias gd='git diff'
 alias gc='git commit -v'
-alias gca='git commit -av'
-alias gcp='git commit -p'
 alias gs='git status -sb'
 alias gb='git branch -v'
-alias glog='git log --oneline'
+alias gl='git log --oneline'
 alias gco='git checkout'
 
 alias bx='bundle exec'
@@ -45,5 +52,5 @@ alias bx='bundle exec'
 alias vu='vagrant up'
 alias vs='vagrant suspend'
 
-alias tmux_to_clip='tmux save-buffer -|pbcopy'
-alias tmux_from_clip='tmux set-buffer "$(pbpaste)"'
+alias ttc='tmux save-buffer -|pbcopy'
+alias tfc='tmux set-buffer "$(pbpaste)"'
