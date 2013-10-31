@@ -6,6 +6,8 @@ bind -m vi-insert "\C-l":clear-screen
 alias ..='cd ..'
 alias ...='cd ../..'
 
+hub >/dev/null 2>&1 && eval "$(hub alias -s)"
+
 alias gp='git push'
 alias gpl='git pull'
 alias gd='git diff'
