@@ -160,7 +160,8 @@ let g:CommandTMaxHeight=20
 " Auto-format Go, requires vim golang
 autocmd BufWrite *.go :Fmt
 
-set wildignore=log/**,tmp/**,vendor/**
+set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*
+
 
 " Normalized regex, thanks @hornairs
 nnoremap / /\v
