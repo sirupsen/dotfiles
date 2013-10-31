@@ -6,11 +6,6 @@ if [ -d /usr/local/Cellar ]; then
   export PATH=$PATH:/usr/local/sbin
 fi
 
-# Local bin, low priority
-if [ -d ~/.bin ]; then
-  export PATH=$PATH:~/.bin
-fi
-
 # NPM, low priority
 if [ -d /usr/local/share/npm/bin ]; then
   export PATH=$PATH:/usr/local/share/npm/bin
