@@ -41,10 +41,6 @@ Bundle 'altercation/vim-colors-solarized'
 " dunno what happens if you don't do this.
 filetype plugin indent on
 
-" Warn trailing whitespace, thx @metamorfos
-" set list
-" set listchars=tab:>-,trail:.,extends:❯,precedes:❮
-
 " BACKUP
 set noswapfile
 set nobackup
@@ -92,11 +88,8 @@ map <leader>cd :cd %:p:h<CR>
 nmap k gk
 nmap j gj
 
-" Set spelling in Markdown
+" Enable spelling in Markdown
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
-
-" set laststatus=0 " Remove statusbar
-" autocmd BufNewFile,BufRead * let &l:stl="%#Normal#".repeat('─',winwidth(0))
 
 " PLUGINS
 
@@ -104,7 +97,7 @@ autocmd BufNewFile,BufRead *.md,*.markdown set spell
 map <leader>gs :Gstatus<CR>
 map <leader>gc :Gcommit<CR>
 
-" Tabular {
+" Tabular
 map <Leader>t= :Tab /=<CR>
 map <Leader>t= :Tab /=<CR>
 map <Leader>t> :Tab /=><CR>
@@ -147,25 +140,21 @@ map <C-P> :call g:Execrus('repl')<CR>
 " Ctag options
 set tags=tags,gems.tags " Since i ctag for gems
 
-" hi NonText ctermfg=black guifg=black
-" 
 " Force vim to use login shell, ie. for chruby to work right.
 " https://github.com/postmodern/chruby/wiki/Vim
 set shell=$SHELL\ -l
 
 let g:ackprg = 'ag --nogroup --nocolor --column'
 map <leader>n :NERDTreeToggle<CR>
-"
 map <C-t> :CommandT<CR>
 map <C-g> :CommandTBuffer<CR>
 map <C-7> :CommandTTag<CR>
-
 let g:CommandTAcceptSelectionSplitMap='<C-x>'
 let g:CommandTMaxHeight=20
 
-let g:ctrlp_clear_cache_on_exit = 1
-
+" Auto-format Go, requires vim golang
 autocmd BufWrite *.go :Fmt
+
 set wildignore=log/**,tmp/**,vendor/**
 
 " Normalized regex, thanks @hornairs
