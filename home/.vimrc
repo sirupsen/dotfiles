@@ -88,6 +88,11 @@ map <leader>cd :cd %:p:h<CR>
 nmap k gk
 nmap j gj
 
+" Easier to type
+noremap H ^
+noremap L $
+vnoremap L g_
+
 " Enable spelling in Markdown
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
