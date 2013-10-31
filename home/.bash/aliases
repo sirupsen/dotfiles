@@ -29,5 +29,10 @@ function rt {
   fi
 }
 
+function evalin {
+  CODE=`cat`
+  curl -s --dump-header - --data "code=$CODE&execute=true" https://eval.in/ | grep -woE "https:\/\/eval.in/[0-9]+"
+}
+
 alias tmux_to_clip='tmux save-buffer -|pbcopy'
 alias tmux_from_clip='tmux set-buffer "$(pbpaste)"'
