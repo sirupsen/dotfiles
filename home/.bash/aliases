@@ -30,11 +30,18 @@ function ag {
   fi
 }
 
+# Checks the health of my system
+function health {
+  # CD into top visited repositories with the help of bash history.
+  # Check if they have commits that master doesn't.
+
+  # Check status of all running VMs and output them.
+  echo "Nothing yet!"
+}
+
 if [ -r `brew --prefix`/etc/profile.d/z.sh ]; then
   source `brew --prefix`/etc/profile.d/z.sh
 fi
-
-bind -m vi-insert "\C-l":clear-screen
 
 alias ls='ls -G'
 
@@ -56,7 +63,8 @@ alias bx='bundle exec'
 alias bxr='bundle exec rake'
 
 alias vu='vagrant up'
-alias vs='vagrant suspend'
+alias vsu='vagrant suspend'
+alias vs='vagrant ssh'
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
