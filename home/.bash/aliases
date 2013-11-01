@@ -29,6 +29,10 @@ function ag {
   fi
 }
 
+if [ -r `brew --prefix`/etc/profile.d/z.sh ]; then
+  source `brew --prefix`/etc/profile.d/z.sh
+fi
+
 bind -m vi-insert "\C-l":clear-screen
 
 alias ls='ls -G'
