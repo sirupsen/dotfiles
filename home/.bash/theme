@@ -9,7 +9,7 @@ if [ -r /usr/local/etc/bash_completion.d/git-prompt.sh ]; then
   # Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff
   # (http://ubuntuforums.org/showthread.php?t=234232)
   # Use __git_ps1 for a faster prompt.
-  PROMPT_COMMAND='__git_ps1 "\[$LIGHT_RED\]\W\[$YELLOW\]" " \[$NORMAL\]$ "'
+  PROMPT_COMMAND='__git_ps1 "\[$LIGHT_RED\]\h@\W\[$YELLOW\]" " \[$NORMAL\]$ "'
 
 # Fall back prompt
 else
