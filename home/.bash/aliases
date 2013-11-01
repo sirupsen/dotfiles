@@ -25,7 +25,8 @@ function ag {
   elif command ack 2>/dev/null; then
     ack $@
   else
-    grep --exclude-dir .git --exclude-dir vendor -I -R "$1" . ${@:2}
+    grep --exclude-dir=.git --exclude-dir=vendor --exclude-dir=tmp\
+    --exclude-dir=log --mmap --text --color=always -I -R "$1" . ${@:2}
   fi
 }
 
