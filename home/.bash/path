@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Homebrew, high priority
-if [ -d /usr/local/Cellar ]; then
+if [ -d /usr/local/bin ]; then
   export PATH=/usr/local/bin:$PATH
   export PATH=$PATH:/usr/local/sbin
 fi
