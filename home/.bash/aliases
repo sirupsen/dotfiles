@@ -20,9 +20,9 @@ function evalin {
 # So I can always type ag without caring about what is actually present on the
 # system I am using the dotfiles on.
 function ag {
-  if command ag 2>/dev/null; then
+  if command -v ag > /dev/null; then
     command ag $@
-  elif command ack 2>/dev/null; then
+  elif command -v ack >/dev/null; then
     ack $@
   else
     grep --exclude-dir=.git --exclude-dir=vendor --exclude-dir=tmp\
@@ -53,6 +53,7 @@ alias gl='git log --oneline'
 alias gco='git checkout'
 
 alias bx='bundle exec'
+alias bxr='bundle exec rake'
 
 alias vu='vagrant up'
 alias vs='vagrant suspend'
