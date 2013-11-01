@@ -22,6 +22,8 @@ Bundle 'tpope/vim-endwise'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-rake'
 Bundle 'scrooloose/nerdtree'
+Bundle 'scrooloose/syntastic'
+Bundle 'tpope/vim-unimpaired'
 
 " Environments
 Bundle 'pangloss/vim-javascript'
@@ -161,8 +163,3 @@ let g:CommandTMaxHeight=20
 autocmd BufWrite *.go :Fmt
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*
-
-
-" Normalized regex, thanks @hornairs
-nnoremap / /\v
-vnoremap / /\v
