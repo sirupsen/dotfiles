@@ -92,7 +92,6 @@ nmap j gj
 " Easier to type
 noremap H ^
 noremap L $
-vnoremap L g_
 
 " Enable spelling in Markdown
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
@@ -102,14 +101,6 @@ autocmd BufNewFile,BufRead *.md,*.markdown set spell
 " Fugitive
 map <leader>gs :Gstatus<CR>
 map <leader>gc :Gcommit<CR>
-
-" Tabular
-map <Leader>t= :Tab /=<CR>
-map <Leader>t= :Tab /=<CR>
-map <Leader>t> :Tab /=><CR>
-map <Leader>t> :Tab /=><CR>
-map <Leader>t: :Tab /:\zs<CR>
-map <Leader>t: :Tab /:\zs<CR>
 
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
