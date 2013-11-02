@@ -20,8 +20,8 @@ machine.
     <th>Font</th>
   </tr>
   <tr>
-    <td>Retina Macbook 13", OS X</td>
-    <td>iTerm 2</td>
+    <td>Retina Macbook 13"</td>
+    <td>Terminal</td>
     <td>bash</td>
     <td>vim</td>
     <td>git</td>
@@ -32,16 +32,8 @@ machine.
 
 # Installing
 
-I use [homesick][homesick] to clone and symlink my dotfiles across machines.
-It's as easy as:
-
-```bash
-$ gem install homesick
-$ homesick clone Sirupsen/dotfiles
-$ homesick symlink Sirupsen/dotfiles
-```
-
-[homesick]: http://github.com/technicalpickles/homesick
+I use `linker.sh` to clone and symlink my dotfiles across machines. Invoke it to
+symlink the dotfiles. It will prompt to override if the files already exist.
 
 # Screenshots
 
