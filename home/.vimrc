@@ -141,12 +141,6 @@ set tags=tags,gems.tags " Since i ctag for gems
 " https://github.com/postmodern/chruby/wiki/Vim
 set shell=$SHELL\ -l
 
-" Only force ag if it actually exists, otherwise fall back to `git grep` which
-" is the default.
-if executable("ag")
-  let g:grepprg="ag --nogroup --column"
-endif
-
 map <leader>n :NERDTreeToggle<CR>
 map <C-t> :CommandT<CR>
 map <C-g> :CommandTBuffer<CR>
