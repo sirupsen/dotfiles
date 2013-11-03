@@ -14,7 +14,12 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " Utility
 NeoBundle 'teoljungberg/vim-grep'
 NeoBundle 'Sirupsen/vim-execrus'
-NeoBundle 'wincent/Command-T', { 'build' : { 'mac' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile' } }
+NeoBundle 'wincent/Command-T', { 
+  \ 'build' : {
+    \'mac' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile',
+    \'linux' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile' 
+  \} 
+\}
 NeoBundle 'tomtom/tcomment_vim'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tpope/vim-endwise'
