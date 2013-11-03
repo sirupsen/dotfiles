@@ -17,19 +17,6 @@ function evalin {
   curl -s --dump-header - --data "code=$CODE&execute=true" https://eval.in/ | grep -woE "https:\/\/eval.in/[0-9]+"
 }
 
-# So I can always type ag without caring about what is actually present on the
-# system I am using the dotfiles on.
-function ag {
-  if command -v ag > /dev/null; then
-    command ag $@
-  elif command -v ack >/dev/null; then
-    ack $@
-  else
-    grep --exclude-dir=.git --exclude-dir=vendor --exclude-dir=tmp\
-    --exclude-dir=log --mmap --text --color=always -I -R "$1" . ${@:2}
-  fi
-}
-
 # Checks the health of my system
 function health {
   # CD into top visited repositories with the help of bash history.
@@ -68,3 +55,5 @@ alias vs='vagrant ssh'
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
+
+alias gg='git grep'
