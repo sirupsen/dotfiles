@@ -5,38 +5,38 @@ filetype off
 set encoding=utf-8
 set history=100 " Keep more history, default is 20
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/neobundle.vim
+call neobundle#rc(expand('~/.vim/bundle/'))
 
 " Vundle
-Bundle 'gmarik/vundle'
+NeoBundleFetch 'Shougo/neobundle.vim'
 
 " Utility
-Bundle 'teoljungberg/vim-grep'
-Bundle 'Sirupsen/vim-execrus'
-Bundle 'wincent/Command-T'
-Bundle 'tomtom/tcomment_vim'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-endwise'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-rake'
-Bundle 'scrooloose/nerdtree'
-Bundle 'scrooloose/syntastic'
-Bundle 'tpope/vim-unimpaired'
+NeoBundle 'teoljungberg/vim-grep'
+NeoBundle 'Sirupsen/vim-execrus'
+NeoBundle 'wincent/Command-T', { 'build' : { 'mac' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile' } }
+NeoBundle 'tomtom/tcomment_vim'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-endwise'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'tpope/vim-rake'
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 'tpope/vim-unimpaired'
 
 " Environments
-Bundle 'pangloss/vim-javascript'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'tpope/vim-liquid'
-Bundle 'tpope/vim-markdown'
-Bundle 'tpope/vim-rails'
-Bundle 'vim-scripts/VimClojure'
-Bundle 'jnwhiteh/vim-golang'
-Bundle 'derekwyatt/vim-scala'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'kchmck/vim-coffee-script'
+NeoBundle 'vim-ruby/vim-ruby'
+NeoBundle 'tpope/vim-liquid'
+NeoBundle 'tpope/vim-markdown'
+NeoBundle 'tpope/vim-rails'
+NeoBundle 'vim-scripts/VimClojure'
+NeoBundle 'jnwhiteh/vim-golang'
+NeoBundle 'derekwyatt/vim-scala'
 
 " Colors
-Bundle 'altercation/vim-colors-solarized'
+NeoBundle 'altercation/vim-colors-solarized'
 
 " Enable after Vundle.. in the README,
 " dunno what happens if you don't do this.
