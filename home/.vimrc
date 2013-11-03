@@ -16,8 +16,8 @@ NeoBundle 'teoljungberg/vim-grep'
 NeoBundle 'Sirupsen/vim-execrus'
 NeoBundle 'wincent/Command-T', { 
   \ 'build' : {
-    \'mac' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile',
-    \'linux' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile' 
+    \'mac' : 'ruby ruby/command-t/extconf.rb && make clean && make',
+    \'linux' : 'ruby ruby/command-t/extconf.rb && make clean && make' 
   \} 
 \}
 NeoBundle 'tomtom/tcomment_vim'
