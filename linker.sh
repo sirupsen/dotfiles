@@ -1,12 +1,10 @@
 #!/bin/bash
 
 function symlink {
-  rm -rf $2
-  ln -s $1 $2
+  ln -nsf $1 $2
 }
 
-for file in home/.[^.]*
-do
+for file in home/.[^.]*; do
   path="$(pwd)/$file"
   base=$(basename $file)
   target="$HOME/$(basename $file)"
