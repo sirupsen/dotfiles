@@ -33,7 +33,8 @@ machine.
 # Installing
 
 I use `linker.sh` to clone and symlink my dotfiles across machines. Invoke it to
-symlink the dotfiles. It will prompt to override if the files already exist.
+symlink the dotfiles. It will prompt to override if the files already exist. Run
+`:NeoBundleInstall` in Vim to clone down my Vim plugins.
 
 # Screenshots
 
