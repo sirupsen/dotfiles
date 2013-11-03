@@ -12,33 +12,33 @@ call neobundle#rc(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " Utility
-NeoBundle 'teoljungberg/vim-grep'
 NeoBundle 'Sirupsen/vim-execrus'
-NeoBundle 'wincent/Command-T', { 
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 'teoljungberg/vim-grep'
+NeoBundle 'tomtom/tcomment_vim'
+NeoBundle 'tpope/vim-endwise'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-rake'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'tpope/vim-unimpaired'
+NeoBundle 'wincent/Command-T', {
   \ 'build' : {
     \'mac' : 'ruby ruby/command-t/extconf.rb && make clean && make',
     \'linux' : 'ruby ruby/command-t/extconf.rb && make clean && make' 
   \} 
 \}
-NeoBundle 'tomtom/tcomment_vim'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'tpope/vim-endwise'
-NeoBundle 'tpope/vim-surround'
-NeoBundle 'tpope/vim-rake'
-NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'scrooloose/syntastic'
-NeoBundle 'tpope/vim-unimpaired'
 
 " Environments
-NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'derekwyatt/vim-scala'
+NeoBundle 'jnwhiteh/vim-golang'
 NeoBundle 'kchmck/vim-coffee-script'
-NeoBundle 'vim-ruby/vim-ruby'
+NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'tpope/vim-liquid'
 NeoBundle 'tpope/vim-markdown'
 NeoBundle 'tpope/vim-rails'
+NeoBundle 'vim-ruby/vim-ruby'
 NeoBundle 'vim-scripts/VimClojure'
-NeoBundle 'jnwhiteh/vim-golang'
-NeoBundle 'derekwyatt/vim-scala'
 
 " Colors
 NeoBundle 'altercation/vim-colors-solarized'
