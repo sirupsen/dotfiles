@@ -3,7 +3,7 @@
 # This is for smart running of tests. If .zeus.sock exists, then we run the
 # tests with Zeus, otherwise, fall back to Ruby.
 function rt {
-  if [ -e .zeus.sock ]; then
+  if [[ -S .zeus.sock ]]; then
     zeus test $1
   else
     bundle exec ruby -Itest $1
@@ -26,16 +26,20 @@ function health {
   echo "Nothing yet!"
 }
 
-if [ -r `brew --prefix`/etc/profile.d/z.sh ]; then
-  source `brew --prefix`/etc/profile.d/z.sh
+if command -v brew > /dev/null; then
+  if [[ -r $(brew --prefix)/etc/profile.d/z.sh ]]; then
+    source $(brew --prefix)/etc/profile.d/z.sh
+  fi
+fi
+
+if command -v hub > /dev/null; then
+  alias git=hub
 fi
 
 alias ls='ls -G'
 
 alias ..='cd ..'
 alias ...='cd ../..'
-
-hub >/dev/null 2>&1 && eval "$(hub alias -s)"
 
 alias gp='git push'
 alias gpl='git pull'
