@@ -26,15 +26,11 @@ function health {
   echo "Nothing yet!"
 }
 
-if command -v brew 2> /dev/null >&2; then
-  if [[ -r $(brew --prefix)/etc/profile.d/z.sh ]]; then
-    source $(brew --prefix)/etc/profile.d/z.sh
-  fi
-fi
-
 if command -v hub > /dev/null; then
   alias git=hub
 fi
+
+source $HOME/.bash/z.bash
 
 alias ls='ls -G'
 
