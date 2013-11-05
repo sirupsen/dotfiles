@@ -3,8 +3,8 @@
 # This is for smart running of tests. If .zeus.sock exists, then we run the
 # tests with Zeus, otherwise, fall back to Ruby.
 function rt {
-  if [[ -S .zeus.sock ]]; then
-    zeus test $1
+  if [ -e .zeus.sock ]; then
+    bundle exec zeus test $1
   else
     bundle exec ruby -Itest $1
   fi
