@@ -11,9 +11,12 @@ fi
 # Put in current directory only
 PS1+="\[$RED\]\W"
 
-# If we have __git_ps1 installed, then put it in the prompt.
-if [[ -r /usr/local/etc/bash_completion.d/git-prompt.sh ]]; then
-  source /usr/local/etc/bash_completion.d/git-prompt.sh
+# OS X homebrew
+source /usr/local/etc/bash_completion.d/git-prompt.sh 2> /dev/null
+
+# If we have __git_ps1 installed, then put it in the prompt. We do what we can
+# from the previous two lines.
+if command -v __git_ps1 > /dev/null 2>&1; then
   PS1+="\[$YELLOW\]$(__git_ps1 " (%s)")"
 fi
 
