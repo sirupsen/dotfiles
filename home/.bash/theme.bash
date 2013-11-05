@@ -5,7 +5,7 @@ PS1=''
 
 # Set hostname if not on MacBook (home)
 if [[ ! $(hostname) =~ MacBook ]]; then
-  PS1="\[$ORANGE\]\h"
+  PS1="\[$ORANGE\]\h "
 fi
 
 # Put in current directory only
