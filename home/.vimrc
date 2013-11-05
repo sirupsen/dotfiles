@@ -71,7 +71,7 @@ set smartcase " Case sensitive when uppercase is present
 set incsearch " Search as you type
 
 " FORMATTING
-set autoindent " Indent at the same level as previous line
+" set autoindent " Indent at the same level as previous line
 set smartindent
 set smarttab
 set expandtab " Tabs are spaces
@@ -157,3 +157,8 @@ let g:CommandTMaxHeight=20
 autocmd BufWrite *.go :Fmt
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*
+
+" netrw tree style listing
+let g:netrw_liststyle=3
+let g:netrw_banner=0
+let g:netrw_winsize=80

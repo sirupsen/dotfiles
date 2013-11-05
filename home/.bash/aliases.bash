@@ -26,7 +26,7 @@ function health {
   echo "Nothing yet!"
 }
 
-if command -v brew > /dev/null; then
+if command -v brew 2> /dev/null; then
   if [[ -r $(brew --prefix)/etc/profile.d/z.sh ]]; then
     source $(brew --prefix)/etc/profile.d/z.sh
   fi

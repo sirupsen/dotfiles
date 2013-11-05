@@ -2,18 +2,10 @@
 
 # Git prompt
 if [ -r /usr/local/etc/bash_completion.d/git-prompt.sh ]; then
-  # Show a * (unstaged) or + (staged) 
-  export GIT_PS1_SHOWDIRTYSTATE=1
   source /usr/local/etc/bash_completion.d/git-prompt.sh
-
-  # Enclosing (\[\]) around colors to avoid word-wrap weirdo stuff
-  # (http://ubuntuforums.org/showthread.php?t=234232)
-  # Use __git_ps1 for a faster prompt.
-  PROMPT_COMMAND='__git_ps1 "\[$LIGHT_RED\]\W\[$YELLOW\]" " \[$NORMAL\]$ "'
-
-# Fall back prompt
+  PS1='\[$ORANGE\]\h\[$RED\]:\w\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
 else
-  PS1='\[$LIGHT_RED\]\h@\W\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
+  PS1='\[$ORANGE\]\h\[$RED\]:\w\[$YELLOW\]\[${NORMAL}\]$ '
 fi
 
 # Set window names in TMUX coresponding to the current
