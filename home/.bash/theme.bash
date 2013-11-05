@@ -3,9 +3,9 @@
 # Git prompt
 if [ -r /usr/local/etc/bash_completion.d/git-prompt.sh ]; then
   source /usr/local/etc/bash_completion.d/git-prompt.sh
-  PS1='\[$ORANGE\]\h\[$RED\]:\w\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
+  PS1='\[$ORANGE\]\h\[$RED\]:\W\[$YELLOW\]$(__git_ps1 " (%s)") \[${NORMAL}\]$ '
 else
-  PS1='\[$ORANGE\]\h\[$RED\]:\w\[$YELLOW\]\[${NORMAL}\]$ '
+  PS1='\[$ORANGE\]\h\[$RED\]:\W\[$YELLOW\]\[${NORMAL}\] $ '
 fi
 
 # Set window names in TMUX coresponding to the current
