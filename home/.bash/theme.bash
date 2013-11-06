@@ -11,8 +11,10 @@ fi
 # Put in current directory only
 PS1+="\[$RED\]\W"
 
-# OS X homebrew
+# OS X Homebrew
 source /usr/local/etc/bash_completion.d/git-prompt.sh 2> /dev/null
+# Ubuntu Linux
+source /etc/bash_completion.d/git 2> /dev/null
 
 # If we have __git_ps1 installed, then put it in the prompt. We do what we can
 # from the previous two lines.
