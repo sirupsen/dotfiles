@@ -69,7 +69,7 @@ if ! vim --version | grep -q "+ruby"; then
     wget "ftp://ftp.vim.org/pub/vim/unix/vim-$VIM_VERSION.tar.bz2"
     tar xjf "vim-$VIM_VERSION.tar.bz2"
     cd vim74
-    source .bashrc
+    source $HOME/.bashrc
     ruby --version
     ./configure --enable-rubyinterp
     make -j"$(cores)"
