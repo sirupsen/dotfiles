@@ -1,8 +1,13 @@
 #/bin/bash
 
+# Exit immediately if anything exits with non-zero
+set -e
+
+# Print commands as we go
+set -x
+
 CHRUBY_VERSION="0.3.7"
 VIM_VERSION="7.4"
-RUBIES=( )
 
 source ~/.bashrc
 
