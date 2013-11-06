@@ -2,12 +2,38 @@
 
 CHRUBY_VERSION="0.3.7"
 VIM_VERSION="7.4"
-RUBIES=( "ruby-2.0.0-p247" )
+RUBIES=( )
 
 source ~/.bashrc
 
 cores() {
   4
+}
+
+# $1: Ruby version (ruby-2.0.0-p247
+# $2: Ruby git sha for version (v2_0_0_247)
+install_mri_ruby() {
+  if [[ ! -d "$HOME/.rubies/$1" ]]; then
+    echo "Installing packages required for $1.."
+
+    if [[ $(uname) = 'Linux' ]]; then
+      sudo apt-get -y update
+      sudo apt-get -y install build-essential zlib1g-dev libssl-dev\
+        libreadline6-dev libyaml-dev libxslt-dev libxml2-dev
+    fi
+
+    echo "Installing $1.."
+
+    (
+     cd $HOME/.rubies/ruby-trunk
+     git checkout $2
+     autoconf
+     ./configure --prefix "$HOME/.rubies/$1.." --disable-install-doc
+     make -j"$(cores)"
+     make install
+     git checkout master
+    )
+  fi
 }
 
 ./linker.sh
@@ -30,37 +56,12 @@ if ! type -t chruby > /dev/null 2>&1; then
   )
 fi
 
-if [[ ! -d $HOME/.rubies ]]; then
-  mkdir $HOME/.rubies
-fi
-
 if [[ ! -d $HOME/.rubies/ruby-trunk ]]; then
   git clone https://github.com/ruby/ruby.git ~/.rubies/ruby-trunk
 fi
 
-for ruby in "${RUBIES[@]}"; do
-  if [[ ! -d $HOME/.rubies/$RUBY ]]; then
-    echo "Installing packages required for $RUBY.."
-
-    if [[ $(uname) = 'Linux' ]]; then
-      sudo apt-get -y update
-      sudo apt-get -y install build-essential zlib1g-dev libssl-dev\
-        libreadline6-dev libyaml-dev libxslt-dev libxml2-dev
-    fi
-
-    echo "Installing $RUBY.."
-
-    (
-     cd $HOME/.rubies/ruby-trunk
-     git checkout v2_0_0_247
-     autoconf
-     ./configure --prefix "$HOME/.rubies/$RUBY" --disable-install-doc
-     make -j"$(cores)"
-     make install
-     git checkout master
-    )
-  fi
-done
+install_mri_ruby "ruby-2.0.0-p247" "v2_0_0_247"
+install_mri_ruby "ruby-1.9.3-p448" "v1_9_3_448"
 
 if ! vim --version | grep -q "+ruby"; then
   echo "Installing Vim 7.4 with Ruby support.."
