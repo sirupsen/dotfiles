@@ -14,7 +14,7 @@ cores() {
 # $2: Ruby git sha for version (v2_0_0_247)
 install_mri_ruby() {
   if [[ ! -d "$HOME/.rubies/$1" ]]; then
-    echo "Installing packages required for $1.."
+    echo "Installing packages required for $1"
 
     if [[ $(uname) = 'Linux' ]]; then
       sudo apt-get -y update
@@ -22,16 +22,20 @@ install_mri_ruby() {
         libreadline6-dev libyaml-dev libxslt-dev libxml2-dev
     fi
 
-    echo "Installing $1.."
+    echo "Installing $1"
 
     (
      cd $HOME/.rubies/ruby-trunk
      git checkout $2
      autoconf
-     ./configure --prefix "$HOME/.rubies/$1.." --disable-install-doc
+     ./configure --prefix "$HOME/.rubies/$1" --disable-install-doc
      make -j"$(cores)"
      make install
      git checkout master
+
+     hash -r
+     chruby $1
+     gem install bundler
     )
   fi
 }
@@ -39,13 +43,13 @@ install_mri_ruby() {
 ./linker.sh
 
 if [[ ! -d $HOME/.vim/bundle/neobundle.vim ]]; then
-  echo "Installing Neobundle.."
+  echo "Installing Neobundle"
   git clone git://github.com/Shougo/neobundle.vim $HOME/.vim/bundle/neobundle.vim
   vim +NeoBundleInstall +qall
 fi
 
 if ! type -t chruby > /dev/null 2>&1; then
-  echo "Installing chruby.."
+  echo "Installing chruby"
 
   (
     cd /tmp
@@ -64,7 +68,7 @@ install_mri_ruby "ruby-2.0.0-p247" "v2_0_0_247"
 install_mri_ruby "ruby-1.9.3-p448" "v1_9_3_448"
 
 if ! vim --version | grep -q "+ruby"; then
-  echo "Installing Vim 7.4 with Ruby support.."
+  echo "Installing Vim 7.4 with Ruby support"
   (
     cd /tmp
     wget "ftp://ftp.vim.org/pub/vim/unix/vim-$VIM_VERSION.tar.bz2"
@@ -82,7 +86,7 @@ if ! vim --version | grep -q "+ruby"; then
 fi
 
 if [[ ! -f $HOME/.vim/bundle/Command-T/ruby/command-t/match.o ]]; then
-  echo "Compiling commandt.."
+  echo "Compiling commandt"
   (
     cd $HOME/.vim/bundle/Command-T/ruby/command-t
     ruby extconf.rb
