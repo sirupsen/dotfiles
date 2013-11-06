@@ -13,9 +13,14 @@ fi
 PS1+='\[$RED\]\W'
 
 # OS X Homebrew
-source /usr/local/etc/bash_completion.d/git-prompt.sh 2> /dev/null
+if [[ -f /usr/local/etc/bash_completion.d/git-prompt.sh ]]; then
+  source /usr/local/etc/bash_completion.d/git-prompt.sh 2> /dev/null
+fi
+
 # Ubuntu Linux
-source /etc/bash_completion.d/git 2> /dev/null
+if [[ -f /etc/bash_completion.d/git ]]; then 
+  source /etc/bash_completion.d/git 2> /dev/null
+fi
 
 # If we have __git_ps1 installed, then put it in the prompt. We do what we can
 # from the previous two lines.
