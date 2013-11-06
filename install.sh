@@ -36,9 +36,9 @@ install_mri_ruby() {
      ./configure --prefix "$HOME/.rubies/$1" --disable-install-doc
      make -j"$(cores)"
      make install
-     git checkout master
+     git checkout trunk
 
-     hash -r
+     source ~/.bashrc
      chruby $1
      gem install bundler
     )
