@@ -45,6 +45,7 @@ alias gs='git status -sb'
 alias gb='git branch -v'
 alias gl='git log --oneline'
 alias gco='git checkout'
+alias yolo="git push --force"
 
 alias bx='bundle exec'
 alias bxr='bundle exec rake'
