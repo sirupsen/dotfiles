@@ -32,6 +32,7 @@ install_mri_ruby() {
     (
      cd $HOME/.rubies/ruby-trunk
      git checkout $2
+     git clean -f
      autoconf
      ./configure --prefix "$HOME/.rubies/$1" --disable-install-doc
      make -j"$(cores)"
