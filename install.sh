@@ -9,8 +9,6 @@ set -x
 CHRUBY_VERSION="0.3.7"
 VIM_VERSION="7.4"
 
-source ~/.bashrc
-
 cores() {
   4
 }
@@ -80,7 +78,6 @@ if ! vim --version | grep -q "+ruby"; then
     wget "ftp://ftp.vim.org/pub/vim/unix/vim-$VIM_VERSION.tar.bz2"
     tar xjf "vim-$VIM_VERSION.tar.bz2"
     cd vim74
-    source $HOME/.bashrc
     ruby --version
     ./configure --enable-rubyinterp
     make -j"$(cores)"
