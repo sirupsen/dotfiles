@@ -69,7 +69,6 @@ if [[ ! -d $HOME/.rubies/ruby-trunk ]]; then
 fi
 
 install_mri_ruby "ruby-2.0.0-p247" "v2_0_0_247"
-install_mri_ruby "ruby-1.9.3-p448" "v1_9_3_448"
 
 if ! vim --version | grep -q "+ruby"; then
   echo "Installing Vim 7.4 with Ruby support"
