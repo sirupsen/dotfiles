@@ -6,7 +6,7 @@ set -e
 # Print commands as we go
 set -x
 
-CHRUBY_VERSION="0.3.7"
+CHRUBY_VERSION="0.3.8"
 VIM_VERSION="7.4"
 
 cores() {
