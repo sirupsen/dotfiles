@@ -156,7 +156,7 @@ let g:CommandTMaxHeight=20
 " Auto-format Go, requires vim golang
 autocmd BufWrite *.go :Fmt
 
-set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*
+set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
 " netrw tree style listing
 let g:netrw_liststyle=3
