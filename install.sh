@@ -9,6 +9,8 @@ set -x
 CHRUBY_VERSION="0.3.8"
 VIM_VERSION="7.4"
 
+./linker.sh
+
 cores() {
   if [[ `uname` == 'Darwin' ]]; then
     `sysctl -n hw.ncpu`
@@ -77,17 +79,16 @@ fi
 install_mri_ruby "ruby-2.0.0-p353"
 install_mri_ruby "ruby-1.9.3-p484"
 
-# Refresh chruby
-source ~/.bashrc
-
 if ! vim --version | grep -q "+ruby"; then
   echo "Installing Vim 7.4 with Ruby support..."
   (
     cd /tmp
+    source /usr/local/share/chruby/chruby.sh 
+    chruby 2.0.0
+
     wget "ftp://ftp.vim.org/pub/vim/unix/vim-$VIM_VERSION.tar.bz2"
     tar xjf "vim-$VIM_VERSION.tar.bz2"
     cd vim74
-    chruby 2.0.0
     ruby --version
     ./configure --enable-rubyinterp
     make -j"$(cores)"
@@ -101,6 +102,7 @@ fi
 echo "Compiling commandt..."
 (
   cd $HOME/.vim/bundle/Command-T/ruby/command-t
+  source /usr/local/share/chruby/chruby.sh 
   chruby 2.0.0
   ruby extconf.rb
   make clean
