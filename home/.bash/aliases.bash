@@ -5,6 +5,8 @@
 function rt {
   if [ -e .zeus.sock ]; then
     bundle exec zeus test $1
+  elif grep -q "spring-commands-testunit" Gemfile; then
+    bundle exec spring testunit $@
   else
     bundle exec ruby -Itest $1
   fi
