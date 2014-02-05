@@ -48,6 +48,7 @@ alias gb='git branch -v'
 alias gl='git log --oneline'
 alias gco='git checkout'
 alias yolo="git push --force"
+alias blush="git commit --amend -C HEAD && yolo"
 
 alias bx='bundle exec'
 alias bxr='bundle exec rake'
@@ -55,8 +56,12 @@ alias bxr='bundle exec rake'
 alias vu='vagrant up'
 alias vsu='vagrant suspend'
 alias vs='vagrant ssh'
+alias vz='cd ~/vagrant && vagrant ssh && z'
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
 
 alias gg='git grep'
+
+alias open-ports="sudo lsof -iTCP -sTCP:LISTEN -P"
+alias walrus="while true; do ruby -e '0.upto(50) { |i| print \"\r\" + (\" \" * i) + \":\" + %w(€ c)[i%2] + \".\" * (50-i); sleep 0.25 }'; done"
