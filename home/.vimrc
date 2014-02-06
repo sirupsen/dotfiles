@@ -100,6 +100,7 @@ noremap L $
 
 " Enable spelling in Markdown
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
+autocmd BufNewFile,BufRead *.rbb set filetype=ruby
 
 " PLUGINS
 
