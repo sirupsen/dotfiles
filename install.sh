@@ -76,15 +76,15 @@ if ! type -t chruby > /dev/null 2>&1; then
   )
 fi
 
-install_mri_ruby "ruby-2.0.0-p353"
-install_mri_ruby "ruby-1.9.3-p484"
+#install_mri_ruby "ruby-2.0.0-p353"
+#install_mri_ruby "ruby-1.9.3-p484"
 
 if ! vim --version | grep -q "+ruby"; then
   echo "Installing Vim 7.4 with Ruby support..."
   (
     cd /tmp
     source /usr/local/share/chruby/chruby.sh 
-    chruby 2.0.0
+    ruby -v
 
     wget "ftp://ftp.vim.org/pub/vim/unix/vim-$VIM_VERSION.tar.bz2"
     tar xjf "vim-$VIM_VERSION.tar.bz2"
@@ -103,7 +103,6 @@ echo "Compiling commandt..."
 (
   cd $HOME/.vim/bundle/Command-T/ruby/command-t
   source /usr/local/share/chruby/chruby.sh 
-  chruby 2.0.0
   ruby extconf.rb
   make clean
   make
