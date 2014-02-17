@@ -41,7 +41,7 @@ alias ...='cd ../..'
 
 alias cbranch="git rev-parse --abbrev-ref HEAD"
 alias gp='git push origin `cbranch`'
-alias gpl='git pull `cbranch`'
+alias gpl='git pull origin `cbranch`'
 alias gc='git commit --verbose'
 alias gs='git status --short --branch'
 alias gb='git branch --verbose'
