@@ -47,7 +47,7 @@ alias gs='git status --short --branch'
 alias gb='git branch --verbose'
 alias gl='git log --oneline'
 alias gco='git checkout'
-alias yolo='git push --force origin `cbranch`'
+alias gpf='git push --force origin `cbranch`'
 alias blush="git commit --amend --reuse-message HEAD && yolo"
 
 alias bx='bundle exec'
