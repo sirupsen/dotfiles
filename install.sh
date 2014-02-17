@@ -1,15 +1,5 @@
 #/bin/bash
-
-# Exit immediately if anything exits with non-zero
-set -e
-
-# Print commands as we go
-set -x
-
-CHRUBY_VERSION="0.3.8"
-VIM_VERSION="7.4"
-
-./linker.sh
+set -ex
 
 cores() {
   if [[ `uname` == 'Darwin' ]]; then
@@ -29,21 +19,18 @@ fi
 
 if ! type -t chruby > /dev/null 2>&1; then
   (
-    cd /tmp
-    wget -O "chruby-$CHRUBY_VERSION.tar.gz" "https://github.com/postmodern/chruby/archive/v$CHRUBY_VERSION.tar.gz"
-    tar -xzvf "chruby-$CHRUBY_VERSION.tar.gz"
-    cd "chruby-$CHRUBY_VERSION/"
+    git clone git@github.com:postmodern/chruby.git /tmp/chruby-latest
+    cd /tmp/chruby-latest
     sudo make install
+    rm -rf /tmp/chruby-latest
   )
 fi
 
 if ! type -t ruby-install > /dev/null 2>&1; then
   (
-    cd /tmp
-    wget -O ruby-install-0.3.4.tar.gz https://github.com/postmodern/ruby-install/archive/v0.3.4.tar.gz
-    tar -xzvf ruby-install-0.3.4.tar.gz
-    cd ruby-install-0.3.4/
+    git clone git@github.com:postmodern/ruby-install.git /tmp/ruby-install-latest
     sudo make install
+    rm -rf /tmp/ruby-install-latest
   )
 fi
 
