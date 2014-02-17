@@ -39,16 +39,16 @@ alias ls='ls -G'
 alias ..='cd ..'
 alias ...='cd ../..'
 
-alias gp='git push'
-alias gpl='git pull'
-alias gd='git diff'
-alias gc='git commit -v'
-alias gs='git status -sb'
-alias gb='git branch -v'
+alias cbranch="git rev-parse --abbrev-ref HEAD"
+alias gp='git push origin `cbranch`'
+alias gpl='git pull `cbranch`'
+alias gc='git commit --verbose'
+alias gs='git status --short --branch'
+alias gb='git branch --verbose'
 alias gl='git log --oneline'
 alias gco='git checkout'
-alias yolo="git push --force"
-alias blush="git commit --amend -C HEAD && yolo"
+alias yolo='git push --force origin `cbranch`'
+alias blush="git commit --amend --reuse-message HEAD && yolo"
 
 alias bx='bundle exec'
 alias bxr='bundle exec rake'

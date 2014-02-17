@@ -14,6 +14,6 @@ if [[ -r /usr/local/share/chruby/chruby.sh && -z $SHOPIFY_DEV_VAGRANT ]]; then
 
   chruby 2.1.0
 
-  Allow auto-switching in directories with a .ruby-version # file
+  # Allow auto-switching in directories with a .ruby-version # file
   source /usr/local/share/chruby/auto.sh
 fi
