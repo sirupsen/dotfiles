@@ -13,6 +13,7 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 
 " Utility
 NeoBundle 'Sirupsen/vim-execrus'
+NeoBundle 'gcmt/wildfire.vim'
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'teoljungberg/vim-grep'
