@@ -28,6 +28,11 @@ function health {
   echo "Nothing yet!"
 }
 
+function dotfiles {
+  cd ~/.dotfiles
+  git pull origin master
+}
+
 if command -v hub > /dev/null; then
   alias git=hub
 fi
