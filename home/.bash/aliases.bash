@@ -53,15 +53,14 @@ alias gb='git branch --verbose'
 alias gl='git log --oneline'
 alias gco='git checkout'
 alias gpf='git push --force origin `cbranch`'
-alias blush="git commit --amend --reuse-message HEAD && yolo"
+alias blush="git commit --amend --reuse-message HEAD && gpf"
 
 alias bx='bundle exec'
-alias bxr='bundle exec rake'
 
 alias vu='vagrant up'
 alias vsu='vagrant suspend'
 alias vs='vagrant ssh'
-alias vz='cd ~/vagrant && vagrant ssh && z'
+alias vss='cd ~/vagrant && vagrant ssh'
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
