@@ -25,9 +25,9 @@ NeoBundle 'tpope/vim-rake'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'wincent/Command-T', {
-  \ 'build' : {
-    \'mac' : 'ruby ruby/command-t/extconf.rb && make clean && make',
-    \'linux' : 'ruby ruby/command-t/extconf.rb && make clean && make' 
+  \'build' : {
+    \'mac' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile',
+    \'linux' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile' 
   \} 
 \}
 
