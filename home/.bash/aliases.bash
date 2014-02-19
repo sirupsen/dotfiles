@@ -60,7 +60,7 @@ alias bx='bundle exec'
 alias vu='vagrant up'
 alias vsu='vagrant suspend'
 alias vs='vagrant ssh'
-alias vss='cd ~/vagrant && vagrant ssh'
+alias vss='cd ~/code/vagrant && vagrant ssh'
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'

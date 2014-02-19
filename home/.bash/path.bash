@@ -17,5 +17,11 @@ else
   export GOPATH=~/code/go
 fi
 
+# Use gnu utils instead of os x
+if [[ -d /usr/local/opt/coreutils/libexec/gnubin ]]; then
+  MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+  PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH" 
+fi
+
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages                        
 export VAGRANT_DEFAULT_PROVIDER="vmware_fusion" 
