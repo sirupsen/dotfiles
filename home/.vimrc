@@ -139,8 +139,6 @@ imap <tab> <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
 
 map <C-E> :call g:Execrus()<CR>
-map <C-\> :call g:Execrus('alternative')<CR>
-map <C-P> :call g:Execrus('repl')<CR>
 
 " Ctag options
 set tags=tags,gems.tags " Since i ctag for gems
