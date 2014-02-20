@@ -53,6 +53,7 @@ alias gb='git branch --verbose'
 alias gl='git log --oneline'
 alias gco='git checkout'
 alias gpf='git push --force origin `cbranch`'
+alias gd='git diff'
 alias blush="git commit --amend --reuse-message HEAD && gpf"
 
 alias bx='bundle exec'
