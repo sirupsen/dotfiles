@@ -145,6 +145,31 @@ map <C-P> :call g:Execrus('repl')<CR>
 " Ctag options
 set tags=tags,gems.tags " Since i ctag for gems
 
+" Jumping to tags.
+"
+" Basically, <c-]> jumps to tags (like normal) and <c-\> opens the tag in a new
+" split instead.
+"
+" Both of them will align the destination line to the upper middle part of the
+" screen.  Both will pulse the cursor line so you can see where the hell you
+" are.  <c-\> will also fold everything in the buffer and then unfold just
+" enough for you to see the destination line.
+"
+" Thanks Steve Losh
+" (https://bitbucket.org/sjl/dotfiles/src/1e885626f65626c1324ff9cdf38e54ea9f7a2506/vim/vimrc?at=default#cl-520)
+function! JumpToTag()
+    execute "normal! \<c-]>mzzvzz15\<c-e>"
+    execute "keepjumps normal! `z"
+    Pulse
+endfunction
+function! JumpToTagInSplit()
+    execute "normal! \<c-w>v\<c-]>mzzMzvzz15\<c-e>"
+    execute "keepjumps normal! `z"
+    Pulse
+endfunction
+nnoremap <c-]> :silent! call JumpToTag()<cr>
+nnoremap <c-\> :silent! call JumpToTagInSplit()<cr>
+
 " Force vim to use login shell, ie. for chruby to work right.
 " https://github.com/postmodern/chruby/wiki/Vim
 set shell=$SHELL\ -l
