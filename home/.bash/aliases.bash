@@ -60,8 +60,20 @@ alias bx='bundle exec'
 
 alias vu='vagrant up'
 alias vsu='vagrant suspend'
+alias vr='vagrant resume'
 alias vs='vagrant ssh'
-alias vss='cd ~/code/vagrant && vagrant ssh'
+
+vss() {
+  local project=$1
+  if [[ -z $project ]]; then
+    project="vagrant"
+  fi
+
+  z "$project"
+
+  # Ignore error if SSH doesn't work due to the machine not being up.
+  vagrant ssh 2>/dev/null || (vagrant up && vagrant ssh)
+}
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
