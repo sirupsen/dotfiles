@@ -19,15 +19,7 @@ NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'tpope/vim-dispatch'
 NeoBundle 'tpope/vim-commentary'
-
-NeoBundle 'wincent/Command-T', {
-  \'build' : {
-    \'mac' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile',
-    \'linux' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile' 
-  \} 
-\}
-
-" Environments
+NeoBundle "kien/ctrlp.vim"
 NeoBundle 'derekwyatt/vim-scala'
 NeoBundle 'jnwhiteh/vim-golang'
 NeoBundle 'kchmck/vim-coffee-script'
@@ -124,15 +116,8 @@ map <C-E> :Make<CR>
 " https://github.com/postmodern/chruby/wiki/Vim
 set shell=$SHELL\ -l
 map <leader>n :NERDTreeToggle<CR>
-map <C-t> :CommandT<CR>
-map <C-g> :CommandTBuffer<CR>
-map <C-7> :CommandTTag<CR>
-let g:CommandTAcceptSelectionSplitMap='<C-x>'
-let g:CommandTMaxHeight=20
 
-" Auto-format Go, requires vim golang
-autocmd BufWrite *.go :Fmt
-
-set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files --unmerged', 'find . -type f ! -path "./vendor/*" ! -path "./log/*" ! -path "./node_modules/*" ! -path "./public/*" ! -path "./tmp/*"']
+map <C-t> :CtrlP<CR>
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
