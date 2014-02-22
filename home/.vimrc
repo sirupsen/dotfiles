@@ -121,3 +121,11 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -c', 'find . -type f 
 map <C-t> :CtrlP<CR>
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
+
+fun! StripTrailingWhitespaces()
+  let l = line(".")
+  let c = col(".")
+  %s/\s\+$//e
+  call cursor(l, c)
+endfun
+autocmd FileType c,cpp,go,scala,markdown,clojure,javascript,ruby,python autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
