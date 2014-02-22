@@ -15,5 +15,5 @@ stty -ixon
 
 export TERM=screen-256color
 
-# Plenty big history for searching backwards
-export HISTFILESIZE=2500
+# Plenty big history for searching backwards and doing analysis
+export HISTFILESIZE=100000
