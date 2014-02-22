@@ -39,7 +39,13 @@ fi
 
 source $HOME/.bash/z.bash
 
-alias ls='ls -G'
+# Enable fancy coloring on GNU ls
+if ls --version | grep -q GNU; then
+  eval `dircolors ~/.dir_colors`
+  alias ls='ls --color=auto'
+else
+  alias ls='ls -G'
+fi
 
 alias ..='cd ..'
 alias ...='cd ../..'
