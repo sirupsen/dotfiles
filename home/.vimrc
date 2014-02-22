@@ -117,7 +117,7 @@ map <C-E> :Make<CR>
 set shell=$SHELL\ -l
 map <leader>n :NERDTreeToggle<CR>
 
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files --unmerged', 'find . -type f ! -path "./vendor/*" ! -path "./log/*" ! -path "./node_modules/*" ! -path "./public/*" ! -path "./tmp/*"']
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -c', 'find . -type f ! -path "./vendor/*" ! -path "./log/*" ! -path "./node_modules/*" ! -path "./public/*" ! -path "./tmp/*"']
 map <C-t> :CtrlP<CR>
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*

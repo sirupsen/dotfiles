@@ -12,16 +12,6 @@ fi
 # Put in current directory only
 PS1+='\[$RED\]\W'
 
-# OS X Homebrew
-if [[ -f /usr/local/etc/bash_completion.d/git-prompt.sh ]]; then
-  source /usr/local/etc/bash_completion.d/git-prompt.sh 2> /dev/null
-fi
-
-# Ubuntu Linux
-if [[ -f /etc/bash_completion.d/git ]]; then 
-  source /etc/bash_completion.d/git 2> /dev/null
-fi
-
 # If we have __git_ps1 installed, then put it in the prompt. We do what we can
 # from the previous two lines.
 if command -v __git_ps1 > /dev/null 2>&1; then
