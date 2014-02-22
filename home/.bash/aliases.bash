@@ -58,6 +58,7 @@ alias gs='git status --short --branch'
 alias gb='git branch --verbose'
 alias gl='git log --oneline'
 alias gco='git checkout'
+__git_complete gco _git_checkout
 alias gpf='git push --force origin `cbranch`'
 alias gd='git diff'
 alias blush="git commit --amend --reuse-message HEAD && gpf"
