@@ -19,15 +19,12 @@ NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'tpope/vim-dispatch'
 NeoBundle 'tpope/vim-commentary'
-
 NeoBundle 'wincent/Command-T', {
   \'build' : {
     \'mac' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile',
     \'linux' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile' 
   \} 
 \}
-
-" Environments
 NeoBundle 'derekwyatt/vim-scala'
 NeoBundle 'jnwhiteh/vim-golang'
 NeoBundle 'kchmck/vim-coffee-script'
@@ -129,9 +126,6 @@ map <C-g> :CommandTBuffer<CR>
 map <C-7> :CommandTTag<CR>
 let g:CommandTAcceptSelectionSplitMap='<C-x>'
 let g:CommandTMaxHeight=20
-
-" Auto-format Go, requires vim golang
-autocmd BufWrite *.go :Fmt
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
