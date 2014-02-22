@@ -12,18 +12,18 @@ call neobundle#rc(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " Utility
-NeoBundle 'Sirupsen/vim-execrus'
 NeoBundle 'gcmt/wildfire.vim'
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'teoljungberg/vim-grep'
-NeoBundle 'gcmt/wildfire.vim'
-NeoBundle 'tomtom/tcomment_vim'
+
 NeoBundle 'tpope/vim-endwise'
 NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'tpope/vim-rake'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
+NeoBundle 'tpope/vim-dispatch'
+NeoBundle 'tpope/vim-commentary'
+
 NeoBundle 'wincent/Command-T', {
   \'build' : {
     \'mac' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile',
@@ -36,11 +36,12 @@ NeoBundle 'derekwyatt/vim-scala'
 NeoBundle 'jnwhiteh/vim-golang'
 NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'vim-ruby/vim-ruby'
+NeoBundle 'vim-scripts/VimClojure'
+
 NeoBundle 'tpope/vim-liquid'
 NeoBundle 'tpope/vim-markdown'
 NeoBundle 'tpope/vim-rails'
-NeoBundle 'vim-ruby/vim-ruby'
-NeoBundle 'vim-scripts/VimClojure'
 
 " Colors
 NeoBundle 'altercation/vim-colors-solarized'
@@ -102,7 +103,6 @@ noremap L $
 
 " Enable spelling in Markdown
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
-autocmd BufNewFile,BufRead *.rbb set filetype=ruby
 
 " PLUGINS
 
@@ -138,7 +138,10 @@ endfunction
 imap <tab> <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
 
-map <C-E> :call g:Execrus()<CR>
+autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
+autocmd BufNewFile,BufRead *_test.rb set makeprg=bundle\ exec\ testrb
+
+map <C-E> :Make %<CR>
 
 " Ctag options
 set tags=tags,gems.tags " Since i ctag for gems
