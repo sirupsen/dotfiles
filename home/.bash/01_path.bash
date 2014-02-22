@@ -1,14 +1,19 @@
 #!/bin/bash
 
-# Homebrew, high priority
+# Homebrew
 if [ -d /usr/local/bin ]; then
   export PATH=/usr/local/bin:$PATH
   export PATH=$PATH:/usr/local/sbin
 fi
 
-# NPM, low priority
+# NPM
 if [ -d /usr/local/share/npm/bin ]; then
   export PATH=$PATH:/usr/local/share/npm/bin
+fi
+
+# Personal bin files
+if [[ -d $HOME/.bin ]]; then
+  export PATH=$PATH:$HOME/.bin
 fi
 
 if [[ -n $SHOPIFY_DEV_VAGRANT ]]; then
