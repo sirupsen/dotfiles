@@ -137,3 +137,5 @@ fun! StripTrailingWhitespaces()
   call cursor(l, c)
 endfun
 autocmd FileType c,cpp,go,scala,markdown,clojure,javascript,ruby,python autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
+
+match Error /\%81v.\+/
