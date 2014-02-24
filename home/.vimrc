@@ -114,6 +114,7 @@ autocmd BufNewFile,BufRead *_test.rb set makeprg=bundle\ exec\ testrb\ %
 
 autocmd FileType go compiler go
 autocmd BufWrite *.go :Fmt
+autocmd FileType go set nolist " Go fmt will use tabs
 
 map <C-E> :Make<CR>
 
