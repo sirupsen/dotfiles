@@ -3,8 +3,7 @@ set nocompatible " No vi compatility, this first because it resets some options
 let mapleader=" " " Mapleader
 filetype off
 set encoding=utf-8
-set history=100  " Keep more history, default is 20
-
+set history=1000  " Keep more history, default is 20
 set rtp+=~/.vim/bundle/neobundle.vim
 call neobundle#rc(expand('~/.vim/bundle/'))
 
@@ -34,16 +33,12 @@ NeoBundle 'tpope/vim-liquid'
 NeoBundle 'tpope/vim-markdown'
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'reedes/vim-colors-pencil'
 NeoBundle 'kana/vim-textobj-user'
 NeoBundle 'rhysd/vim-textobj-ruby'
 NeoBundle 'gcmt/wildfire.vim'
 
 filetype plugin indent on " Enable after Vundle loaded, #dunnolol
-
-set tags=.git/tags " Use commit hook tags, see ~/.git_template
-
-set list " Highlight trailings, stolen from @teoljungberg
-set listchars=tab:>-,trail:.,extends:>,precedes:<
 
 " Allow editing crontabs http://vim.wikia.com/wiki/Editing_crontab
 set backupskip=/tmp/*,/private/tmp/* "
@@ -57,17 +52,23 @@ set background=dark " Set dark solarized theme
 set t_Co=256  " 2000s plz
 set textwidth=80  " Switch line at 80 characters
 set scrolloff=5   " Keep some distance to the bottom"
-set showmatch         " Show matching of: () [] {}
-set ignorecase        " Required for smartcase to work
-set smartcase         " Case sensitive when uppercase is present
-set incsearch         " Search as you type
-set smartindent       " Be smart about indentation
-set expandtab         " Tabs are spaces
+set showmatch     " Show matching of: () [] {}
+set ignorecase    " Required for smartcase to work
+set smartcase     " Case sensitive when uppercase is present
+set incsearch     " Search as you type
+set smartindent   " Be smart about indentation
+set expandtab     " Tabs are spaces
 set smarttab
+set shell=$SHELL\ -l  " load shell for ruby version etc.
 
 set tabstop=2 " Tabs are 2 spaces
 set backspace=2 " Backspace deletes 2 spaces
 set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
+
+set list " Highlight trailings, stolen from @teoljungberg
+set listchars=tab:>-,trail:.,extends:>,precedes:<
+
+set tags=.git/tags " Use commit hook tags, see ~/.git_template
 
 map <C-J> <C-W>j
 map <C-K> <C-W>k
@@ -110,28 +111,23 @@ imap <tab>   <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
 
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
-
 autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
 autocmd BufNewFile,BufRead *_test.rb set makeprg=bundle\ exec\ testrb\ %
+map <C-E> :Make<CR>
 
 autocmd FileType go compiler go
 autocmd BufWrite *.go :Fmt
 autocmd FileType go set nolist " Go fmt will use tabs
 
-map <C-E> :Make<CR>
-
-" Force vim to use login shell, ie. for chruby to work right.
-" https://github.com/postmodern/chruby/wiki/Vim
-set shell=$SHELL\ -l
 map <leader>n :NERDTreeToggle<CR>
 map <C-t> :CommandT<CR>
-map <C-g> :CommandTBuffer<CR>
-map <C-7> :CommandTTag<CR>
+map <C-g> :CommandTTag<CR>
 let g:CommandTAcceptSelectionSplitMap='<C-x>'
 let g:CommandTMaxHeight=20
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
+" Remove trailing whitespace on save
 fun! StripTrailingWhitespaces()
   let l = line(".")
   let c = col(".")
@@ -145,4 +141,4 @@ let g:wildfire_objects = {
       \ "ruby" : ["i'", 'i"', "i)", "i]", "ir", "i}", "ip"]
 \ }
 
-match Error /\%81v.\+/
+match Error /\%81v.\+/ " Highilght columns after the 80th
