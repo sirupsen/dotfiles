@@ -9,7 +9,6 @@ set rtp+=~/.vim/bundle/neobundle.vim
 call neobundle#rc(expand('~/.vim/bundle/'))
 
 NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'gcmt/wildfire.vim'
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'teoljungberg/vim-grep'
@@ -35,6 +34,9 @@ NeoBundle 'tpope/vim-liquid'
 NeoBundle 'tpope/vim-markdown'
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'kana/vim-textobj-user'
+NeoBundle 'rhysd/vim-textobj-ruby'
+NeoBundle 'gcmt/wildfire.vim'
 
 filetype plugin indent on " Enable after Vundle loaded, #dunnolol
 
@@ -137,5 +139,10 @@ fun! StripTrailingWhitespaces()
   call cursor(l, c)
 endfun
 autocmd FileType c,cpp,go,scala,markdown,clojure,javascript,ruby,python autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
+
+let g:wildfire_objects = {
+      \ "*" :    ["i'", 'i"', "i)", "i]", "i}", "ip"],
+      \ "ruby" : ["i'", 'i"', "i)", "i]", "ir", "i}", "ip"]
+\ }
 
 match Error /\%81v.\+/
