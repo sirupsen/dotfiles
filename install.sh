@@ -45,7 +45,7 @@ if ! vim --version | grep -q "+ruby"; then
     tar xjf "vim-$VIM_VERSION.tar.bz2"
     cd vim74
     ./configure --enable-rubyinterp
-    make -j"$(cores)"
+    make --jobs "$(cores)"
     sudo make install
   )
 
