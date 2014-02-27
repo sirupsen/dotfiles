@@ -117,9 +117,10 @@ map <C-E> :Make<CR>
 
 autocmd FileType go compiler go
 autocmd BufWrite *.go :Fmt
-autocmd FileType go set nolist " Go fmt will use tabs
+autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 
 map <leader>n :NERDTreeToggle<CR>
+
 map <C-t> :CommandT<CR>
 map <C-g> :CommandTTag<CR>
 let g:CommandTAcceptSelectionSplitMap='<C-x>'
@@ -134,7 +135,7 @@ fun! StripTrailingWhitespaces()
   %s/\s\+$//e
   call cursor(l, c)
 endfun
-autocmd FileType c,cpp,go,scala,markdown,clojure,javascript,ruby,python autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
+autocmd FileType c,bash,cpp,go,scala,markdown,clojure,javascript,ruby,python autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
 
 let g:wildfire_objects = {
       \ "*" :    ["i'", 'i"', "i)", "i]", "i}", "ip"],
@@ -142,3 +143,7 @@ let g:wildfire_objects = {
 \ }
 
 match Error /\%81v.\+/ " Highilght columns after the 80th
+
+let g:surround_{char2nr('%')} = "<% \r %>"
+let g:surround_{char2nr('=')} = "<%= \r %>"
+let g:surround_{char2nr('#')} = "#{\r}"
