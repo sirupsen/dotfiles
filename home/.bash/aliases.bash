@@ -64,6 +64,7 @@ alias gd='git diff'
 alias blush="git commit --amend --reuse-message HEAD && gpf"
 
 alias bx='bundle exec'
+alias bxr='bundle exec rake'
 
 alias vu='vagrant up'
 alias vsu='vagrant suspend'

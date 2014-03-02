@@ -1,6 +1,6 @@
 " BASIC
 set nocompatible " No vi compatility, this first because it resets some options
-let mapleader=" " " Mapleader
+let mapleader="," " Mapleader
 filetype off
 set encoding=utf-8
 set history=1000  " Keep more history, default is 20
@@ -138,8 +138,9 @@ endfun
 autocmd FileType c,bash,cpp,go,scala,markdown,clojure,javascript,ruby,python autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
 
 let g:wildfire_objects = {
-      \ "*" :    ["i'", 'i"', "i)", "i]", "i}", "ip"],
-      \ "ruby" : ["i'", 'i"', "i)", "i]", "ir", "i}", "ip"]
+      \ "*" :    ["i'", 'i"', 'i)', 'i]', 'i}', "ip"],
+      \ "ruby" : ["i'", 'i"', 'i)', "ir", "ar"],
+      \ "markdown" : ["i'", 'i"', "is", "ip"]
 \ }
 
 match Error /\%81v.\+/ " Highilght columns after the 80th
