@@ -35,8 +35,10 @@ NeoBundle 'tpope/vim-rails'
 NeoBundle 'altercation/vim-colors-solarized'
 NeoBundle 'reedes/vim-colors-pencil'
 NeoBundle 'kana/vim-textobj-user'
-NeoBundle 'rhysd/vim-textobj-ruby'
+NeoBundle 'tsaleh/vim-matchit'
+NeoBundle 'nelstrom/vim-textobj-rubyblock'
 NeoBundle 'gcmt/wildfire.vim'
+NeoBundle 'nelstrom/vim-visual-star-search'
 
 filetype plugin indent on " Enable after Vundle loaded, #dunnolol
 
