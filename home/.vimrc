@@ -119,6 +119,7 @@ map <C-E> :Make<CR>
 
 autocmd FileType go compiler go
 autocmd BufWrite *.go :Fmt
+autocmd BufNewFile,BufRead *_test.go set makeprg=go\ test
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 
 map <leader>n :NERDTreeToggle<CR>
