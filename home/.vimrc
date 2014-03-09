@@ -131,14 +131,13 @@ let g:CommandTMaxHeight=20
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
-" Remove trailing whitespace on save
 fun! StripTrailingWhitespaces()
   let l = line(".")
   let c = col(".")
   %s/\s\+$//e
   call cursor(l, c)
 endfun
-autocmd FileType c,bash,cpp,go,scala,markdown,clojure,javascript,ruby,python autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
+" autocmd FileType c,bash,cpp,go,scala,markdown,clojure,javascript,ruby,python autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
 
 let g:wildfire_objects = {
       \ "*" :    ["i'", 'i"', 'i)', 'i]', 'i}', "ip"],
