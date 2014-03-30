@@ -51,7 +51,17 @@ alias ..='cd ..'
 alias ...='cd ../..'
 
 alias cbranch="git rev-parse --abbrev-ref HEAD"
-alias gp='git push origin `cbranch`'
+
+# If I have a fork, prioriritize pushing to that instead of origin.
+function gp() {
+  if git remote | grep -iq sirupsen; then
+    echo -e "\x1b[33m Pushing to remote \x1b[34msirupsen\x1b[0m"
+    git push sirupsen cbranch
+  else
+    git push origin cbranch
+  fi
+}
+
 alias gpl='git pull origin `cbranch`'
 alias gc='git commit --verbose'
 alias gs='git status --short --branch'
