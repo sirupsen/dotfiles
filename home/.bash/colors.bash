@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # Normal Colors
-GREEN=$'\e[0;32m'
 RED=$'\e[0;31m'
+GREEN=$'\e[0;32m'
+YELLOW=$'\e[0;33m'
 BLUE=$'\e[0;34m'
+
 WHITE=$'\e[1;37m'
 BLACK=$'\e[0;30m'
-YELLOW=$'\e[0;33m'
 PURPLE=$'\e[0;35m'
 CYAN=$'\e[0;36m'
 GRAY=$'\e[1;30m'
