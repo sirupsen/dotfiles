@@ -5,8 +5,8 @@
 function rt {
   if [ -e .zeus.sock ]; then
     bundle exec zeus test $1
-  elif grep -q "spring-commands-testunit" Gemfile; then
-    bundle exec spring testunit $@
+  # elif grep -q "spring-commands-testunit" Gemfile; then
+  #   bundle exec spring testunit $@
   else
     bundle exec ruby -Itest $1
   fi
@@ -26,6 +26,10 @@ function health {
 
   # Check status of all running VMs and output them.
   echo "Nothing yet!"
+}
+
+function knife-each {
+  knife search -i node $1 | tail -n +3 | xargs -I^ ssh deploy@^ $2
 }
 
 function dotfiles {
@@ -68,8 +72,10 @@ alias gs='git status --short --branch'
 alias gb='git branch --verbose'
 alias gl='git log --oneline'
 alias gco='git checkout'
-__git_complete gco _git_checkout
-alias gpf='gp --force'
+if type -t __git_complete > /dev/null; then
+  __git_complete gco _git_checkout
+fi
+alias gpf='git push --force origin `cbranch`'
 alias gd='git diff'
 alias blush="git commit --amend --reuse-message HEAD && gpf"
 
