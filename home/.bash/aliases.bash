@@ -29,8 +29,13 @@ function health {
 }
 
 function knife-each {
-  knife search -i node $1 | tail -n +3 | xargs -I^ ssh deploy@^ $2
+  knife search -i node $1 | tail -n +3
 }
+
+function knife-each-ssh {
+  knife-each $1 | xargs -I^ $3 ssh deploy@^ $2
+}
+
 
 function dotfiles {
   cd ~/.dotfiles
@@ -70,6 +75,7 @@ alias gpl='git pull origin `cbranch`'
 alias gc='git commit --verbose'
 alias gs='git status --short --branch'
 alias gb='git branch --verbose'
+alias grc='git rebase --continue'
 alias gl='git log --oneline'
 alias gco='git checkout'
 if type -t __git_complete > /dev/null; then
@@ -77,7 +83,7 @@ if type -t __git_complete > /dev/null; then
 fi
 alias gpf='git push --force origin `cbranch`'
 alias gd='git diff'
-alias blush="git commit --amend --reuse-message HEAD && gpf"
+alias blush="git commit --amend --reuse-message HEAD"
 
 alias bx='bundle exec'
 alias bxr='bundle exec rake'
