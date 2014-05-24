@@ -33,7 +33,7 @@ function knife-each {
 }
 
 function knife-each-ssh {
-  knife-each $1 | xargs -I^ $3 ssh deploy@^ $2
+  knife-each $1 | xargs -I^ $3 ssh deploy@^ "hostname && $2"
 }
 
 
@@ -94,13 +94,7 @@ alias vr='vagrant resume'
 alias vs='vagrant ssh'
 
 vss() {
-  local project=$1
-  if [[ -z $project ]]; then
-    project="vagrant"
-  fi
-
-  z "$project"
-
+  cd ~/code/vagrant
   # Ignore error if SSH doesn't work due to the machine not being up.
   vagrant ssh 2>/dev/null || (vagrant up && vagrant ssh)
 }
