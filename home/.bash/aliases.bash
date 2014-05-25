@@ -19,15 +19,6 @@ function evalin {
   curl -s --dump-header - --data "code=$CODE&execute=true" https://eval.in/ | grep -woE "https:\/\/eval.in/[0-9]+"
 }
 
-# Checks the health of my system
-function health {
-  # CD into top visited repositories with the help of bash history.
-  # Check if they have commits that master doesn't.
-
-  # Check status of all running VMs and output them.
-  echo "Nothing yet!"
-}
-
 function knife-each {
   knife search -i node $1 | tail -n +3
 }
@@ -35,7 +26,6 @@ function knife-each {
 function knife-each-ssh {
   knife-each $1 | xargs -I^ $3 ssh deploy@^ "hostname && $2"
 }
-
 
 function dotfiles {
   cd ~/.dotfiles
