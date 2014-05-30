@@ -73,6 +73,7 @@ if type -t __git_complete > /dev/null; then
 fi
 alias gpf='git push --force origin `cbranch`'
 alias gd='git diff'
+alias gupdate='git fetch origin && git rebase origin/master && gpf'
 alias blush="git commit --amend --reuse-message HEAD"
 
 alias bx='bundle exec'
@@ -82,15 +83,6 @@ alias vu='vagrant up'
 alias vsu='vagrant suspend'
 alias vr='vagrant resume'
 alias vs='vagrant ssh'
-
-green() {
-  while true; do
-    sleep 0.1
-    git ci-status \
-      && say "$(basename `pwd`) green" \
-      && return
-  done
-}
 
 vss() {
   cd ~/code/vagrant
@@ -104,4 +96,17 @@ alias tfc='tmux set-buffer "$(pbpaste)"'
 alias gg='git grep'
 
 alias open-ports="sudo lsof -iTCP -sTCP:LISTEN -P"
-alias walrus="while true; do ruby -e '0.upto(50) { |i| print \"\r\" + (\" \" * i) + \":\" + %w(€ c)[i%2] + \".\" * (50-i); sleep 0.25 }'; done"
+alias walrus="ruby -e 'loop { 0.upto(50) { |i| print \"\r\" + (\" \" * i) + \":\" + %w(€ c)[i%2] + \".\" * (50-i); sleep 0.25 } }'"
+
+green() {
+  walrus & >/dev/null 2>&1
+  WALRUS_PID=$!
+
+  while true; do
+    sleep 0.1
+    git ci-status > /dev/null \
+      && say "$(basename `pwd`) green" \
+      && kill -SIGKILL $WALRUS_PID > /dev/null 2>&1 \
+      && return
+  done
+}
