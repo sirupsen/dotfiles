@@ -83,6 +83,15 @@ alias vsu='vagrant suspend'
 alias vr='vagrant resume'
 alias vs='vagrant ssh'
 
+green() {
+  while true; do
+    sleep 0.1
+    git ci-status \
+      && say "$(basename `pwd`) green" \
+      && return
+  done
+}
+
 vss() {
   cd ~/code/vagrant
   # Ignore error if SSH doesn't work due to the machine not being up.
