@@ -51,17 +51,16 @@ alias ...='cd ../..'
 
 alias cbranch="git rev-parse --abbrev-ref HEAD"
 
-# If I have a fork, prioriritize pushing to that instead of origin.
-function gp() {
-  if git remote | grep -iq sirupsen; then
-    echo -e "\x1b[33m Pushing to remote \x1b[34msirupsen\x1b[0m"
-    git push sirupsen `cbranch`
+git_origin_or_fork() {
+  if git remote 2>/dev/null | grep -iq sirupsen; then
+    echo "sirupsen"
   else
-    git push origin `cbranch`
+    echo "origin"
   fi
 }
 
-alias gpl='git pull origin `cbranch`'
+alias gp='git push `git_origin_or_fork` `cbranch`'
+alias gpl='git pull `git_origin_or_fork` `cbranch`'
 alias gc='git commit --verbose'
 alias gs='git status --short --branch'
 alias gb='git branch --verbose'
@@ -71,7 +70,7 @@ alias gco='git checkout'
 if type -t __git_complete > /dev/null; then
   __git_complete gco _git_checkout
 fi
-alias gpf='git push --force origin `cbranch`'
+alias gpf='git push --force `git_origin_or_fork` `cbranch`'
 alias gd='git diff'
 alias gupdate='git fetch origin && git rebase origin/master && gpf'
 alias blush="git commit --amend --reuse-message HEAD"
@@ -103,10 +102,10 @@ green() {
   WALRUS_PID=$!
 
   while true; do
-    sleep 0.1
     git ci-status > /dev/null \
       && say "$(basename `pwd`) green" \
       && kill -SIGKILL $WALRUS_PID > /dev/null 2>&1 \
       && return
+    sleep 0.1
   done
 }
