@@ -70,7 +70,7 @@ alias gco='git checkout'
 if type -t __git_complete > /dev/null; then
   __git_complete gco _git_checkout
 fi
-alias gpf='git push --force `git_origin_or_fork` `cbranch`'
+alias gpf='git push `git_origin_or_fork` +`cbranch`'
 alias gd='git diff'
 alias gupdate='git fetch origin && git rebase origin/master && gpf'
 alias blush="git commit --amend --reuse-message HEAD"
