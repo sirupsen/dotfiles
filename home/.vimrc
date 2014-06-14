@@ -112,6 +112,8 @@ endfunction
 imap <tab>   <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
 
+au BufNewFile,BufRead *.ejson set filetype=json
+
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
 autocmd BufNewFile,BufRead *_test.rb set makeprg=bundle\ exec\ testrb\ %
