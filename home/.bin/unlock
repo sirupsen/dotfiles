@@ -3,7 +3,7 @@
 file="/etc/hosts"
 host_access_file="/usr/local/etc/host_access"
 today=$(date "+%d/%m/%y")
-max_unlocks=3
+max_unlocks=2
 
 if [[ $UID != 0 ]]; then
   echo -e "\x1b[31mMust run as root to acccess /etc/hosts"
