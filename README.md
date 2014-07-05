@@ -3,10 +3,6 @@
 Dotfiles I have used and tweaked for the past couple of years. They're simple
 and optimized for a 13" laptop.
 
-They go hand in hand with my [`babushka`
-deps](https://github.com/sirupsen/babushka-deps) which provision my development
-machine.
-
 # Setup
 
 <table>
