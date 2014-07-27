@@ -41,11 +41,11 @@ if ! vim --version | grep -q "+ruby"; then
     source /usr/local/share/chruby/chruby.sh 
     ruby --version
 
-    wget "ftp://ftp.vim.org/pub/vim/unix/vim-$VIM_VERSION.tar.bz2"
-    tar xjf "vim-$VIM_VERSION.tar.bz2"
-    cd vim74
+    wget "ftp://ftp.vim.org/pub/vim/unix/vim-7.4.tar.bz2"
+    tar xjf "vim-7.4.tar.bz2"
+    cd vim*
     ./configure --enable-rubyinterp
-    make --jobs "$(cores)"
+    make --jobs 4
     sudo make install
   )
 
