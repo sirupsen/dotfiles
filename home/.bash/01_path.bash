@@ -16,11 +16,7 @@ if [[ -d $HOME/.bin ]]; then
   export PATH=$PATH:$HOME/.bin
 fi
 
-if [[ -n $SHOPIFY_DEV_VAGRANT ]]; then
-  export GOPATH=~/src/go
-else
-  export GOPATH=~/code/go
-fi
+export GOPATH=~/src/go
 
 # Use gnu utils instead of os x
 if [[ -d /usr/local/opt/coreutils/libexec/gnubin ]]; then
