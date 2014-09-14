@@ -24,7 +24,7 @@ NeoBundle 'wincent/Command-T', {
   \} 
 \}
 NeoBundle 'derekwyatt/vim-scala'
-NeoBundle 'jnwhiteh/vim-golang'
+NeoBundle 'fatih/vim-go'
 NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'vim-ruby/vim-ruby'
@@ -119,9 +119,9 @@ autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
 autocmd BufNewFile,BufRead *_test.rb set makeprg=bundle\ exec\ testrb\ %
 map <C-E> :Make<CR>
 
-autocmd FileType go compiler go
-autocmd BufWrite *.go :Fmt
-autocmd BufNewFile,BufRead *_test.go set makeprg=go\ test
+" autocmd FileType go compiler go
+" autocmd BufWrite *.go :Fmt
+" autocmd BufNewFile,BufRead *_test.go set makeprg=go\ test
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 
 map <leader>n :NERDTreeToggle<CR>
