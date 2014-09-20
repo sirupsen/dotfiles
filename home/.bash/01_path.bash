@@ -18,6 +18,10 @@ fi
 
 export GOPATH=~/src/go
 
+if [[ -d $GOPATH ]]; then
+  PATH="$PATH:$GOPATH/bin"
+fi
+
 # Use gnu utils instead of os x
 if [[ -d /usr/local/opt/coreutils/libexec/gnubin ]]; then
   MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
