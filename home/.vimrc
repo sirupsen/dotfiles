@@ -17,12 +17,7 @@ NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
 NeoBundle 'tpope/vim-dispatch'
 NeoBundle 'tpope/vim-commentary'
-NeoBundle 'wincent/Command-T', {
-  \'build' : {
-    \'mac' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile',
-    \'linux' : 'ruby ruby/command-t/extconf.rb && make -f ruby/command-t/Makefile' 
-  \} 
-\}
+NeoBundle 'wincent/Command-T'
 NeoBundle 'derekwyatt/vim-scala'
 NeoBundle 'fatih/vim-go'
 NeoBundle 'kchmck/vim-coffee-script'
