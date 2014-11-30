@@ -12,7 +12,7 @@ if [[ -r /usr/local/share/chruby/chruby.sh && -z $SHOPIFY_DEV_VAGRANT ]]; then
   source /usr/local/share/chruby/chruby.sh
   RUBIES=(~/.rubies/*)
 
-  chruby 2.1.0
+  chruby 2.1.3
 
   # Allow auto-switching in directories with a .ruby-version # file
   source /usr/local/share/chruby/auto.sh
