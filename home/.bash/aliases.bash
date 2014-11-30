@@ -27,6 +27,10 @@ function knife-each-ssh {
   knife-each $1 | xargs -I^ $3 ssh simon@^ "hostname && $2"
 }
 
+function host-each-ssh {
+  IFS=','; for host in $HOST; do xargs -I^ $3 ssh simon@^ "hostname && $2"; done
+}
+
 function dotfiles {
   cd ~/.dotfiles
   git pull origin master
