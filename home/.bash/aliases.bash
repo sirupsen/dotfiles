@@ -63,6 +63,14 @@ git_origin_or_fork() {
   fi
 }
 
+git-find-merge() {
+  git rev-list $1..master --ancestry-path \
+    | grep -f \
+      <(git rev-list $1..master --first-parent) \
+    | tail -1
+}
+
+
 alias gp='git push `git_origin_or_fork` `cbranch`'
 alias gpl='git pull `git_origin_or_fork` `cbranch`'
 alias gc='git commit --verbose'
@@ -74,7 +82,7 @@ alias gco='git checkout'
 if type -t __git_complete > /dev/null; then
   __git_complete gco _git_checkout
 fi
-alias gpf='git push `git_origin_or_fork` +`cbranch`'
+alias gpf='if [[ $(cbranch) != "master" ]]; then git push `git_origin_or_fork` +`cbranch`; else echo "Not going to force push master bud"; fi'
 alias gd='git diff'
 alias gupdate='git fetch origin && git rebase origin/master && gpf'
 alias blush="git commit --amend --reuse-message HEAD"
