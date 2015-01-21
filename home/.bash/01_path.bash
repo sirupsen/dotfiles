@@ -13,7 +13,7 @@ fi
 
 # Personal bin files
 if [[ -d $HOME/.bin ]]; then
-  export PATH=$PATH:$HOME/.bin
+  export PATH=$HOME/.bin:$PATH
 fi
 
 export GOPATH=~/src/go
