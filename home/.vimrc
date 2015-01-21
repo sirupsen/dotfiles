@@ -66,7 +66,7 @@ set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
 set list " Highlight trailings, stolen from @teoljungberg
 set listchars=tab:>-,trail:.,extends:>,precedes:<
 
-set tags=.git/tags " Use commit hook tags, see ~/.git_template
+set tags=tags,.git/tags " Use commit hook tags, see ~/.git_template
 
 map <C-J> <C-W>j
 map <C-K> <C-W>k
@@ -123,7 +123,8 @@ autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 map <leader>n :NERDTreeToggle<CR>
 
 map <C-t> :CommandT<CR>
-map <C-g> :CommandTTag<CR>
+map <C-g> :CommandTBuffer<CR>
+map <C-/> :CommandTTag<CR>
 let g:CommandTAcceptSelectionSplitMap='<C-x>'
 let g:CommandTMaxHeight=20
 
