@@ -34,6 +34,7 @@ NeoBundle 'tsaleh/vim-matchit'
 NeoBundle 'nelstrom/vim-textobj-rubyblock'
 NeoBundle 'gcmt/wildfire.vim'
 NeoBundle 'nelstrom/vim-visual-star-search'
+NeoBundle 'nickhutchinson/vim-systemtap'
 
 filetype plugin indent on " Enable after Vundle loaded, #dunnolol
 
