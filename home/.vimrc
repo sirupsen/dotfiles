@@ -109,6 +109,8 @@ imap <tab>   <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
 
 au BufNewFile,BufRead *.ejson set filetype=json
+au BufNewFile,BufRead *.sxx set filetype=stp
+
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
 " autocmd FileType go compiler go

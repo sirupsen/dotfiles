@@ -40,8 +40,6 @@ if command -v hub > /dev/null; then
   alias git=hub
 fi
 
-source $HOME/.bash/z.bash
-
 # Enable fancy coloring on GNU ls
 if ls --version | grep -q GNU; then
   eval `dircolors ~/.dir_colors`
