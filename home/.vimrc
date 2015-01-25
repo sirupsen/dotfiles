@@ -5,36 +5,36 @@ filetype off
 set encoding=utf-8
 set history=1000  " Keep more history, default is 20
 set rtp+=~/.vim/bundle/neobundle.vim
-call neobundle#rc(expand('~/.vim/bundle/'))
+call neobundle#begin(expand('~/.vim/bundle/'))
 
 NeoBundleFetch 'Shougo/neobundle.vim'
+NeoBundle 'teoljungberg/vim-grep'
+
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic'
-NeoBundle 'teoljungberg/vim-grep'
+
 NeoBundle 'tpope/vim-endwise'
 NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-unimpaired'
-NeoBundle 'tpope/vim-dispatch'
 NeoBundle 'tpope/vim-commentary'
+
 NeoBundle 'wincent/Command-T'
-NeoBundle 'derekwyatt/vim-scala'
-NeoBundle 'fatih/vim-go'
-NeoBundle 'kchmck/vim-coffee-script'
-NeoBundle 'pangloss/vim-javascript'
-NeoBundle 'vim-ruby/vim-ruby'
-NeoBundle 'vim-scripts/VimClojure'
+NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'tsaleh/vim-matchit'
+
+" Languages
+NeoBundle 'nickhutchinson/vim-systemtap'
 NeoBundle 'tpope/vim-liquid'
 NeoBundle 'tpope/vim-markdown'
 NeoBundle 'tpope/vim-rails'
-NeoBundle 'altercation/vim-colors-solarized'
-NeoBundle 'reedes/vim-colors-pencil'
-NeoBundle 'kana/vim-textobj-user'
-NeoBundle 'tsaleh/vim-matchit'
-NeoBundle 'nelstrom/vim-textobj-rubyblock'
-NeoBundle 'gcmt/wildfire.vim'
-NeoBundle 'nelstrom/vim-visual-star-search'
-NeoBundle 'nickhutchinson/vim-systemtap'
+NeoBundle 'vim-ruby/vim-ruby'
+NeoBundle 'vim-scripts/VimClojure'
+NeoBundle 'kchmck/vim-coffee-script'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'derekwyatt/vim-scala'
+NeoBundle 'fatih/vim-go'
+
+call neobundle#end()
 
 filetype plugin indent on " Enable after Vundle loaded, #dunnolol
 
@@ -109,11 +109,7 @@ imap <tab>   <c-r>=InsertTabWrapper()<cr>
 imap <s-tab> <c-n>
 
 au BufNewFile,BufRead *.ejson set filetype=json
-
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
-autocmd BufNewFile,BufRead *_test.rb compiler rubyunit
-autocmd BufNewFile,BufRead *_test.rb set makeprg=bundle\ exec\ testrb\ %
-map <C-E> :Make<CR>
 
 " autocmd FileType go compiler go
 " autocmd BufWrite *.go :Fmt
@@ -130,22 +126,4 @@ let g:CommandTMaxHeight=20
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
-fun! StripTrailingWhitespaces()
-  let l = line(".")
-  let c = col(".")
-  %s/\s\+$//e
-  call cursor(l, c)
-endfun
-" autocmd FileType c,bash,cpp,go,scala,markdown,clojure,javascript,ruby,python autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
-
-let g:wildfire_objects = {
-      \ "*" :    ["i'", 'i"', 'i)', 'i]', 'i}', "ip"],
-      \ "ruby" : ["i'", 'i"', 'i)', "ir", "ar"],
-      \ "markdown" : ["i'", 'i"', "is", "ip"]
-\ }
-
 match Error /\%81v.\+/ " Highilght columns after the 80th
-
-let g:surround_{char2nr('%')} = "<% \r %>"
-let g:surround_{char2nr('=')} = "<%= \r %>"
-let g:surround_{char2nr('#')} = "#{\r}"
