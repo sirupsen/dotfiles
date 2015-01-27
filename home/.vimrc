@@ -113,9 +113,7 @@ au BufNewFile,BufRead *.sxx set filetype=stp
 
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
-" autocmd FileType go compiler go
-" autocmd BufWrite *.go :Fmt
-" autocmd BufNewFile,BufRead *_test.go set makeprg=go\ test
+autocmd BufWrite *.go :Fmt
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 
 map <leader>n :NERDTreeToggle<CR>
@@ -127,5 +125,3 @@ let g:CommandTAcceptSelectionSplitMap='<C-x>'
 let g:CommandTMaxHeight=20
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
-
-match Error /\%81v.\+/ " Highilght columns after the 80th
