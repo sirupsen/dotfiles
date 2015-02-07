@@ -13,7 +13,7 @@ for file in home/.[^.]*; do
 
   if [[ -h $target && ($(readlink $target) == $path)]]; then
     echo -e "\x1B[90m~/$base is symlinked to your dotfiles.\x1B[39m"
-  elif [[ -f $target && $(md5 $path) == $(md5 $target) ]]; then
+  elif [[ -f $target && $(sha256sum $path | awk '{print $2}') == $(sha256sum $target | awk '{print $2}') ]]; then
     echo -e "\x1B[32m~/$base exists and was identical to your dotfile.  Overriding with symlink.\x1B[39m"
     symlink $path $target
   elif [[ -a $target ]]; then
