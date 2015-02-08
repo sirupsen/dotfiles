@@ -1,10 +1,10 @@
 #! /bin/bash
 
+# https://github.com/github/hub
 if command -v hub > /dev/null; then
   alias git=hub
 fi
 
-# Enable fancy coloring on GNU ls
 if ls --version | grep -q GNU; then
   eval `dircolors ~/.dir_colors`
   alias ls='ls --color=auto'
@@ -61,4 +61,3 @@ vss() {
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
-
