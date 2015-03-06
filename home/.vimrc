@@ -113,7 +113,7 @@ au BufNewFile,BufRead *.sxx set filetype=stp
 
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
-autocmd BufWrite *.go :Fmt
+autocmd BufWrite *.go :GoFmt
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 
 map <leader>n :NERDTreeToggle<CR>
