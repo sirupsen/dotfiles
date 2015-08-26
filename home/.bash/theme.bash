@@ -5,7 +5,7 @@ PS1=''
 
 # Set hostname if not on MacBook (home) and not in tmux (where hostname is shown
 # right in the prompt).
-if [[ ! $(hostname) =~ MacBook && -z $TMUX ]]; then
+if [[ -z $TMUX ]]; then
   PS1='\[$ORANGE\]\h '
 fi
 
