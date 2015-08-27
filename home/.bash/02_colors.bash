@@ -12,7 +12,7 @@ PURPLE=$'\e[0;35m'
 CYAN=$'\e[0;36m'
 GRAY=$'\e[1;30m'
 PINK=$'\e[37;1;35m'
-ORANGE=$'\e[33;40m'
+ORANGE=$'\e[91m'
 
 # Revert color back to the normal color
 NORMAL=$'\e[00m'

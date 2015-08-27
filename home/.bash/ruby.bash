@@ -5,7 +5,7 @@ if [[ -r /usr/local/share/chruby/chruby.sh && -z $SHOPIFY_DEV_VAGRANT ]]; then
   RUBIES=(~/.rubies/*)
 
   # switch to latest stable
-  chruby 2.2.1
+  chruby 2.2
 
   source /usr/local/share/chruby/auto.sh
 fi
