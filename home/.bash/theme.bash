@@ -6,7 +6,7 @@ PS1=''
 # Set hostname if not on MacBook (home) and not in tmux (where hostname is shown
 # right in the prompt).
 if [[ -z $TMUX ]]; then
-  PS1='\[$ORANGE\]\h '
+  PS1='\[$NORMAL\]\h '
 fi
 
 # Put in current directory only
