@@ -9,8 +9,6 @@
   ui = auto
 [merge]
   tool = vimdiff
-[core]
-  editor = /usr/bin/vim
 [interactive]
   singlekey = true
 [push]

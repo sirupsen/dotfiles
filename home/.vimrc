@@ -123,4 +123,6 @@ map <C-/> :CommandTTag<CR>
 let g:CommandTAcceptSelectionSplitMap='<C-x>'
 let g:CommandTMaxHeight=20
 
+set shell=bash\ --login
+
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
