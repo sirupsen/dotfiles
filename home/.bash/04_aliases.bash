@@ -52,6 +52,7 @@ alias blush="git commit --amend --reuse-message HEAD"
 alias bx='bundle exec'
 alias rt='bx ruby -Itest'
 alias vs='vagrant ssh'
+alias knife='BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
 
 vss() {
   cd ~/src/vagrant
