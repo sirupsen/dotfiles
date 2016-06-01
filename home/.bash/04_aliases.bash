@@ -53,6 +53,7 @@ alias bx='bundle exec'
 alias rt='bx ruby -Itest'
 alias vs='vagrant ssh'
 alias knife='BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
+alias vim='nvim'
 
 vss() {
   cd ~/src/vagrant

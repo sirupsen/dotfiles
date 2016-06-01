@@ -1,4 +1,4 @@
-#!/bin/bash
+# #!/bin/bash
 
 # Homebrew
 if [ -d /usr/local/bin ]; then
@@ -28,5 +28,5 @@ if [[ -d /usr/local/opt/coreutils/libexec/gnubin ]]; then
   PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH" 
 fi
 
-export PYTHONPATH=/usr/local/lib/python2.7/site-packages                        
-export VAGRANT_DEFAULT_PROVIDER="vmware_fusion" 
+export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+export VAGRANT_DEFAULT_PROVIDER="vmware_fusion"

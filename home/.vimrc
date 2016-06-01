@@ -4,37 +4,34 @@ let mapleader="," " Mapleader
 filetype off
 set encoding=utf-8
 set history=1000  " Keep more history, default is 20
-set rtp+=~/.vim/bundle/neobundle.vim
-call neobundle#begin(expand('~/.vim/bundle/'))
 
-NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'teoljungberg/vim-grep'
+call plug#begin('~/.config/nvim/plugged')
 
-NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'scrooloose/syntastic'
+Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'neomake/neomake'
 
-NeoBundle 'tpope/vim-endwise'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'tpope/vim-unimpaired'
-NeoBundle 'tpope/vim-commentary'
+Plug 'scrooloose/nerdtree', { 'on': 'NerdTreeToggle' }
 
-NeoBundle 'wincent/Command-T'
-NeoBundle 'altercation/vim-colors-solarized'
-NeoBundle 'tsaleh/vim-matchit'
+Plug 'tpope/vim-endwise', { 'for': 'ruby' }
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-commentary'
 
-" Languages
-NeoBundle 'nickhutchinson/vim-systemtap'
-NeoBundle 'tpope/vim-liquid'
-NeoBundle 'tpope/vim-markdown'
-NeoBundle 'tpope/vim-rails'
-NeoBundle 'vim-ruby/vim-ruby'
-NeoBundle 'vim-scripts/VimClojure'
-NeoBundle 'kchmck/vim-coffee-script'
-NeoBundle 'pangloss/vim-javascript'
-NeoBundle 'derekwyatt/vim-scala'
-NeoBundle 'fatih/vim-go'
+Plug 'altercation/vim-colors-solarized'
 
-call neobundle#end()
+Plug 'nickhutchinson/vim-systemtap'
+Plug 'tpope/vim-liquid'
+Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-rails', { 'for': 'ruby' }
+Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
+Plug 'vim-scripts/VimClojure', { 'for': 'clojure' }
+Plug 'kchmck/vim-coffee-script'
+Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
+Plug 'fatih/vim-go', { 'for': 'go' }
+
+call plug#end()
 
 filetype plugin indent on " Enable after Vundle loaded, #dunnolol
 
@@ -114,14 +111,11 @@ au BufNewFile,BufRead *.sxx set filetype=stp
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
+autocmd! BufWritePost * Neomake
 
 map <leader>n :NERDTreeToggle<CR>
 
-map <C-t> :CommandT<CR>
-map <C-g> :CommandTBuffer<CR>
-map <C-/> :CommandTTag<CR>
-let g:CommandTAcceptSelectionSplitMap='<C-x>'
-let g:CommandTMaxHeight=20
+map <C-t> :FZF<CR>
 
 set shell=bash\ --login
 
