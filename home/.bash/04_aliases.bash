@@ -46,11 +46,14 @@ fi
 alias gpf='if [[ $(cbranch) != "master" ]]; then git push `git_origin_or_fork` +`cbranch`; else echo "Not going to force push master bud"; fi'
 alias gd='git diff'
 alias gg='git grep'
-alias gupdate='git fetch origin && git rebase origin/master && gpf'
+alias gfo='git fetch origin'
+alias gro='git rebase origin/master'
+alias gfogro='gfo && gro'
+alias gupd='gfogro && gpf'
 alias blush="git commit --amend --reuse-message HEAD"
 
 alias bx='bundle exec'
-alias rt='bx ruby -Itest'
+alias rt='bx ruby -I.:test -e "ARGV.each { |f| require f }"'
 alias vs='vagrant ssh'
 alias knife='BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
 alias vim='nvim'
