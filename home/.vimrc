@@ -4,19 +4,22 @@ let mapleader="," " Mapleader
 filetype off
 set encoding=utf-8
 set history=1000  " Keep more history, default is 20
+set mouse=v " Allow copy-pasting
 
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'neomake/neomake'
+Plug 'janko-m/vim-test'
 
-Plug 'scrooloose/nerdtree', { 'on': 'NerdTreeToggle' }
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
+Plug 'mhinz/vim-grepper'
 
 Plug 'altercation/vim-colors-solarized'
 
@@ -63,20 +66,16 @@ set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
 set list " Highlight trailings, stolen from @teoljungberg
 set listchars=tab:>-,trail:.,extends:>,precedes:<
 
+set nohlsearch " Don't highlight search results
+
 set tags=tags,.git/tags " Use commit hook tags, see ~/.git_template
 
-map <C-J> <C-W>j
-map <C-K> <C-W>k
-map <C-L> <C-W>l
-map <C-H> <C-W>h
 imap jk <esc>
 map <leader>d :bd<CR>
 
 " Sane behavior on long lines
 nmap k gk
 nmap j gj
-noremap H ^
-noremap L $
 
 map <leader>gs :Gstatus<CR>
 map <leader>gc :Gcommit<CR>
@@ -116,7 +115,14 @@ autocmd! BufWritePost * Neomake
 map <leader>n :NERDTreeToggle<CR>
 
 map <C-t> :FZF<CR>
+map <C-g> :Buffers<CR>
 
-set shell=bash\ --login
+set shell=/bin/bash
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
+
+let g:neomake_ruby_enabled_makers = ['mri']
+let test#strategy = "neovim"
+
+set diffopt=filler,vertical
+set inccommand=split

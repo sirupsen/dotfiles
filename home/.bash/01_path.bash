@@ -6,9 +6,8 @@ if [ -d /usr/local/bin ]; then
   export PATH=$PATH:/usr/local/sbin
 fi
 
-# NPM
-if [ -d /usr/local/share/npm/bin ]; then
-  export PATH=$PATH:/usr/local/share/npm/bin
+if command -v foo >/dev/null 2>&1; then
+  export PATH="$PATH:$(npm config get prefix)/bin"
 fi
 
 # Personal bin files
@@ -16,10 +15,10 @@ if [[ -d $HOME/.bin ]]; then
   export PATH=$HOME/.bin:$PATH
 fi
 
-export GOPATH=~/src/go
+export GOPATH=$HOME
 
 if [[ -d $GOPATH ]]; then
-  PATH="$PATH:$GOPATH/bin"
+  export PATH="$GOPATH/bin:$PATH"
 fi
 
 # Use gnu utils instead of os x
