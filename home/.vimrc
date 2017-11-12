@@ -10,13 +10,15 @@ call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'neomake/neomake'
+" Plug 'neomake/neomake'
 Plug 'janko-m/vim-test'
+Plug 'benmills/vimux'
 
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
 Plug 'mhinz/vim-grepper'
@@ -110,7 +112,7 @@ au BufNewFile,BufRead *.sxx set filetype=stp
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
-autocmd! BufWritePost * Neomake
+" autocmd! BufWritePost * Neomake
 
 map <leader>n :NERDTreeToggle<CR>
 
@@ -121,8 +123,16 @@ set shell=/bin/bash
 
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
-let g:neomake_ruby_enabled_makers = ['mri']
-let test#strategy = "neovim"
+" let g:neomake_ruby_enabled_makers = ['mri']
+" let g:test#runner_commands = ['Minitest', 'Rails']
+let test#strategy = "vimux"
+nmap <silent> <leader>t :TestNearest<CR>
+nmap <silent> <leader>T :TestFile<CR>
+nmap <silent> <leader>l :TestLast<CR>
+nmap <silent> <leader>a :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))<CR>
+nmap <silent> <Leader>f :call VimuxRunCommand("dev test " . bufname("%") . " -n /WIP/")<CR>
+" nmap <silent> <Leader>r :call VimuxRunCommand("rubocop " . bufname("%"))<CR>
+nmap <silent> <Leader>R :call VimuxRunCommand("dev style")<CR>
 
 set diffopt=filler,vertical
 set inccommand=split

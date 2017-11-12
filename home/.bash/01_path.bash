@@ -28,3 +28,4 @@ if [[ -d /usr/local/opt/coreutils/libexec/gnubin ]]; then
 fi
 
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+export PATH="$HOME/.cargo/bin:$PATH"

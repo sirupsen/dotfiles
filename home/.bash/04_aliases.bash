@@ -54,6 +54,11 @@ alias gupd='gfo && gro && gpf && dev up'
 alias blush="git commit --amend --reuse-message HEAD"
 alias squash='squash=`git rebase -i $(git merge-base HEAD master)`'
 
+garch() {
+  local commit=$(git rev-list -n 1 --before="$1" master)
+  git checkout ${commit}
+}
+
 alias bx='bundle exec'
 alias rt='bx ruby -I.:test'
 alias vs='vagrant ssh'
@@ -64,21 +69,10 @@ review() {
   git fetch origin $1
   git checkout $1
   git rebase origin/$1
+
   if [[ -a "dev.yml" ]]; then
     dev up
   fi
-
-  # local pr=$(chrome-cli info | grep -Po "(?<=pull\/)[0-9]+")
-  # local repo=$(chrome-cli info | grep -Po "(?<=github.com\/)\w+\/\w+")
-
-  # if [[ -z $pr || -z $repo ]]; then
-  #   echo "is your open tab a github PR?"
-  #   return 1
-  # fi
-
-  # cd "${HOME}/src/github.com/${repo}"
-  # gh pr ${pr} --fetch
-  # dev up
 }
 
 alias ttc='tmux save-buffer -|pbcopy'
@@ -89,3 +83,15 @@ alias k=kubectl
 
 alias ralias=". ~/.bash/*alias*"
 alias ealias="vim ~/.bash/04_aliases.bash && ralias"
+
+cliphighlight() {
+  pbpaste | highlight -O rtf --font-size 54 --font Inconsolata --style solarized-dark -W -J 80 -j 3 --src-lang $1 | pbcopy
+}
+
+reset-camera () {
+  sudo killall AppleCameraAssistant
+  sudo killall VDCAssistant
+}
+
+# Kill all old webhook jobs
+# knife mssh "roles:app--shopify--jobs AND name:*.shopifydc.com AND NOT name:jobs24.chi2.shopifydc.com" "ps -eo etime,pid,args | grep 'resque-.*Working' | grep -P '\d+-\d+:\d+:\d+' | grep webhook | tr -s ' ' | cut -d ' ' -f2 | xargs -L1 -I% sudo kill -9 %"
