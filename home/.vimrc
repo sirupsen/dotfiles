@@ -33,8 +33,11 @@ Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'vim-scripts/VimClojure', { 'for': 'clojure' }
 Plug 'kchmck/vim-coffee-script'
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+Plug 'mxw/vim-jsx', { 'for': 'javascript' }
 Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
 Plug 'fatih/vim-go', { 'for': 'go' }
+Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
+Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 
 call plug#end()
 
@@ -136,3 +139,5 @@ nmap <silent> <Leader>R :call VimuxRunCommand("dev style")<CR>
 
 set diffopt=filler,vertical
 set inccommand=split
+
+let g:jsx_ext_required = 0
