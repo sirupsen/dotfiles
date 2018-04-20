@@ -144,3 +144,7 @@ set diffopt=filler,vertical
 set inccommand=split
 
 let g:jsx_ext_required = 0
+
+nmap <silent> <leader>g :Grepper<CR>
+nmap gs  <plug>(GrepperOperator)
+xmap gs  <plug>(GrepperOperator)
