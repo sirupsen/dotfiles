@@ -66,13 +66,18 @@ alias knife='chruby 2.3 && BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
 alias vim='nvim'
 
 review() {
-  git fetch origin $1
-  git checkout $1
-  git rebase origin/$1
+  local default_branch=$(git rev-parse --abbrev-ref HEAD)
+  local branch="${1:-$default_branch}"
+
+  git fetch origin $branch
+  git checkout $branch
+  git rebase origin/$branch
 
   if [[ -a "dev.yml" ]]; then
     dev up
   fi
+
+  vim -c "let g:gitgutter_diff_base = 'master'" $(git diff --name-only origin/master)
 }
 
 alias ttc='tmux save-buffer -|pbcopy'
@@ -92,6 +97,3 @@ reset-camera () {
   sudo killall AppleCameraAssistant
   sudo killall VDCAssistant
 }
-
-# Kill all old webhook jobs
-# knife mssh "roles:app--shopify--jobs AND name:*.shopifydc.com AND NOT name:jobs24.chi2.shopifydc.com" "ps -eo etime,pid,args | grep 'resque-.*Working' | grep -P '\d+-\d+:\d+:\d+' | grep webhook | tr -s ' ' | cut -d ' ' -f2 | xargs -L1 -I% sudo kill -9 %"

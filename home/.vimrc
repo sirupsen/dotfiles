@@ -13,6 +13,7 @@ Plug 'junegunn/fzf.vim'
 " Plug 'neomake/neomake'
 Plug 'janko-m/vim-test'
 Plug 'benmills/vimux'
+Plug 'airblade/vim-gitgutter'
 
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 
@@ -38,6 +39,8 @@ Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
 Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+Plug 'uarun/vim-protobuf'
+Plug 'leafgarland/typescript-vim'
 
 call plug#end()
 
