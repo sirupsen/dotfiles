@@ -97,3 +97,5 @@ reset-camera () {
   sudo killall AppleCameraAssistant
   sudo killall VDCAssistant
 }
+
+alias shopifresh="dev cd shopify && gpl && dev up"

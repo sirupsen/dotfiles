@@ -1,7 +1,6 @@
 [user]
   name = Simon Eskildsen
   email = sirup@sirupsen.com
-	signingkey = 6E4E24B83BFAD7D3
 [color]
   branch = auto
   diff = auto
@@ -21,7 +20,3 @@
   protocol = ssh
 [init]
   templatedir = ~/.git_template
-[gpg]
-	program = gpg
-[commit]
-	gpgsign = true
