@@ -14,6 +14,7 @@ export EDITOR=nvim
 stty -ixon
 
 export TERM=screen-256color
+export PROMPT_COMMAND='history -a; history -r'
 
 # Plenty big history for searching backwards and doing analysis
 export HISTFILESIZE=100000

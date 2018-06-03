@@ -34,7 +34,7 @@ git-find-merge() {
 
 alias gp='git push `git_origin_or_fork` `cbranch`'
 alias gpl='git pull `git_origin_or_fork` `cbranch`'
-alias gc='git commit --verbose'
+alias gc='git commit --verbose --gpg-sign'
 alias gs='git status --short --branch'
 alias gbr='git branch --no-merged origin/master --sort=-committerdate | head -n 10'
 alias grc='git rebase --continue'

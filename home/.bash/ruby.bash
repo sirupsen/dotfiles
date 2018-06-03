@@ -9,4 +9,4 @@
 #   source /usr/local/share/chruby/auto.sh
 # fi
 
-chruby 2.3
+chruby 2.5
