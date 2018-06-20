@@ -18,3 +18,4 @@ export PROMPT_COMMAND='history -a; history -r'
 
 # Plenty big history for searching backwards and doing analysis
 export HISTFILESIZE=100000
+export GPG_TTY=$(tty)

@@ -40,6 +40,7 @@ alias gbr='git branch --no-merged origin/master --sort=-committerdate | head -n 
 alias grc='git rebase --continue'
 alias gl='git log --oneline'
 alias gco='git checkout'
+alias gb='git branch'
 if type -t __git_complete > /dev/null; then
   __git_complete gco _git_checkout
 fi
@@ -69,7 +70,7 @@ review() {
   local default_branch=$(git rev-parse --abbrev-ref HEAD)
   local branch="${1:-$default_branch}"
 
-  git fetch origin $branch
+  git fetch origin master $branch
   git checkout $branch
   git rebase origin/$branch
 
@@ -77,17 +78,29 @@ review() {
     dev up
   fi
 
-  vim -c "let g:gitgutter_diff_base = 'master'" $(git diff --name-only origin/master)
+  vim -c "let g:gitgutter_diff_base = 'origin/master'" -c ":e!" $(git diff --name-only origin/master)
 }
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
 
 alias walrus="ruby -e 'loop { 0.upto(50) { |i| print \"\r\" + (\" \" * i) + \":\" + %w(€ c)[i%2] + \".\" * (50-i); sleep 0.25 } }'"
-alias k=kubectl
 
-alias ralias=". ~/.bash/*alias*"
-alias ealias="vim ~/.bash/04_aliases.bash && ralias"
+alias k=kubectl
+alias kgp='k get pods'
+
+kexec() {
+  local ns=$1
+  local container=${2:- }
+  local command="${3:-/bin/bash}"
+
+  local id=$(k get pods -n ${ns} | grep -i ${container} | awk '{print $1}' | head -n1)
+  echo -e "\x1b[33mEntering ${id}\x1b[0m"
+  k exec ${id} -it -n ${ns} -- ${command}
+}
+
+alias rlias=". ~/.bash/*alias*"
+alias elias="vim ~/.bash/04_aliases.bash && ralias"
 
 cliphighlight() {
   pbpaste | highlight -O rtf --font-size 54 --font Inconsolata --style solarized-dark -W -J 80 -j 3 --src-lang $1 | pbcopy
@@ -98,4 +111,24 @@ reset-camera () {
   sudo killall VDCAssistant
 }
 
-alias shopifresh="dev cd shopify && gpl && dev up"
+fresh() {
+  dev cd $1
+  gfogro
+}
+
+freshall () {
+  fresh shopify
+  fresh activefailover
+  fresh spy
+  fresh cloudplatform
+  fresh cusco
+  fresh nginx-routing-modules
+
+  cd ~/.chef
+  gpl
+  bundle
+
+  vim +PlugUpdate +qall
+
+  sudo killall xhyve
+}

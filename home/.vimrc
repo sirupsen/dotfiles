@@ -41,6 +41,7 @@ Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'uarun/vim-protobuf'
 Plug 'leafgarland/typescript-vim'
+Plug 'jparise/vim-graphql'
 
 call plug#end()
 
@@ -148,3 +149,9 @@ let g:jsx_ext_required = 0
 nmap <silent> <leader>g :Grepper<CR>
 nmap gs  <plug>(GrepperOperator)
 xmap gs  <plug>(GrepperOperator)
+
+" Git gutter
+set updatetime=100
+
+" don't override ctrl-T
+let g:go_def_mapping_enabled = 0
