@@ -20,8 +20,5 @@ export DOCKER_HOST="tcp://192.168.64.3:2376"
 export DOCKER_CERT_PATH="/Users/sirup/.minikube/certs"
 export DOCKER_API_VERSION="1.23"
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/sirup/src/google-cloud-sdk/path.bash.inc' ]; then source '/Users/sirup/src/google-cloud-sdk/path.bash.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/sirup/src/google-cloud-sdk/completion.bash.inc' ]; then source '/Users/sirup/src/google-cloud-sdk/completion.bash.inc'; fi
+source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc'
+source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc'

@@ -26,4 +26,3 @@ ssh() {
 }
 
 export PROMPT_COMMAND=rename_tmux_window_to_current_dir
-
