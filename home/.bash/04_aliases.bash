@@ -1,5 +1,3 @@
-#! /bin/bash
-
 # https://github.com/github/hub
 if command -v hub > /dev/null; then
   alias git=hub

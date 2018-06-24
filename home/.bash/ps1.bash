@@ -1,5 +1,3 @@
-#!/bin/bash
-
 build_ps1() {
   PS1=''
 
@@ -25,7 +23,7 @@ build_ps1() {
 
   PS1+='\[${NORMAL}\]'
 
-  if (( $COLUMNS < 80 )); then
+  if [[ $COLUMNS -lt 80 ]]; then
     PS1+="\n$ "
   else
     PS1+=' $ '

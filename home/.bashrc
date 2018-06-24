@@ -1,4 +1,5 @@
-#!/bin/bash 
+# set -x
+export DEV_DISABLE_ENV_LOGGING=1
 source /opt/dev/dev.sh
 
 for file in ~/.bash/*.bash; do
@@ -7,12 +8,11 @@ done
 
 unset DISPLAY
 
-eval "$(fasd --init auto)"
-
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_OPTS="--height=40% --multi"
 export FZF_DEFAULT_COMMAND='fd --type f'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
 export RUST_SRC_PATH=$(rustc --print sysroot)/lib/rustlib/src/rust/src
 export PYTHONPATH=/usr/local/lib/python3.6/site-packages
 

@@ -54,7 +54,6 @@ set backupskip=/tmp/*,/private/tmp/* "
 set undodir=~/.vim/undo
 set noswapfile
 set nobackup
-set shell=/bin/bash
 set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
 syntax enable
@@ -70,7 +69,7 @@ set incsearch     " Search as you type
 set smartindent   " Be smart about indentation
 set expandtab     " Tabs are spaces
 set smarttab
-set shell=$SHELL\ -l  " load shell for ruby version etc.
+" set shell=$SHELL\ -l  " load shell for ruby version etc.
 
 set tabstop=2 " Tabs are 2 spaces
 set backspace=2 " Backspace deletes 2 spaces
@@ -133,7 +132,7 @@ map <leader>n :NERDTreeToggle<CR>
 map <C-t> :FZF<CR>
 map <C-g> :Buffers<CR>
 
-let test#strategy = "neovim"
+let test#strategy = "vimux"
 nmap <silent> <leader>t :TestNearest<CR>
 nmap <silent> <leader>T :TestFile<CR>
 nmap <silent> <leader>l :TestLast<CR>
@@ -158,9 +157,13 @@ set hidden
 let g:racer_cmd = "~/.cargo/bin/racer"
 au FileType rust nmap gd <Plug>(rust-def)
 au FileType rust nmap <leader>gd <Plug>(rust-doc)
+let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
 
 " don't override ctrl-T
 let g:go_def_mapping_enabled = 0
 let g:deoplete#enable_at_startup = 1
+
+let g:VimuxOrientation = "h"
+let g:VimuxHeight = "40"
 
 nmap K <Plug>(devdocs-under-cursor)

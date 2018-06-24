@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Notify immediatly on bg job completion
 set -o notify
 
@@ -7,11 +5,7 @@ set -o notify
 shopt -s nocaseglob
 
 # Vim as default editorj
-export EDITOR=nvim
-
-# To make Vim behave under xterm.
-# Thanks, @teoljungberg
-stty -ixon
+export EDITOR=/usr/local/bin/nvim
 
 export TERM=screen-256color
 export PROMPT_COMMAND="history -a; history -r; ${PROMPT_COMMAND}"

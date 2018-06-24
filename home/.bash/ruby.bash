@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # if [[ -r /usr/local/share/chruby/chruby.sh && -z $SHOPIFY_DEV_VAGRANT ]]; then
 #   source /usr/local/share/chruby/chruby.sh
 #   RUBIES=(~/.rubies/*)
@@ -9,4 +7,4 @@
 #   source /usr/local/share/chruby/auto.sh
 # fi
 
-chruby 2.5
+# chruby 2.5

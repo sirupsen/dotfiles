@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 # Links everything in home/ to ~/, does sanity checks.
 # By Simon Eskildsen (github.com/Sirupsen)
 
