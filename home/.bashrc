@@ -10,6 +10,12 @@ unset DISPLAY
 eval "$(fasd --init auto)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_DEFAULT_OPTS="--height=40% --multi"
+export FZF_DEFAULT_COMMAND='fd --type f'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export RUST_SRC_PATH=$(rustc --print sysroot)/lib/rustlib/src/rust/src
+export PYTHONPATH=/usr/local/lib/python3.6/site-packages
+
 export PATH=$GOPATH/bin:$PATH
 export PATH="$HOME/.yarn/bin:$PATH"
 export BACKTRACE=1

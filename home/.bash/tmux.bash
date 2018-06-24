@@ -25,4 +25,4 @@ ssh() {
     tmux rename-window "$old_name"
 }
 
-export PROMPT_COMMAND=rename_tmux_window_to_current_dir
+export PROMPT_COMMAND="rename_tmux_window_to_current_dir;${PROMPT_COMMAND:-:}"

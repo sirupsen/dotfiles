@@ -88,19 +88,26 @@ alias walrus="ruby -e 'loop { 0.upto(50) { |i| print \"\r\" + (\" \" * i) + \":\
 
 alias k=kubectl
 alias kgp='k get pods'
+alias kgn='k get namespaces'
+alias kgpn='k get pods -o name | grep -oP "(?<=/).+$"'
+alias kg='k get'
+alias klz='kgpn | fzf --preview "kubectl logs {}" --height=100%'
+
+alias kctx='kubectl config use-context $(kubectl config get-contexts -o=name | fzf)'
+alias kns='kubectl config set-context $(k config current-context) --namespace=$(kgn -o name | grep -oP "(?<=/).+$" | fzf)'
 
 kexec() {
   local ns=$1
-  local container=${2:- }
-  local command="${3:-/bin/bash}"
+  local command="${2:-/bin/bash}"
 
-  local id=$(k get pods -n ${ns} | grep -i ${container} | awk '{print $1}' | head -n1)
+  local id=$(k get pods -n ${ns} | awk '{print $1}' | fzf)
   echo -e "\x1b[33mEntering ${id}\x1b[0m"
   k exec ${id} -it -n ${ns} -- ${command}
 }
 
 alias rlias=". ~/.bash/*alias*"
-alias elias="vim ~/.bash/04_aliases.bash && ralias"
+alias elias="vim ~/.bash/04_aliases.bash; rlias"
+alias vimrc="vim ~/.vimrc"
 
 cliphighlight() {
   pbpaste | highlight -O rtf --font-size 54 --font Inconsolata --style solarized-dark -W -J 80 -j 3 --src-lang $1 | pbcopy

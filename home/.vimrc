@@ -10,19 +10,20 @@ call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
-" Plug 'neomake/neomake'
 Plug 'janko-m/vim-test'
 Plug 'benmills/vimux'
 Plug 'airblade/vim-gitgutter'
-
+Plug 'mhinz/vim-grepper'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'rhysd/devdocs.vim'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins', 'for': 'rust' }
+Plug 'thalesmello/webcomplete.vim'
 
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
-Plug 'mhinz/vim-grepper'
 
 Plug 'altercation/vim-colors-solarized'
 
@@ -42,6 +43,7 @@ Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'uarun/vim-protobuf'
 Plug 'leafgarland/typescript-vim'
 Plug 'jparise/vim-graphql'
+Plug 'racer-rust/vim-racer'
 
 call plug#end()
 
@@ -52,6 +54,8 @@ set backupskip=/tmp/*,/private/tmp/* "
 set undodir=~/.vim/undo
 set noswapfile
 set nobackup
+set shell=/bin/bash
+set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
 syntax enable
 colorscheme solarized
@@ -78,6 +82,9 @@ set listchars=tab:>-,trail:.,extends:>,precedes:<
 set nohlsearch " Don't highlight search results
 
 set tags=tags,.git/tags " Use commit hook tags, see ~/.git_template
+
+set diffopt=filler,vertical
+set inccommand=split " Neovim will preview search
 
 imap jk <esc>
 map <leader>d :bd<CR>
@@ -126,23 +133,15 @@ map <leader>n :NERDTreeToggle<CR>
 map <C-t> :FZF<CR>
 map <C-g> :Buffers<CR>
 
-set shell=/bin/bash
-
-set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
-
-" let g:neomake_ruby_enabled_makers = ['mri']
-" let g:test#runner_commands = ['Minitest', 'Rails']
-let test#strategy = "vimux"
+let test#strategy = "neovim"
 nmap <silent> <leader>t :TestNearest<CR>
 nmap <silent> <leader>T :TestFile<CR>
 nmap <silent> <leader>l :TestLast<CR>
+
 nmap <silent> <leader>a :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))<CR>
 nmap <silent> <Leader>f :call VimuxRunCommand("dev test " . bufname("%") . " -n /WIP/")<CR>
 " nmap <silent> <Leader>r :call VimuxRunCommand("rubocop " . bufname("%"))<CR>
 nmap <silent> <Leader>R :call VimuxRunCommand("dev style")<CR>
-
-set diffopt=filler,vertical
-set inccommand=split
 
 let g:jsx_ext_required = 0
 
@@ -153,5 +152,15 @@ xmap gs  <plug>(GrepperOperator)
 " Git gutter
 set updatetime=100
 
+" rust
+let g:racer_experimental_completer = 1
+set hidden
+let g:racer_cmd = "~/.cargo/bin/racer"
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
+
 " don't override ctrl-T
 let g:go_def_mapping_enabled = 0
+let g:deoplete#enable_at_startup = 1
+
+nmap K <Plug>(devdocs-under-cursor)
