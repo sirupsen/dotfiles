@@ -13,8 +13,6 @@ fi
 alias ..='cd ..'
 alias ...='cd ../..'
 
-alias cbranch="git rev-parse --abbrev-ref HEAD"
-
 git_origin_or_fork() {
   if git remote 2>/dev/null | grep -iq sirupsen; then
     echo "sirupsen"
@@ -30,8 +28,9 @@ git-find-merge() {
     | tail -1
 }
 
-alias gp='git push `git_origin_or_fork` `cbranch`'
-alias gpl='git pull `git_origin_or_fork` `cbranch`'
+alias gcb="git rev-parse --abbrev-ref HEAD"
+alias gp='git push `git_origin_or_fork` `gcb`'
+alias gpl='git pull `git_origin_or_fork` `gcb`'
 alias gc='git commit --verbose'
 alias gs='git status --short --branch'
 alias gbr='git branch --no-merged origin/master --sort=-committerdate | head -n 10'
@@ -39,10 +38,7 @@ alias grc='git rebase --continue'
 alias gl='git log --oneline'
 alias gco='git checkout'
 alias gb='git branch'
-if type -t __git_complete > /dev/null; then
-  __git_complete gco _git_checkout
-fi
-alias gpf='if [[ $(cbranch) != "master" ]]; then git push `git_origin_or_fork` +`cbranch`; else echo "Not going to force push master bud"; fi'
+alias gpf='if [[ $(gcb) != "master" ]]; then git push `git_origin_or_fork` +`gcb`; else echo "Not going to force push master bud"; fi'
 alias gd='git diff'
 alias gg='git grep'
 alias ga='git add'
@@ -60,7 +56,6 @@ garch() {
 
 alias bx='bundle exec'
 alias rt='bx ruby -I.:test'
-alias vs='vagrant ssh'
 alias knife='chruby 2.3 && BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
 alias vim='nvim'
 
@@ -90,18 +85,10 @@ alias kgn='k get namespaces'
 alias kgpn='k get pods -o name | grep -oP "(?<=/).+$"'
 alias kg='k get'
 alias klz='kgpn | fzf --preview "kubectl logs {}" --height=100%'
-
+alias kex='k exec -it $(kgpn | fzf)'
+alias kexb='k exec -it $(kgpn | fzf) /bin/sh'
 alias kctx='kubectl config use-context $(kubectl config get-contexts -o=name | fzf)'
 alias kns='kubectl config set-context $(k config current-context) --namespace=$(kgn -o name | grep -oP "(?<=/).+$" | fzf)'
-
-kexec() {
-  local ns=$1
-  local command="${2:-/bin/bash}"
-
-  local id=$(k get pods -n ${ns} | awk '{print $1}' | fzf)
-  echo -e "\x1b[33mEntering ${id}\x1b[0m"
-  k exec ${id} -it -n ${ns} -- ${command}
-}
 
 alias rlias=". ~/.bash/*alias*"
 alias elias="vim ~/.bash/04_aliases.bash; rlias"

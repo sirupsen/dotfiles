@@ -22,7 +22,9 @@ fi
 # Use gnu utils instead of os x
 if [[ -d /usr/local/opt/coreutils/libexec/gnubin ]]; then
   MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+  MANPATH="/usr/local/opt/findutils/libexec/gnuman:$MANPATH"
   PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH" 
+  PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
 fi
 
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages

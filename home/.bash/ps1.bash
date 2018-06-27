@@ -16,7 +16,7 @@ build_ps1() {
   export KUBE_PS1_SUFFIX=''
   export KUBE_PS1_DIVIDER='/'
   export KUBE_PS1_CTX_COLOR='magenta'
-  export KUBE_PS1_NS_COLOR='gray'
+  export KUBE_PS1_NS_COLOR='37'
   if command -v kube_ps1 > /dev/null 2>&1; then
     PS1+=' \[$BLUE\]$(kube_ps1)'
   fi
