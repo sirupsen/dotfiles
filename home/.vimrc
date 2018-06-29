@@ -54,7 +54,7 @@ set backupskip=/tmp/*,/private/tmp/* "
 set undodir=~/.vim/undo
 set noswapfile
 set nobackup
-set wildignore+=.git/**,public/assets/**,vendor/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
+set wildignore+=.git/**,public/assets/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
 syntax enable
 colorscheme solarized
@@ -167,3 +167,4 @@ let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
 
 nmap K <Plug>(devdocs-under-cursor)
+nmap <leader>L :set invnumber<CR>
