@@ -27,5 +27,5 @@ if [[ -d /usr/local/opt/coreutils/libexec/gnubin ]]; then
   PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
 fi
 
-export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+# export PYTHONPATH=/usr/local/lib/python2.7/site-packages
 export PATH="$HOME/.cargo/bin:$PATH"

@@ -1,5 +1,4 @@
-# set -x
-export DEV_DISABLE_ENV_LOGGING=1
+#set -x
 source /opt/dev/dev.sh
 
 for file in ~/.bash/*.bash; do
@@ -24,7 +23,7 @@ export PATH="$HOME/.yarn/bin:$PATH"
 export BACKTRACE=1
 export GOPATH=$HOME
 export DISABLE_DATABASE_ENVIRONMENT_CHECK=1
-export DOCKER_TLS_VERIFY="1"
-export DOCKER_HOST="tcp://192.168.64.3:2376"
-export DOCKER_CERT_PATH="/Users/sirup/.minikube/certs"
-export DOCKER_API_VERSION="1.23"
+# export DOCKER_TLS_VERIFY="1"
+# export DOCKER_HOST="tcp://192.168.64.3:2376"
+# export DOCKER_CERT_PATH="/Users/sirup/.minikube/certs"
+# export DOCKER_API_VERSION="1.23"

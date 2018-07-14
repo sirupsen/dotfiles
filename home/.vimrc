@@ -9,21 +9,23 @@ set mouse=v " Allow copy-pasting
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --rust-completer --go-completer' }
 Plug 'junegunn/fzf.vim'
 Plug 'janko-m/vim-test'
 Plug 'benmills/vimux'
 Plug 'airblade/vim-gitgutter'
-Plug 'mhinz/vim-grepper'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'rhysd/devdocs.vim'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins', 'for': 'rust' }
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins', 'for': 'rust' }
 Plug 'thalesmello/webcomplete.vim'
+" Plug 'vim-syntastic/syntastic'
 
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-obsession'
 
 Plug 'altercation/vim-colors-solarized'
 
@@ -129,8 +131,7 @@ autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 
 map <leader>n :NERDTreeToggle<CR>
 
-map <C-t> :FZF<CR>
-map <C-g> :Buffers<CR>
+nmap L :set invnumber<CR>
 
 let test#strategy = "vimux"
 nmap <silent> <leader>t :TestNearest<CR>
@@ -144,10 +145,6 @@ nmap <silent> <Leader>R :call VimuxRunCommand("dev style")<CR>
 
 let g:jsx_ext_required = 0
 
-nmap <silent> <leader>g :Grepper<CR>
-nmap gs  <plug>(GrepperOperator)
-xmap gs  <plug>(GrepperOperator)
-
 " Git gutter
 set updatetime=100
 
@@ -158,6 +155,12 @@ let g:racer_cmd = "~/.cargo/bin/racer"
 au FileType rust nmap gd <Plug>(rust-def)
 au FileType rust nmap <leader>gd <Plug>(rust-doc)
 let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
+let g:ycm_rust_src_path = '/Users/sirup/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/'
+
+autocmd FileType rust          nnoremap <buffer> <C-]> :YcmCompleter GoTo<CR>
+
+nmap K :YcmCompleter GetDoc<CR>
+nmap <leader>K <Plug>(devdocs-under-cursor)
 
 " don't override ctrl-T
 let g:go_def_mapping_enabled = 0
@@ -166,5 +169,38 @@ let g:deoplete#enable_at_startup = 1
 let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
 
-nmap K <Plug>(devdocs-under-cursor)
-nmap <leader>L :set invnumber<CR>
+
+" let g:rustfmt_autosave = 1
+let g:python2_host_prog = '/usr/local/bin/python'
+let g:python3_host_prog = '/usr/local/bin/python3'
+
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 0
+" let g:syntastic_check_on_wq = 0
+" let g:syntastic_rust_checkers = ['cargo']
+
+map <C-t> :FZF<CR>
+map <C-h> :Buffers<CR>
+map <C-l> :Tags<CR>
+
+command! -bang -nargs=* GGrep
+  \ call fzf#vim#grep(
+  \   'git grep --line-number '.shellescape(<q-args>), 0,
+  \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
+
+map <C-g> :GGrep<CR>
+
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
+endfunction
+
+let g:fzf_action = {
+  \ 'ctrl-q': function('s:build_quickfix_list'),
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'

@@ -41,6 +41,7 @@ alias gb='git branch'
 alias gpf='if [[ $(gcb) != "master" ]]; then git push `git_origin_or_fork` +`gcb`; else echo "Not going to force push master bud"; fi'
 alias gd='git diff'
 alias gg='git grep'
+alias ggi='git grep -i'
 alias ga='git add'
 alias gfo='git fetch origin master'
 alias gro='git rebase origin/master'
@@ -57,7 +58,15 @@ garch() {
 alias bx='bundle exec'
 alias rt='bx ruby -I.:test'
 alias knife='chruby 2.3 && BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
-alias vim='nvim'
+
+vim() {
+  if [[ -z $@ ]]; then
+    nvim +FZF
+  else
+    nvim $@
+  fi
+}
+alias vi=vim
 
 review() {
   local default_branch=$(git rev-parse --abbrev-ref HEAD)
