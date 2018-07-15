@@ -27,3 +27,6 @@ for file in home/.[^.]*; do
     symlink $path $target
   fi
 done
+
+echo "(1) Remember to use chsh to change to /usr/local/bin/bash"
+echo "(2) Install plug"
