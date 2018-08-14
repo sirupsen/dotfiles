@@ -3,12 +3,7 @@ if command -v hub > /dev/null; then
   alias git=hub
 fi
 
-if ls --version | grep -q GNU; then
-  eval `dircolors ~/.dir_colors`
-  alias ls='ls --color=auto'
-else
-  alias ls='ls -G'
-fi
+alias ls='ls -G'
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -80,7 +75,7 @@ review() {
     dev up
   fi
 
-  vim -c "let g:gitgutter_diff_base = 'origin/master'" -c ":e!" $(git diff --name-only origin/master)
+  nvim -c "let g:gitgutter_diff_base = 'origin/master'" -c ":e!" $(git diff --name-only origin/master)
 }
 
 alias ttc='tmux save-buffer -|pbcopy'
