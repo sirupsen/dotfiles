@@ -19,6 +19,7 @@ Plug 'rhysd/devdocs.vim'
 " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins', 'for': 'rust' }
 Plug 'thalesmello/webcomplete.vim'
 " Plug 'vim-syntastic/syntastic'
+Plug 'milkypostman/vim-togglelist'
 
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
 Plug 'tpope/vim-fugitive'
@@ -31,7 +32,7 @@ Plug 'altercation/vim-colors-solarized'
 
 Plug 'nickhutchinson/vim-systemtap'
 Plug 'tpope/vim-liquid'
-Plug 'tpope/vim-markdown'
+Plug 'plasticboy/vim-markdown'
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'vim-scripts/VimClojure', { 'for': 'clojure' }
@@ -149,28 +150,21 @@ let g:jsx_ext_required = 0
 set updatetime=100
 
 " rust
-let g:racer_experimental_completer = 1
 set hidden
-let g:racer_cmd = "~/.cargo/bin/racer"
-au FileType rust nmap gd <Plug>(rust-def)
-au FileType rust nmap <leader>gd <Plug>(rust-doc)
-let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
-let g:ycm_rust_src_path = '/Users/sirup/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/'
 
-autocmd FileType rust          nnoremap <buffer> <C-]> :YcmCompleter GoTo<CR>
+" Use Ctags for now, maybe return to this later
+" au FileType rust nmap gd <Plug>(rust-def)
+" au FileType rust nmap <leader>gd <Plug>(rust-doc)
+" autocmd FileType rust          nnoremap <buffer> <C-0> :YcmCompleter GoTo<CR>
+let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
 
 nmap K :YcmCompleter GetDoc<CR>
 nmap <leader>K <Plug>(devdocs-under-cursor)
-
-" don't override ctrl-T
-let g:go_def_mapping_enabled = 0
-let g:deoplete#enable_at_startup = 1
+let g:go_def_mapping_enabled = 0 " don't override ctrl-T
 
 let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
 
-
-" let g:rustfmt_autosave = 1
 let g:python2_host_prog = '/usr/local/bin/python'
 let g:python3_host_prog = '/usr/local/bin/python3'
 
@@ -180,16 +174,26 @@ let g:python3_host_prog = '/usr/local/bin/python3'
 " let g:syntastic_check_on_wq = 0
 " let g:syntastic_rust_checkers = ['cargo']
 
+
+" command! -bang -nargs=* GGrep
+"   \ call fzf#vim#grep(
+"   \   'git grep --line-number -P "' . <q-args> . '"', 0,
+"   \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
+
+" map <C-g> :GGrep<CR>
+
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
+map <C-g> :Rg<CR>
 map <C-t> :FZF<CR>
 map <C-h> :Buffers<CR>
 map <C-l> :Tags<CR>
-
-command! -bang -nargs=* GGrep
-  \ call fzf#vim#grep(
-  \   'git grep --line-number '.shellescape(<q-args>), 0,
-  \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
-
-map <C-g> :GGrep<CR>
+map <leader>cl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && .git/hooks/ctags )"'<CR>
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -204,3 +208,5 @@ let g:fzf_action = {
   \ 'ctrl-v': 'vsplit' }
 
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
+
+let g:vim_markdown_folding_disabled = 1

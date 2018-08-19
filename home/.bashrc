@@ -16,7 +16,7 @@ export FZF_DEFAULT_OPTS="--height=40% --multi"
 export FZF_DEFAULT_COMMAND='fd --type f --no-ignore'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-export RUST_SRC_PATH=$(rustc --print sysroot)/lib/rustlib/src/rust/src
+export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
 
 export PATH=$GOPATH/bin:$PATH
 export PATH="$HOME/.yarn/bin:$PATH"

@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 PATH="/usr/local/bin:$PATH"
+# This ensures we don't corrupt the tags file if we exit.
 trap "rm -f .git/tags.$$" EXIT
-ctags --tag-relative -Rf.git/tags.$$ --exclude=.git --languages=-javascript,sql
+# This will generate ctags for all files tracked by git and all files that will
+# be tracked by git (i.e. not ignored).
+( git ls-files --others --exclude-standard; git ls-files ) | ctags -L - --links=no --tag-relative -Rf.git/tags.$$ --exclude=.git --languages=-javascript,sql
 mv .git/tags.$$ .git/tags
