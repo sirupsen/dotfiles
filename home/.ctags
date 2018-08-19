@@ -20,6 +20,7 @@
 
 --languages=-html
 --languages=-javascript
+--languages=-sql
 
 --langmap=Lisp:+.clj
 

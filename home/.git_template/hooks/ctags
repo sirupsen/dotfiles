@@ -5,5 +5,5 @@ PATH="/usr/local/bin:$PATH"
 trap "rm -f .git/tags.$$" EXIT
 # This will generate ctags for all files tracked by git and all files that will
 # be tracked by git (i.e. not ignored).
-( git ls-files --others --exclude-standard; git ls-files ) | ctags -L - --links=no --tag-relative -Rf.git/tags.$$ --exclude=.git --languages=-javascript,sql
+( git ls-files --others --exclude-standard; git ls-files ) | ctags -L - --links=no --tag-relative -Rf.git/tags.$$
 mv .git/tags.$$ .git/tags
