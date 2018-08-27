@@ -105,6 +105,8 @@ alias rlias=". ~/.bash/*alias*"
 alias elias="vim ~/.bash/04_aliases.bash; rlias"
 alias vimrc="vim ~/.vimrc"
 
+alias whatsmyip='curl https://ipapi.co/json/'
+
 cliphighlight() {
   pbpaste | highlight -O rtf --font-size 54 --font Inconsolata --style solarized-dark -W -J 80 -j 3 --src-lang $1 | pbcopy
 }
