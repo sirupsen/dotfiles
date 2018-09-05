@@ -3,10 +3,9 @@ if command -v hub > /dev/null; then
   alias git=hub
 fi
 
-alias ls='ls -G'
-
 alias ..='cd ..'
 alias ...='cd ../..'
+alias ls="ls --color=always"
 
 git_origin_or_fork() {
   if git remote 2>/dev/null | grep -iq sirupsen; then
@@ -83,7 +82,15 @@ alias tfc='tmux set-buffer "$(pbpaste)"'
 
 alias walrus="ruby -e 'loop { 0.upto(50) { |i| print \"\r\" + (\" \" * i) + \":\" + %w(€ c)[i%2] + \".\" * (50-i); sleep 0.25 } }'"
 
-alias k=kubectl
+alias k='kubectl'
+alias t1e4='k --context "tier1-us-east-4"'
+alias t1e5='k --context "tier1-us-east-5"'
+alias t1c4='k --context "tier1-us-central-4"'
+alias t1c5='k --context "tier1-us-central-5"'
+alias rdst1c1='k --context "redis-tier1-us-central1-1"'
+alias rdst1e1='k --context "redis-tier1-us-east1-1"'
+alias kns='kubectl config set-context $(k config current-context) --namespace=$(kgn -o name | grep -oP "(?<=/).+$" | fzf --prompt "k8s namespace > ")'
+alias kctx='kubectl config use-context $(kubectl config get-contexts -o=name | fzf --prompt "k8s context > ") && kns'
 alias kgp='k get pods'
 alias kgn='k get namespaces'
 alias kgpn='k get pods -o name | grep -oP "(?<=/).+$"'
@@ -92,8 +99,6 @@ alias kl='k logs $(kpgn)'
 alias klz='kgpn | fzf --preview "kubectl logs {}" --height=100%'
 alias kex='k exec -it $(kgpn | fzf)'
 alias kexb='kubectl exec -it $(kgpn | fzf --prompt "/bin/bash > ") -- /bin/bash'
-alias kns='kubectl config set-context $(k config current-context) --namespace=$(kgn -o name | grep -oP "(?<=/).+$" | fzf --prompt "k8s namespace > ")'
-alias kctx='kubectl config use-context $(kubectl config get-contexts -o=name | fzf --prompt "k8s context > ") && kns'
 alias kdesc='k describe $(k get pods -o name | fzf)'
 
 alias rlias=". ~/.bash/*alias*"

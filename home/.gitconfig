@@ -20,3 +20,5 @@
   protocol = ssh
 [init]
   templatedir = ~/.git_template
+[alias]
+  fix = "!f() { ${EDITOR} `git diff --name-only`; }; f"
