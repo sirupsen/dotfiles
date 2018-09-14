@@ -191,8 +191,9 @@ command! -bang -nargs=* Rg
 
 map <C-g> :Rg<CR>
 map <C-t> :FZF<CR>
-map <C-h> :Buffers<CR>
-map <C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
+map <C-j> :Buffers<CR>
+" map <C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
+map <C-l> :Tags<CR>
 map <leader>cl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && .git/hooks/ctags )"'<CR>
 
 function! s:build_quickfix_list(lines)

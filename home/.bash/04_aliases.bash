@@ -105,7 +105,7 @@ alias rlias=". ~/.bash/*alias*"
 alias elias="vim ~/.bash/04_aliases.bash; rlias"
 alias vimrc="vim ~/.vimrc"
 
-alias whatsmyip='curl https://ipapi.co/json/'
+alias whatsmyip='curl -s https://am.i.mullvad.net/json | jq'
 
 cliphighlight() {
   pbpaste | highlight -O rtf --font-size 54 --font Inconsolata --style solarized-dark -W -J 80 -j 3 --src-lang $1 | pbcopy
@@ -114,6 +114,15 @@ cliphighlight() {
 reset-camera () {
   sudo killall AppleCameraAssistant
   sudo killall VDCAssistant
+}
+
+brew() {
+  local brew_user=$(stat -c "%U" /usr/local/Homebrew/)
+  if [[ ${brew_user} == $(whoami) ]]; then
+    /usr/local/bin/brew $@
+  else
+    sudo -u $brew_user -- /usr/local/bin/brew $@
+  fi
 }
 
 fresh() {
