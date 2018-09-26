@@ -63,32 +63,35 @@ vim() {
 alias vi=vim
 
 review-open() {
-  local diff_files=$(git diff --name-only origin/master)
+  local default_branch=$(git rev-parse --abbrev-ref HEAD)
+  local branch="${1:-$default_branch}"
+  local base="${2:-master}"
+
+  local diff_files=$(git diff --name-only origin/$base...$branch)
   echo "Changed files from origin/master..."
   echo $diff_files
 
-  nvim -c "let g:gitgutter_diff_base = 'origin/master'" -c ":e!" $diff_files
+  nvim -c "let g:gitgutter_diff_base = 'origin/$base'" -c ":e!" $diff_files
 }
 
 review() {
   local default_branch=$(git rev-parse --abbrev-ref HEAD)
   local branch="${1:-$default_branch}"
+  local base="${2:-master}"
 
-  git fetch origin master $branch
+  git fetch origin $base $branch
 
   # This typically fails if you have stashed changes.
   if ! git checkout $branch; then
     return 1
   fi
 
-  git rebase origin/$branch
-
   # Do this in the background?
   if [[ -a "dev.yml" ]]; then
     dev up
   fi
 
-  review-open
+  review-open $branch $base
 }
 
 alias ttc='tmux save-buffer -|pbcopy'
