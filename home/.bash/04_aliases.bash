@@ -62,18 +62,8 @@ vim() {
 }
 alias vi=vim
 
-review-open() {
-  local default_branch=$(git rev-parse --abbrev-ref HEAD)
-  local branch="${1:-$default_branch}"
-  local base="${2:-master}"
-
-  local diff_files=$(git diff --name-only origin/$base...$branch)
-  echo "Changed files from origin/master..."
-  echo $diff_files
-
-  nvim -c "let g:gitgutter_diff_base = 'origin/$base'" -c ":e!" $diff_files
-}
-
+# This will open the diff to master (the same diff as in a pull request). If you
+# pass a second argument, it'll use that branch as a base instead.
 review() {
   local default_branch=$(git rev-parse --abbrev-ref HEAD)
   local branch="${1:-$default_branch}"
@@ -86,12 +76,22 @@ review() {
     return 1
   fi
 
-  # Do this in the background?
+  nvim -c "let g:gitgutter_diff_base = 'origin/$base'" -c ":e!" $(git diff --name-only origin/$base...$branch)
+}
+
+# This will run "dev" (internal shopify tool that pulls all dependencies) to
+# ensure that I can easily run test. This is typically my default command to
+# run! Might extend this with generic Ruby, Docker, and Vagrant support later..
+review-test() {
+  local default_branch=$(git rev-parse --abbrev-ref HEAD)
+  local branch="${1:-$default_branch}"
+  local base="${2:-master}"
+
   if [[ -a "dev.yml" ]]; then
     dev up
   fi
 
-  review-open $branch $base
+  review $branch $base
 }
 
 alias ttc='tmux save-buffer -|pbcopy'
