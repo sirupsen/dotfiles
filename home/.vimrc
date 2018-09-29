@@ -202,6 +202,10 @@ function! s:build_quickfix_list(lines)
   cc
 endfunction
 
+" command! CrateOpen `cargo metadata --format-version 1 | rb 'from_json["packages"].find { |c| c["name"] =~ /feed/ }["targets"][0]["src_path"]'`
+" TODO: Do this automatically when ftype is Rust (or there's a Cargo.toml in root)
+command! FZFCrate :FZF ~/.cargo/registry/src
+
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
   \ 'ctrl-t': 'tab split',
