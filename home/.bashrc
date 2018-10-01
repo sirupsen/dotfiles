@@ -2,7 +2,7 @@
 source /opt/dev/dev.sh
 
 for file in ~/.bash/*.bash; do
-  source $file
+  source "${file}"
 done
 
 unset DISPLAY

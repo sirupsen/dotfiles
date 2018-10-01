@@ -98,20 +98,6 @@ alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
 
 alias walrus="ruby -e 'loop { 0.upto(50) { |i| print \"\r\" + (\" \" * i) + \":\" + %w(€ c)[i%2] + \".\" * (50-i); sleep 0.25 } }'"
-
-alias k='kubectl'
-alias kns='kubectl config set-context $(k config current-context) --namespace=$(kgn -o name | grep -oP "(?<=/).+$" | fzf --prompt "k8s namespace > ")'
-alias kctx='kubectl config use-context $(kubectl config get-contexts -o=name | fzf --prompt "k8s context > ") && kns'
-alias kgp='k get pods'
-alias kgn='k get namespaces'
-alias kgpn='k get pods -o name | grep -oP "(?<=/).+$"'
-alias kg='k get'
-alias kl='k logs $(kpgn)'
-alias klz='kgpn | fzf --preview "kubectl logs {}" --height=100%'
-alias kex='k exec -it $(kgpn | fzf)'
-alias kexb='kubectl exec -it $(kgpn | fzf --prompt "/bin/bash > ") -- /bin/bash'
-alias kdesc='k describe $(k get pods -o name | fzf)'
-
 alias rlias=". ~/.bash/*alias*"
 alias elias="vim ~/.bash/04_aliases.bash; rlias"
 alias vimrc="vim ~/.vimrc"
