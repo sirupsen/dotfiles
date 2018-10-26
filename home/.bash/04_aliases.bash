@@ -223,7 +223,8 @@ zk-check() {
 }
 
 # TODO:
-# - zk-bidirectional-links. make sure A->B also has B->A link.
+# - zk-fix-links. make sure A->B also has B->A link.
+# - zk-fix-link-descriptions. Make sure A->B reflects the most recent title of B.
 # - zk-review. cloze deletion? base it on #u and #r.
 # - zk-import. import from readwise..?
 # - zk-review-tag. fzf to select a tag.

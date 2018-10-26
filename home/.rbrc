@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+require 'json'
+require 'pp'
+require 'time'
+require 'forwardable'
+
+class Enumerator
+  extend Forwardable
+
+  def_delegators :to_f, :sum, :median, :avg, :stats
+
+  def from_json
+    JSON.parse(to_a.join, symbolize_names: true)
+  end
+
+  def to_f
+    map(&:to_f)
+  end
+
+  def to_i
+    map(&:to_i)
+  end
+end
+
+module Enumerable
+  def sum
+    inject(:+)
+  end
+
+  def avg
+    inject(:+) / size
+  end
+
+  def median
+    sort[size / 2]
+  end
+
+  def stats
+    puts "size\t#{size}"
+    puts "sum\t#{sum}"
+    puts "avg\t#{avg}"
+    puts "median\t#{median}"
+    puts "raw\t#{self.join(" ")}"
+  end
+end
