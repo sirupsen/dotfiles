@@ -64,35 +64,43 @@ alias vi=vim
 
 # This will open the diff to master (the same diff as in a pull request). If you
 # pass a second argument, it'll use that branch as a base instead.
-review() {
-  local default_branch=$(git rev-parse --abbrev-ref HEAD)
-  local branch="${1:-$default_branch}"
-  local base="${2:-master}"
+# review() {
+#   # TODO: Support / syntax.
+#   local default_branch=$(git rev-parse --abbrev-ref HEAD)
+#   local branch="${1:-$default_branch}"
+#   local remote="${2:-origin}"
+#   local base="${3:-master}"
+#   local name=$(basename `git rev-parse --show-toplevel`)
 
-  git fetch origin $base $branch
+#   if ! git remote | grep "${remote}" > /dev/null; then
+#     git remote add "${remote}" "git@github.com:${remote}/${name}"
+#   fi
 
-  # This typically fails if you have stashed changes.
-  if ! git checkout $branch; then
-    return 1
-  fi
+#   git fetch origin "$base"
+#   git fetch "$remote" "$branch"
 
-  nvim -c "let g:gitgutter_diff_base = 'origin/$base'" -c ":e!" $(git diff --name-only origin/$base...$branch)
-}
+#   # This typically fails if you have stashed changes.
+#   if ! git checkout "$remote/$branch"; then
+#     return 1
+#   fi
 
-# This will run "dev" (internal shopify tool that pulls all dependencies) to
-# ensure that I can easily run test. This is typically my default command to
-# run! Might extend this with generic Ruby, Docker, and Vagrant support later..
-review-test() {
-  local default_branch=$(git rev-parse --abbrev-ref HEAD)
-  local branch="${1:-$default_branch}"
-  local base="${2:-master}"
+#   nvim -c "let g:gitgutter_diff_base = 'origin/${base}'" -c ":e!" $(git diff --name-only origin/$base...$remote/$branch)
+# }
 
-  if [[ -a "dev.yml" ]]; then
-    dev up
-  fi
+# # This will run "dev" (internal shopify tool that pulls all dependencies) to
+# # ensure that I can easily run test. This is typically my default command to
+# # run! Might extend this with generic Ruby, Docker, and Vagrant support later..
+# review-test() {
+#   local default_branch=$(git rev-parse --abbrev-ref HEAD)
+#   local branch="${1:-$default_branch}"
+#   local base="${2:-master}"
 
-  review $branch $base
-}
+#   if [[ -a "dev.yml" ]]; then
+#     dev up
+#   fi
+
+#   review $branch $base
+# }
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
@@ -229,5 +237,4 @@ zk-check() {
 # - zk-import. import from readwise..?
 # - zk-review-tag. fzf to select a tag.
 # - zk-review-connect. try to connect with others.
-# - zk-pictures. percentage?
 # - zk-prune. take low U and consider deleting them.

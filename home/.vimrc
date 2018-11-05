@@ -16,6 +16,7 @@ Plug 'benmills/vimux'
 Plug 'airblade/vim-gitgutter'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'rhysd/devdocs.vim'
+Plug 'w0rp/ale'
 " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins', 'for': 'rust' }
 Plug 'thalesmello/webcomplete.vim'
 " Plug 'vim-syntastic/syntastic'
@@ -137,7 +138,7 @@ nmap L :set invnumber<CR>
 let test#strategy = "vimux"
 nmap <silent> <leader>t :TestNearest<CR>
 nmap <silent> <leader>T :TestFile<CR>
-nmap <silent> <leader>l :TestLast<CR>
+" nmap <silent> <leader>l :TestLast<CR>
 
 nmap <silent> <leader>a :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))<CR>
 nmap <silent> <Leader>f :call VimuxRunCommand("dev test " . bufname("%") . " -n /WIP/")<CR>
@@ -215,3 +216,12 @@ let g:fzf_action = {
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
 
 let g:vim_markdown_folding_disabled = 1
+
+let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
+let b:ale_fixers = ['rustfmt']
+
+" use the ]l, ]l instead..
+" nmap <silent> [j <Plug>(ale_previous)
+" nmap <silent> ]j <Plug>(ale_next)
+nmap [c <Plug>GitGutterPrevHunk
+nmap ]c <Plug>GitGutterNextHunk

@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'ostruct'
+
+options = OpenStruct.new(
+  base: "origin/master",
+  dev_up: false,
+)
+
+REMOTE_BRANCH_SPLIT = /[:|\/]/
+
+def remote_branch(string)
+  return ['origin', string] unless string =~ REMOTE_BRANCH_SPLIT
+  string.split(REMOTE_BRANCH_SPLIT)
+end
+
+def ensure_remote(remote)
+  unless `git remote`[remote]
+    repo = `basename $(git rev-parse --show-toplevel)`.strip
+    repo_git = "git@github.com:#{remote}/#{repo}"
+    `git remote add #{remote.inspect} #{repo_git}`
+  end
+end
+
+def pull(branch, remote)
+  system("git fetch #{remote} #{branch}")
+end
+
+def checkout(branch, remote)
+  local_branch_name = "#{remote}-#{branch}"
+  local_branch_name = branch if remote == 'origin'
+
+  system("git checkout -b #{local_branch_name.inspect} --track #{remote}/#{branch}")
+end
+
+def rebase(branch, remote)
+  system("git pull --rebase #{remote} #{branch}")
+end
+
+def current_branch_tracking_remote
+  rev_parse = `git rev-parse HEAD --symbolic-full-name @{u}`
+  rev_parse.match(/refs\/remotes\/(.+)$/)[1]
+end
+
+OptionParser.new { |opts|
+  opts.banner = "Usage: review [options]"
+
+  opts.on("-b", "--base BRANCH", "Base to compare (default: origin/master)") do |value|
+    options.base = value
+  end
+
+  opts.on("-u", "--dev-up", "Run dev up (default: no)") do |val|
+    options.dev_up = true
+  end
+}.parse!
+
+remote = ARGV[0]
+remote = current_branch_tracking_remote unless remote
+
+base_remote, base_branch = remote_branch(options.base)
+ensure_remote(base_remote)
+pull(base_branch, base_remote)
+
+target_remote, target_branch = remote_branch(remote)
+ensure_remote(target_remote)
+pull(target_branch, target_remote)
+
+checkout(target_branch, target_remote)
+rebase(target_branch, target_remote)
+
+system("nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{base_remote}/#{base_branch}...#{target_remote}/#{target_branch})")
