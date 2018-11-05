@@ -5,7 +5,6 @@ fi
 
 alias ..='cd ..'
 alias ...='cd ../..'
-alias ls="ls --color=always"
 
 git_origin_or_fork() {
   if git remote 2>/dev/null | grep -iq sirupsen; then
@@ -61,6 +60,18 @@ vim() {
   fi
 }
 alias vi=vim
+
+# Git Diff Files
+gdf() {
+  local default_branch=$(git rev-parse --abbrev-ref HEAD)
+  local branch="${1:-$default_branch}"
+  local base="${2:-master}"
+
+  git diff --name-only origin/$base...$branch
+}
+
+# Git Diff Files Test
+alias gdft='gdf | rg "test/.*_test"'
 
 # This will open the diff to master (the same diff as in a pull request). If you
 # pass a second argument, it'll use that branch as a base instead.

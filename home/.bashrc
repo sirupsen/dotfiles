@@ -24,6 +24,8 @@ export BACKTRACE=1
 export GOPATH=$HOME
 export DISABLE_DATABASE_ENVIRONMENT_CHECK=1
 # export RUST_LOG=info
+export RIPGREP_CONFIG_PATH="$HOME/.rgrc"
+
 (ssh-add -l | grep -q "no identities") && ssh-add -K
 # export DOCKER_TLS_VERIFY="1"
 # export DOCKER_HOST="tcp://192.168.64.3:2376"

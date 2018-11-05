@@ -22,3 +22,5 @@
   templatedir = ~/.git_template
 [alias]
   fix = "!f() { ${EDITOR} `git diff --name-only`; }; f"
+[diff]
+	algorithm = patience
