@@ -133,7 +133,7 @@ reset-camera () {
 }
 
 brew() {
-  local brew_user=$(stat -c "%U" /usr/local/Homebrew/)
+  local brew_user=$(gstat -c "%U" /usr/local/Homebrew/)
   if [[ ${brew_user} == $(whoami) ]]; then
     /usr/local/bin/brew $@
   else
@@ -141,12 +141,12 @@ brew() {
   fi
 }
 
-fresh() {
+refresh() {
   dev cd $1
   gfogro
 }
 
-freshall () {
+refreshall () {
   fresh shopify
   fresh activefailover
   fresh spy

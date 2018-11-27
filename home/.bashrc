@@ -1,4 +1,3 @@
-#set -x
 source /opt/dev/dev.sh
 
 for file in ~/.bash/*.bash; do

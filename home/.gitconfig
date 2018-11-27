@@ -24,3 +24,5 @@
   fix = "!f() { ${EDITOR} `git diff --name-only`; }; f"
 [diff]
 	algorithm = patience
+[protocol]
+	version = 2
