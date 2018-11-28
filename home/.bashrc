@@ -10,7 +10,6 @@ source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.i
 source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc'
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-source /usr/local/bin/env_parallel.bash
 export FZF_DEFAULT_OPTS="--height=40% --multi"
 export FZF_DEFAULT_COMMAND='fd --type f --no-ignore'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"

@@ -5,6 +5,7 @@ fi
 
 alias ..='cd ..'
 alias ...='cd ../..'
+alias ls="ls -G"
 
 git_origin_or_fork() {
   if git remote 2>/dev/null | grep -iq sirupsen; then
@@ -38,8 +39,8 @@ alias ggi='git grep -i'
 alias ga='git add'
 alias gfo='git fetch origin master'
 alias gro='git rebase origin/master'
-alias gfogro='gfo && gro && dev up'
-alias gupd='gfo && gro && gpf && dev up'
+alias gfogro='gfo && gro'
+alias gupd='gfogro && gpf'
 alias blush="git commit --amend --reuse-message HEAD"
 alias squash='squash=`git rebase -i $(git merge-base HEAD master)`'
 
@@ -144,15 +145,16 @@ brew() {
 refresh() {
   dev cd $1
   gfogro
+  dev up
 }
 
 refreshall () {
-  fresh shopify
-  fresh activefailover
-  fresh spy
-  fresh cloudplatform
-  fresh cusco
-  fresh nginx-routing-modules
+  refresh shopify
+  refresh activefailover
+  refresh spy
+  refresh cloudplatform
+  refresh cusco
+  refresh nginx-routing-modules
 
   cd ~/.chef
   gpl

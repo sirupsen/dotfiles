@@ -28,5 +28,8 @@ for file in home/.[^.]*; do
   fi
 done
 
+mkdir -p ~/.config/nvim
+ln -s ~/.vimrc ~/.config/nvim/init.vim
+
 echo "(1) Remember to use chsh to change to /usr/local/bin/bash"
 echo "(2) Install plug"
