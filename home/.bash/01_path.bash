@@ -29,3 +29,6 @@ fi
 
 # export PYTHONPATH=/usr/local/lib/python2.7/site-packages
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.yarn/bin:$PATH"
+
+export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
