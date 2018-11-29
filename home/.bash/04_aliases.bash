@@ -52,14 +52,7 @@ garch() {
 alias bx='bundle exec'
 alias rt='bx ruby -I.:test'
 alias knife='chruby 2.3 && BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
-
-vim() {
-  if [[ -z $@ ]]; then
-    nvim +FZF
-  else
-    nvim $@
-  fi
-}
+alias vim=nvim
 alias vi=vim
 
 # Git Diff Files
