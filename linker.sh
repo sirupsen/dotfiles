@@ -33,3 +33,4 @@ ln -s ~/.vimrc ~/.config/nvim/init.vim
 
 echo "(1) Remember to use chsh to change to /usr/local/bin/bash"
 echo "(2) Install plug"
+echo "https://github.com/junegunn/vim-plug"

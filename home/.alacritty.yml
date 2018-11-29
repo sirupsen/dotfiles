@@ -19,8 +19,8 @@ window:
   # If both are `0`, this setting is ignored.
   start_maximized: true
   dimensions:
-    columns: 80
-    lines: 24
+    columns: 120
+    lines: 35
 
   # Window padding (changes require restart)
   #
@@ -354,6 +354,8 @@ shell:
 #   keys. It is therefore required to update the terminfo when
 #   changing an escape sequence.
 #
+#   NOTE: `xxd -psd` will do the same thing on MacOS.
+#
 # Values for `action`:
 #   - Paste
 #   - PasteSelection
@@ -490,3 +492,20 @@ key_bindings:
   - { key: NumpadEnter,             chars: "\n"                          }
   - { key: Left,     mods: Alt,     chars: "\x1bb"                       }
   - { key: Right,    mods: Alt,     chars: "\x1bf"                       }
+
+  # TMUX
+  - { key: LBracket, mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t:-"] } }
+  - { key: RBracket, mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t:+"] } }
+  - { key: W,        mods: Command, command: { program: "/usr/local/bin/tmux", args: ["kill-pane"] } }
+  - { key: T,        mods: Command, command: { program: "/usr/local/bin/tmux", args: ["new-window"] } }
+
+  - { key: Key0,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "0"] } }
+  - { key: Key1,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "1"] } }
+  - { key: Key2,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "2"] } }
+  - { key: Key3,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "3"] } }
+  - { key: Key4,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "4"] } }
+  - { key: Key5,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "5"] } }
+  - { key: Key6,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "6"] } }
+  - { key: Key7,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "7"] } }
+  - { key: Key8,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "8"] } }
+  - { key: Key9,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "9"] } }
