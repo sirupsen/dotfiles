@@ -1,10 +1,13 @@
 #!/usr/bin/env ruby
 require 'optparse'
 require 'ostruct'
+require "net/http"
+require 'json'
 
 options = OpenStruct.new(
   base: "origin/master",
   dev_up: false,
+  chrome: false,
 )
 
 REMOTE_BRANCH_SPLIT = /[:|\/]/
@@ -42,8 +45,44 @@ def current_branch_tracking_remote
   rev_parse.match(/refs\/remotes\/(.+)$/)[1]
 end
 
+def remote_from_url(url)
+  _, org, repo, pr = url.match(/https:\/\/github.com\/(\w+)\/(\w+)\/pull\/(\d+)/).to_a
+
+  http = Net::HTTP.new("api.github.com", 443)
+  http.use_ssl = true
+
+  request = Net::HTTP::Post.new("/graphql")
+  request["Authorization"] = "bearer #{ENV['GITHUB_ACCESS_TOKEN']}"
+  query = <<~EOF
+    {
+      "query": "\
+        query { \
+          repository(owner:\\"#{org}\\", name:\\"#{repo}\\") { \
+            pullRequest(number: #{pr}) { \
+              headRefName \
+              isCrossRepository \
+              headRepository { \
+                owner { \
+                  login \
+                } \
+              } \
+            } \
+          } \
+        } \
+      "
+    }
+  EOF
+  request.body = query
+
+  $stderr.puts "Finding upstream from URL..."
+  response = http.request(request)
+  pr = JSON.parse(response.body)["data"]["repository"]["pullRequest"]
+  pr["headRefName"] unless pr["isCrossRepository"]
+  "#{pr["headRepository"]["owner"]["login"]}/#{pr["headRefName"]}"
+end
+
 OptionParser.new { |opts|
-  opts.banner = "Usage: review [options]"
+  opts.banner = "Usage: review [OPTIONS] [BRANCH]"
 
   opts.on("-b", "--base BRANCH", "Base to compare (default: origin/master)") do |value|
     options.base = value
@@ -52,10 +91,20 @@ OptionParser.new { |opts|
   opts.on("-u", "--dev-up", "Run dev up (default: no)") do |val|
     options.dev_up = true
   end
+
+  opts.on("-c", "--chrome", "Automatically fetch url from Chrome") do |val|
+    options.chrome = true
+  end
 }.parse!
 
 remote = ARGV[0]
-remote = current_branch_tracking_remote unless remote
+if options.chrome
+  remote = `chrome-cli info`[/https:\/\/github.com\/\w+\/\w+\/pull\/\d+/]
+end
+remote = remote_from_url(remote) if remote && remote.start_with?("https://")
+remote ||= current_branch_tracking_remote
+
+$stderr.puts "Remote: #{remote}"
 
 base_remote, base_branch = remote_branch(options.base)
 ensure_remote(base_remote)
@@ -67,5 +116,7 @@ pull(target_branch, target_remote)
 
 checkout(target_branch, target_remote)
 rebase(target_branch, target_remote)
+
+system("dev up") if options.dev_up
 
 system("nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{base_remote}/#{base_branch}...#{target_remote}/#{target_branch})")
