@@ -120,8 +120,9 @@ OptionParser.new { |opts|
     options.open = false
   end
 
-  opts.on("-c", "--changed-files", "List changed files (implies -o)") do
+  opts.on("-c", "--changed-files", "List changed files (implies -ro)") do
     options.changed_files = true
+    options.refresh = false
     options.open = false
   end
 }.parse!
