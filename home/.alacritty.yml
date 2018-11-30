@@ -498,6 +498,11 @@ key_bindings:
   - { key: W,        mods: Command, command: { program: "/usr/local/bin/tmux", args: ["kill-pane"] } }
   - { key: T,        mods: Command, command: { program: "/usr/local/bin/tmux", args: ["new-window"] } }
 
+  - { key: Left,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["resize-pane", "-L", "5"] } }
+  - { key: Right,    mods: Command, command: { program: "/usr/local/bin/tmux", args: ["resize-pane", "-R", "5"] } }
+  - { key: Down,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["resize-pane", "-D", "5"] } }
+  - { key: Up,       mods: Command, command: { program: "/usr/local/bin/tmux", args: ["resize-pane", "-U", "5"] } }
+
   - { key: Key0,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "0"] } }
   - { key: Key1,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "1"] } }
   - { key: Key2,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "2"] } }
