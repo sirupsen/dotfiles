@@ -119,6 +119,11 @@ OptionParser.new { |opts|
   opts.on("-o", "--no-open", "Don't open editor with changes (default: yes)") do
     options.open = false
   end
+
+  opts.on("-c", "--changed-files", "List changed files (implies -o)") do
+    options.changed_files = true
+    options.open = false
+  end
 }.parse!
 
 remote = ARGV[0]
@@ -133,7 +138,9 @@ base_remote, base_branch = remote_branch(options.base)
 target_remote, target_branch = remote_branch(remote)
 review_diff = "#{base_remote}/#{base_branch}...#{target_remote}/#{target_branch}"
 
-$stderr.puts "Reviewing #{review_diff}"
+unless options.changed_files
+  $stderr.puts "Reviewing #{review_diff}"
+end
 
 if options.refresh
   ensure_remote(base_remote)
@@ -151,3 +158,5 @@ system("dev up") if options.dev_up
 if options.open
   system("nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{review_diff})")
 end
+
+puts `git diff --name-only #{review_diff}` if options.changed_files
