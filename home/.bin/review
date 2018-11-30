@@ -8,6 +8,8 @@ options = OpenStruct.new(
   base: "origin/master",
   dev_up: false,
   chrome: false,
+  refresh: true,
+  open: true,
 )
 
 REMOTE_BRANCH_SPLIT = /[:|\/]/
@@ -82,7 +84,21 @@ def remote_from_url(url)
 end
 
 OptionParser.new { |opts|
-  opts.banner = "Usage: review [OPTIONS] [BRANCH]"
+  opts.banner = <<~EOF
+    Usage: review [OPTIONS] [BRANCH]
+
+    review is a tool to make it easier to review code in your editor instead of
+    in the Github diff. I find that it puts you in the right state of mind to review
+    code. It makes it much easier to dive into the referenced code and see the connections.
+    It is highly recommended to run their tests as well, and try to break them.
+
+    Dependencies:
+      * `vim` with the gitgutter plugin to show the diff in the editor.
+      * `chrome-cli` if you want to use the `-c` option.
+      * `GITHUB_ACCESS_TOKEN` set in your environment create one here https://github.com/settings/tokens
+
+    Flags:
+  EOF
 
   opts.on("-b", "--base BRANCH", "Base to compare (default: origin/master)") do |value|
     options.base = value
@@ -92,31 +108,46 @@ OptionParser.new { |opts|
     options.dev_up = true
   end
 
-  opts.on("-c", "--chrome", "Automatically fetch url from Chrome") do |val|
+  opts.on("-c", "--chrome", "Get content to review from Chrome's current tab (default: no)") do |val|
     options.chrome = true
+  end
+
+  opts.on("-r", "--no-refresh", "Don't fetch latest upstream changes (default: yes)") do
+    options.refresh = false
+  end
+
+  opts.on("-o", "--no-open", "Don't open editor with changes (default: yes)") do
+    options.open = false
   end
 }.parse!
 
 remote = ARGV[0]
 if options.chrome
   remote = `chrome-cli info`[/https:\/\/github.com\/\w+\/\w+\/pull\/\d+/]
+  raise "Unable to find a Github pull request in current Chrome tab"
 end
 remote = remote_from_url(remote) if remote && remote.start_with?("https://")
 remote ||= current_branch_tracking_remote
 
-$stderr.puts "Remote: #{remote}"
-
 base_remote, base_branch = remote_branch(options.base)
-ensure_remote(base_remote)
-pull(base_branch, base_remote)
-
 target_remote, target_branch = remote_branch(remote)
-ensure_remote(target_remote)
-pull(target_branch, target_remote)
+review_diff = "#{base_remote}/#{base_branch}...#{target_remote}/#{target_branch}"
 
-checkout(target_branch, target_remote)
-rebase(target_branch, target_remote)
+$stderr.puts "Reviewing #{review_diff}"
+
+if options.refresh
+  ensure_remote(base_remote)
+  pull(base_branch, base_remote)
+
+  ensure_remote(target_remote)
+  pull(target_branch, target_remote)
+
+  checkout(target_branch, target_remote)
+  rebase(target_branch, target_remote)
+end
 
 system("dev up") if options.dev_up
 
-system("nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{base_remote}/#{base_branch}...#{target_remote}/#{target_branch})")
+if options.open
+  system("nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{review_diff})")
+end
