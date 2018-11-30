@@ -23,6 +23,10 @@ export RIPGREP_CONFIG_PATH="$HOME/.rgrc"
 
 (ssh-add -l | grep -q "no identities") && ssh-add -K
 
+if [[ -f ~/.env ]]; then
+  source ~/.env
+fi
+
 # cloudplatform: add Shopify clusters to your local kubernetes config
 export KUBECONFIG=${KUBECONFIG:+$KUBECONFIG:}/Users/simon/.kube/config:/Users/simon/.kube/config.shopify.cloudplatform
 for file in /Users/simon/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
