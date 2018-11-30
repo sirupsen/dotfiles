@@ -58,7 +58,7 @@ set backupskip=/tmp/*,/private/tmp/* "
 set undodir=~/.vim/undo
 set noswapfile
 set nobackup
-set wildignore+=.git/**,public/assets/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
+set wildignore+=.git/**,public/assets/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*,vendor/**
 
 syntax enable
 colorscheme solarized
