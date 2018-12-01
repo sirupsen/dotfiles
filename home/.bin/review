@@ -12,6 +12,8 @@ options = OpenStruct.new(
   open: true,
 )
 
+GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/pull\/(\d+)/
+
 REMOTE_BRANCH_SPLIT = /[:|\/]/
 
 def remote_branch(string)
@@ -48,7 +50,7 @@ def current_branch_tracking_remote
 end
 
 def remote_from_url(url)
-  _, org, repo, pr = url.match(/https:\/\/github.com\/(\w+)\/(\w+)\/pull\/(\d+)/).to_a
+  _, org, repo, pr = url.match(GITHUB_PR_REGEX).to_a
 
   http = Net::HTTP.new("api.github.com", 443)
   http.use_ssl = true
@@ -129,7 +131,7 @@ OptionParser.new { |opts|
 
 remote = ARGV[0]
 if options.chrome
-  remote = `chrome-cli info`[/https:\/\/github.com\/\w+\/\w+\/pull\/\d+/]
+  remote = `chrome-cli info`[GITHUB_PR_REGEX]
   raise "Unable to find a Github pull request in current Chrome tab"
 end
 remote = remote_from_url(remote) if remote && remote.start_with?("https://")
