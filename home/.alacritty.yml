@@ -496,7 +496,7 @@ key_bindings:
   - { key: LBracket, mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t:-"] } }
   - { key: RBracket, mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t:+"] } }
   - { key: W,        mods: Command, command: { program: "/usr/local/bin/tmux", args: ["kill-pane"] } }
-  - { key: T,        mods: Command, command: { program: "/usr/local/bin/tmux", args: ["new-window"] } }
+  - { key: T,        mods: Command, command: { program: "/usr/local/bin/tmux", args: ["new-window", "-c", "#{pane_current_path}"] } }
 
   - { key: Left,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["resize-pane", "-L", "5"] } }
   - { key: Right,    mods: Command, command: { program: "/usr/local/bin/tmux", args: ["resize-pane", "-R", "5"] } }
