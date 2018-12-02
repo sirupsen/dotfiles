@@ -10,6 +10,7 @@ options = OpenStruct.new(
   chrome: false,
   refresh: true,
   open: true,
+  tmux: false,
 )
 
 GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/pull\/(\d+)/
@@ -18,12 +19,29 @@ REMOTE_BRANCH_SPLIT = /[:|\/]/
 
 def remote_branch(string)
   return ['origin', string] unless string =~ REMOTE_BRANCH_SPLIT
-  string.split(REMOTE_BRANCH_SPLIT)
+  remote_suggested_name, remote_branch = string.split(REMOTE_BRANCH_SPLIT)
+
+  # This is when a URL is passed and you get something like Shopify/shopify, but
+  # you really want origin--but you also want to support forks. The more elegant
+  # solution to this is probably we can in the API see if a repo is the "root",
+  # which is what we're effectively doing here.
+  if `git remote -v | grep origin` =~ /github\.com:#{remote_suggested_name}/i
+    ['origin', remote_branch]
+  else
+    [remote_suggested_name, remote_branch]
+  end
+end
+
+def repo
+  `basename $(git rev-parse --show-toplevel)`.strip
+end
+
+def repo_path
+  `git rev-parse --show-toplevel`.strip
 end
 
 def ensure_remote(remote)
   unless `git remote`[remote]
-    repo = `basename $(git rev-parse --show-toplevel)`.strip
     repo_git = "git@github.com:#{remote}/#{repo}"
     `git remote add #{remote.inspect} #{repo_git}`
   end
@@ -110,6 +128,10 @@ OptionParser.new { |opts|
     options.dev_up = true
   end
 
+  opts.on("-t", "--tmux", "Create new tmux window for review (default: no)") do |val|
+    options.tmux = true
+  end
+
   opts.on("-c", "--chrome", "Get content to review from Chrome's current tab (default: no)") do |val|
     options.chrome = true
   end
@@ -156,10 +178,12 @@ if options.refresh
   rebase(target_branch, target_remote)
 end
 
-system("dev up") if options.dev_up
-
-if options.open
-  system("nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{review_diff})")
+if options.tmux
+  system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile <(echo '. ~/.bashrc && review -r #{ARGV[0]}')\" \\; split-window -h -c \"#{repo_path}\" \"bash --rcfile <(echo '. ~/.bashrc && dev up')\"")
+else
+  system("dev up") if options.dev_up
+  vim_command = "nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{review_diff})"
+  system(vim_command) if options.open
 end
 
 puts `git diff --name-only #{review_diff}` if options.changed_files

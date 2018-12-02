@@ -58,7 +58,7 @@ set backupskip=/tmp/*,/private/tmp/* "
 set undodir=~/.vim/undo
 set noswapfile
 set nobackup
-set wildignore+=.git/**,public/assets/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*,vendor/**
+set wildignore+=.git/**,public/assets/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
 syntax enable
 colorscheme solarized
@@ -135,16 +135,6 @@ map <leader>n :NERDTreeToggle<CR>
 
 nmap L :set invnumber<CR>
 
-let test#strategy = "vimux"
-nmap <silent> <leader>t :TestNearest<CR>
-nmap <silent> <leader>T :TestFile<CR>
-" nmap <silent> <leader>l :TestLast<CR>
-
-nmap <silent> <leader>a :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))<CR>
-nmap <silent> <Leader>f :call VimuxRunCommand("dev test " . bufname("%") . " -n /WIP/")<CR>
-" nmap <silent> <Leader>r :call VimuxRunCommand("rubocop " . bufname("%"))<CR>
-nmap <silent> <Leader>R :call VimuxRunCommand("dev style")<CR>
-
 let g:jsx_ext_required = 0
 
 " Git gutter
@@ -169,33 +159,20 @@ let g:VimuxHeight = "40"
 let g:python2_host_prog = '/usr/local/bin/python'
 let g:python3_host_prog = '/usr/local/bin/python3'
 
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 0
-" let g:syntastic_check_on_wq = 0
-" let g:syntastic_rust_checkers = ['cargo']
+map <C-g> :call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(expand('<cword>')), 1, 0)<CR><CR>
+map <leader><C-g> :Rg<CR>
 
-
-" command! -bang -nargs=* GGrep
-"   \ call fzf#vim#grep(
-"   \   'git grep --line-number -P "' . <q-args> . '"', 0,
-"   \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
-
-" map <C-g> :GGrep<CR>
-
-command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
-
-map <C-g> :Rg<CR>
 map <C-t> :FZF<CR>
+
+" autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
+
 map <C-j> :Buffers<CR>
-" map <C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
-map <C-l> :Tags<CR>
-map <leader>cl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && .git/hooks/ctags )"'<CR>
+
+" map <C-l> :Tags <C-R><C-W><CR>
+map <C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
+map <leader><C-l> :Tags
+" map <leader>L :Tags<CR>
+map <leader>rl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && .git/hooks/ctags )"'<CR>
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -212,8 +189,14 @@ let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
   \ 'ctrl-v': 'vsplit' }
-
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
+
+let test#strategy = "vimux"
+map <leader>t :TestNearest<CR>
+map <leader>T :TestFile<CR>
+
+command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))<CR>
+command! Style :call VimuxRunCommand("dev style")<CR>
 
 let g:vim_markdown_folding_disabled = 1
 
