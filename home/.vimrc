@@ -9,21 +9,102 @@ set mouse=v " Allow copy-pasting
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
+
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --rust-completer --go-completer' }
+" {{{
+nmap K :YcmCompleter GetDoc<CR>
+" }}}
+"
 Plug 'junegunn/fzf.vim'
+" {{{
+" The nice thing about the immediate one below is that it'll start searching
+" immediately. However, everything will buffer inside of FZF which is so much
+" flower than providing an initial query.
+" map <C-g> :call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(expand('<cword>')), 1, 0)<CR><CR>
+map <C-g> :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
+map <leader>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
+
+map <C-t> :FZF<CR>
+
+" autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
+map <C-j> :Buffers<CR>
+" map <C-l> :Tags <C-R><C-W><CR>
+map <C-t> :FZF<CR>
+" autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
+map <C-j> :Buffers<CR>
+" map <C-l> :Tags <C-R><C-W><CR>
+map <C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
+map <leader><C-l> :Tags
+" map <leader>L :Tags<CR>
+map <leader>rl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && .git/hooks/ctags )"'<CR>
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
+endfunction
+" command! CrateOpen `cargo metadata --format-version 1 | rb 'from_json["packages"].find { |c| c["name"] =~ /feed/ }["targets"][0]["src_path"]'`
+" TODO: Do this automatically when ftype is Rust (or there's a Cargo.toml in root)
+command! FZFCrate :FZF ~/.cargo/registry/src
+
+let g:fzf_action = {
+  \ 'ctrl-q': function('s:build_quickfix_list'),
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
+
+command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))<CR>
+command! Style :call VimuxRunCommand("dev style")<CR>
+" }}}
+
 Plug 'janko-m/vim-test'
+" {{{
+let test#strategy = "vimux"
+let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
+map <leader>t :TestNearest<CR>
+map <leader>T :TestFile<CR>
+" }}}
+
 Plug 'benmills/vimux'
+" {{{
+let g:VimuxOrientation = "h"
+let g:VimuxHeight = "40"
+" }}}
+
 Plug 'airblade/vim-gitgutter'
+" {{{
+nmap [h <Plug>GitGutterPrevHunk
+nmap ]h <Plug>GitGutterNextHunk
+set updatetime=100
+" }}}
+
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+" {{{
+map <leader>n :NERDTreeToggle<CR>
+" }}}
+
 Plug 'rhysd/devdocs.vim'
+" {{{
+nmap <leader>K <Plug>(devdocs-under-cursor)
+" }}}
+"
 Plug 'w0rp/ale'
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins', 'for': 'rust' }
+" {{{
+let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
+let b:ale_fixers = ['rustfmt']
+" }}}
+
 Plug 'thalesmello/webcomplete.vim'
-" Plug 'vim-syntastic/syntastic'
 Plug 'milkypostman/vim-togglelist'
 
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
+
 Plug 'tpope/vim-fugitive'
+" {{{
+map <leader>gs :Gstatus<CR>
+map <leader>gc :Gcommit<CR>
+" }}}
+"
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
@@ -33,7 +114,12 @@ Plug 'altercation/vim-colors-solarized'
 
 Plug 'nickhutchinson/vim-systemtap'
 Plug 'tpope/vim-liquid'
+
 Plug 'plasticboy/vim-markdown'
+" {{{
+let g:vim_markdown_folding_disabled = 1
+" }}}
+"
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'vim-scripts/VimClojure', { 'for': 'clojure' }
@@ -73,7 +159,6 @@ set incsearch     " Search as you type
 set smartindent   " Be smart about indentation
 set expandtab     " Tabs are spaces
 set smarttab
-" set shell=$SHELL\ -l  " load shell for ruby version etc.
 
 set tabstop=2 " Tabs are 2 spaces
 set backspace=2 " Backspace deletes 2 spaces
@@ -95,9 +180,6 @@ map <leader>d :bd<CR>
 " Sane behavior on long lines
 nmap k gk
 nmap j gj
-
-map <leader>gs :Gstatus<CR>
-map <leader>gc :Gcommit<CR>
 
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
@@ -125,98 +207,11 @@ imap <s-tab> <c-n>
 
 au BufNewFile,BufRead *.ejson set filetype=json
 au BufNewFile,BufRead *.sxx set filetype=stp
-
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
-
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
-" autocmd! BufWritePost * Neomake
-
-map <leader>n :NERDTreeToggle<CR>
-
 nmap L :set invnumber<CR>
-
-let g:jsx_ext_required = 0
-
-" Git gutter
-set updatetime=100
-
-" rust
 set hidden
 
-" Use Ctags for now, maybe return to this later
-" au FileType rust nmap gd <Plug>(rust-def)
-" au FileType rust nmap <leader>gd <Plug>(rust-doc)
-" autocmd FileType rust          nnoremap <buffer> <C-0> :YcmCompleter GoTo<CR>
-let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
-
-nmap K :YcmCompleter GetDoc<CR>
-nmap <leader>K <Plug>(devdocs-under-cursor)
 let g:go_def_mapping_enabled = 0 " don't override ctrl-T
-
-let g:VimuxOrientation = "h"
-let g:VimuxHeight = "40"
-
 let g:python2_host_prog = '/usr/local/bin/python'
 let g:python3_host_prog = '/usr/local/bin/python3'
-
-" The nice thing about the immediate one below is that it'll start searching
-" immediately. However, everything will buffer inside of FZF which is so much
-" flower than providing an initial query.
-" map <C-g> :call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(expand('<cword>')), 1, 0)<CR><CR>
-map <C-g> :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
-map <leader>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
-
-map <C-t> :FZF<CR>
-
-" autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
-
-map <C-j> :Buffers<CR>
-
-" map <C-l> :Tags <C-R><C-W><CR>
-
-map <C-t> :FZF<CR>
-
-" autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
-
-map <C-j> :Buffers<CR>
-
-" map <C-l> :Tags <C-R><C-W><CR>
-map <C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
-map <leader><C-l> :Tags
-" map <leader>L :Tags<CR>
-map <leader>rl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && .git/hooks/ctags )"'<CR>
-
-function! s:build_quickfix_list(lines)
-  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-  copen
-  cc
-endfunction
-
-" command! CrateOpen `cargo metadata --format-version 1 | rb 'from_json["packages"].find { |c| c["name"] =~ /feed/ }["targets"][0]["src_path"]'`
-" TODO: Do this automatically when ftype is Rust (or there's a Cargo.toml in root)
-command! FZFCrate :FZF ~/.cargo/registry/src
-
-let g:fzf_action = {
-  \ 'ctrl-q': function('s:build_quickfix_list'),
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-v': 'vsplit' }
-let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
-
-let test#strategy = "vimux"
-map <leader>t :TestNearest<CR>
-map <leader>T :TestFile<CR>
-
-command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))<CR>
-command! Style :call VimuxRunCommand("dev style")<CR>
-
-let g:vim_markdown_folding_disabled = 1
-
-let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
-let b:ale_fixers = ['rustfmt']
-
-" use the ]l, ]l instead..
-" nmap <silent> [j <Plug>(ale_previous)
-" nmap <silent> ]j <Plug>(ale_next)
-nmap [c <Plug>GitGutterPrevHunk
-nmap ]c <Plug>GitGutterNextHunk
