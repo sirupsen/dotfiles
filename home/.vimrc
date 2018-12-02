@@ -159,8 +159,20 @@ let g:VimuxHeight = "40"
 let g:python2_host_prog = '/usr/local/bin/python'
 let g:python3_host_prog = '/usr/local/bin/python3'
 
-map <C-g> :call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(expand('<cword>')), 1, 0)<CR><CR>
-map <leader><C-g> :Rg<CR>
+" The nice thing about the immediate one below is that it'll start searching
+" immediately. However, everything will buffer inside of FZF which is so much
+" flower than providing an initial query.
+" map <C-g> :call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(expand('<cword>')), 1, 0)<CR><CR>
+map <C-g> :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
+map <leader>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
+
+map <C-t> :FZF<CR>
+
+" autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
+
+map <C-j> :Buffers<CR>
+
+" map <C-l> :Tags <C-R><C-W><CR>
 
 map <C-t> :FZF<CR>
 
