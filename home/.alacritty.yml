@@ -493,8 +493,8 @@ key_bindings:
   - { key: Right,    mods: Alt,     chars: "\x1bf"                       }
 
   # TMUX
-  - { key: LBracket, mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t:-"] } }
-  - { key: RBracket, mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t:+"] } }
+  - { key: LBracket, mods: Command|Shift, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t:-"] } }
+  - { key: RBracket, mods: Command|Shift, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t:+"] } }
   - { key: W,        mods: Command, command: { program: "/usr/local/bin/tmux", args: ["kill-pane"] } }
   - { key: T,        mods: Command, command: { program: "/usr/local/bin/tmux", args: ["new-window", "-c", "#{pane_current_path}"] } }
 
