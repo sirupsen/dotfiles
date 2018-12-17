@@ -2,3 +2,4 @@ home/.vim/bundle
 .netrwhist
 home/.bundle/cache
 home/.bash/secrets.bash
+home/.bash/env.bash

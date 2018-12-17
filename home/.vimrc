@@ -21,7 +21,7 @@ Plug 'junegunn/fzf.vim'
 " immediately. However, everything will buffer inside of FZF which is so much
 " flower than providing an initial query.
 " map <C-g> :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
-map <C-g> :call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(expand('<cword>')), 1, 0)<CR><CR>
+map <C-g> :call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(expand('<cword>')), 1, 0)<CR>
 map <leader>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
 
 map <C-t> :FZF<CR>
