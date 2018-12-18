@@ -21,7 +21,7 @@ Plug 'junegunn/fzf.vim'
 " immediately. However, everything will buffer inside of FZF which is so much
 " flower than providing an initial query.
 " map <C-g> :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
-map <C-g> :Rg
+map <C-g> :Rg<CR>
 map <leader>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
 
 map <C-t> :FZF<CR>
