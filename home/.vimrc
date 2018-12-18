@@ -21,7 +21,7 @@ Plug 'junegunn/fzf.vim'
 " immediately. However, everything will buffer inside of FZF which is so much
 " flower than providing an initial query.
 " map <C-g> :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
-map <C-g> :call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(expand('<cword>')), 1, 0)<CR>
+map <C-g> :Rg
 map <leader>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
 
 map <C-t> :FZF<CR>
@@ -130,6 +130,9 @@ Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
 Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+" {{{
+autocmd FileType rust map <leader>f :RustFmt<CR>
+" }}}
 Plug 'uarun/vim-protobuf'
 Plug 'leafgarland/typescript-vim'
 Plug 'jparise/vim-graphql'
