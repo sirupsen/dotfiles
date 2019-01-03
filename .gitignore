@@ -3,3 +3,4 @@ home/.vim/bundle
 home/.bundle/cache
 home/.bash/secrets.bash
 home/.bash/env.bash
+home/.bundle/config
