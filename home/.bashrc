@@ -21,6 +21,7 @@ export DISABLE_DATABASE_ENVIRONMENT_CHECK=1
 # export RUST_LOG=info
 export RIPGREP_CONFIG_PATH="$HOME/.rgrc"
 
+(ssh-add -l | grep -q "Error connecting to agent") && ssh-agent bash
 (ssh-add -l | grep -q "no identities") && ssh-add -K
 
 if [[ -f ~/.env ]]; then
