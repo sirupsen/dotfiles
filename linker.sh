@@ -30,7 +30,9 @@ done
 
 mkdir -p ~/.config/nvim
 ln -s ~/.vimrc ~/.config/nvim/init.vim
+rm -rf ~/.config/alacritty # remove the config not linked by this
 
 echo "(1) Remember to use chsh to change to /usr/local/bin/bash"
 echo "(2) Install plug"
-echo "https://github.com/junegunn/vim-plug"
+echo " curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+echo "(3) Run PlugInstall in Vim"
