@@ -22,19 +22,21 @@ Plug 'junegunn/fzf.vim'
 " flower than providing an initial query.
 " map <C-g> :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
 map <C-g> :Rg<CR>
-map <leader>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
+map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
+map <leader><leader>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
 
 map <C-t> :FZF<CR>
 
 " autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
 map <C-j> :Buffers<CR>
+
 " map <C-l> :Tags <C-R><C-W><CR>
 map <C-t> :FZF<CR>
 " autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
 map <C-j> :Buffers<CR>
-" map <C-l> :Tags <C-R><C-W><CR>
-map <C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
-map <leader><C-l> :Tags
+map <C-l> :Tags<CR>
+map <leader><C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
+
 " map <leader>L :Tags<CR>
 map <leader>rl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && .git/hooks/ctags )"'<CR>
 function! s:build_quickfix_list(lines)
@@ -218,3 +220,17 @@ set hidden
 let g:go_def_mapping_enabled = 0 " don't override ctrl-T
 let g:python2_host_prog = '/usr/local/bin/python'
 let g:python3_host_prog = '/usr/local/bin/python3'
+
+function! MRIIndent()
+  setlocal cindent
+  setlocal noexpandtab
+  setlocal shiftwidth=4
+  setlocal softtabstop=4
+  setlocal tabstop=8
+  setlocal textwidth=80
+  " Ensure function return types are not indented
+  setlocal cinoptions=(0,t0
+endfunction
+
+autocmd BufNewFile,BufRead /Users/simon/src/github.com/ruby/ruby/**/*.c call MRIIndent()
+
