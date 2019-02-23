@@ -9,10 +9,11 @@ set mouse=v " Allow copy-pasting
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
+Plug 'zxqfl/tabnine-vim'
 
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --rust-completer --go-completer' }
-" {{{
-nmap K :YcmCompleter GetDoc<CR>
+" Plug 'Valloric/YouCompleteMe', { 'do': './install.py --rust-completer --go-completer' }
+" " {{{
+" nmap K :YcmCompleter GetDoc<CR>
 " }}}
 "
 Plug 'junegunn/fzf.vim'
@@ -23,7 +24,7 @@ Plug 'junegunn/fzf.vim'
 " map <C-g> :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
 map <C-g> :Rg<CR>
 map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
-map <leader><leader>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
+map <Space>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
 
 map <C-t> :FZF<CR>
 
@@ -35,7 +36,7 @@ map <C-t> :FZF<CR>
 " autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
 map <C-j> :Buffers<CR>
 map <C-l> :Tags<CR>
-map <leader><C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
+map <Space><C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
 
 " map <leader>L :Tags<CR>
 map <leader>rl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && .git/hooks/ctags )"'<CR>
@@ -55,7 +56,9 @@ let g:fzf_action = {
   \ 'ctrl-v': 'vsplit' }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
 
-command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))<CR>
+command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))
+
+map <Space>b :Breakpoint<CR>
 command! Style :call VimuxRunCommand("dev style")<CR>
 " }}}
 
@@ -65,6 +68,7 @@ let test#strategy = "vimux"
 let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
 map <leader>t :TestNearest<CR>
 map <leader>T :TestFile<CR>
+map <Space>t :TestLast<CR>
 " }}}
 
 Plug 'benmills/vimux'
@@ -199,16 +203,16 @@ endfunction
 map <leader>r :call RenameFile()<cr>
 
 " Sane default tab-key, replaces Supertab.
-function! InsertTabWrapper()
-  let col = col('.') - 1
-  if !col || getline('.')[col - 1] !~ '\k'
-    return "\<tab>"
-  else
-    return "\<c-p>"
-  endif
-endfunction
-imap <tab>   <c-r>=InsertTabWrapper()<cr>
-imap <s-tab> <c-n>
+" function! InsertTabWrapper()
+"   let col = col('.') - 1
+"   if !col || getline('.')[col - 1] !~ '\k'
+"     return "\<tab>"
+"   else
+"     return "\<c-p>"
+"   endif
+" endfunction
+" imap <tab>   <c-r>=InsertTabWrapper()<cr>
+" imap <s-tab> <c-n>
 
 au BufNewFile,BufRead *.ejson set filetype=json
 au BufNewFile,BufRead *.sxx set filetype=stp
@@ -220,6 +224,8 @@ set hidden
 let g:go_def_mapping_enabled = 0 " don't override ctrl-T
 let g:python2_host_prog = '/usr/local/bin/python'
 let g:python3_host_prog = '/usr/local/bin/python3'
+
+map <leader>c :let @*=expand("%:p")<CR>
 
 function! MRIIndent()
   setlocal cindent
