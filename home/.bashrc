@@ -29,6 +29,6 @@ if [[ -f ~/.env ]]; then
 fi
 
 # cloudplatform: add Shopify clusters to your local kubernetes config
-export KUBECONFIG=/Users/simon/.kube/config:/Users/simon/.kube/config.shopify.cloudplatform
+export KUBECONFIG=/Users/$(whoami)/.kube/config:/Users/$(whoami)/.kube/config.shopify.cloudplatform
 for file in /Users/simon/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
 kubectl-short-aliases
