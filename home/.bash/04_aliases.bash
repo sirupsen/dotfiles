@@ -42,18 +42,9 @@ alias gro='git rebase origin/master'
 alias gfogro='gfo && gro'
 alias gupd='gfogro && gpf'
 alias blush="git commit --amend --reuse-message HEAD"
-alias squash='squash=`git rebase -i $(git merge-base HEAD master)`'
-
-garch() {
-  local commit=$(git rev-list -n 1 --before="$1" master)
-  git checkout ${commit}
-}
-
-alias bx='bundle exec'
-alias rt='bx ruby -I.:test'
-alias knife='chruby 2.3 && BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
-alias vim=nvim
-alias vi=vim
+alias squash='git rebase -i $(git merge-base HEAD master)'
+alias rebase_latest_green='gfo && git rebase $(ci_last_green_master)'
+alias rlg=rebase_latest_green
 
 # Git Diff Files
 gdf() {
@@ -67,45 +58,16 @@ gdf() {
 # Git Diff Files Test
 alias gdft='gdf | rg "test/.*_test"'
 
-# This will open the diff to master (the same diff as in a pull request). If you
-# pass a second argument, it'll use that branch as a base instead.
-# review() {
-#   # TODO: Support / syntax.
-#   local default_branch=$(git rev-parse --abbrev-ref HEAD)
-#   local branch="${1:-$default_branch}"
-#   local remote="${2:-origin}"
-#   local base="${3:-master}"
-#   local name=$(basename `git rev-parse --show-toplevel`)
+garch() {
+  local commit=$(git rev-list -n 1 --before="$1" master)
+  git checkout ${commit}
+}
 
-#   if ! git remote | grep "${remote}" > /dev/null; then
-#     git remote add "${remote}" "git@github.com:${remote}/${name}"
-#   fi
-
-#   git fetch origin "$base"
-#   git fetch "$remote" "$branch"
-
-#   # This typically fails if you have stashed changes.
-#   if ! git checkout "$remote/$branch"; then
-#     return 1
-#   fi
-
-#   nvim -c "let g:gitgutter_diff_base = 'origin/${base}'" -c ":e!" $(git diff --name-only origin/$base...$remote/$branch)
-# }
-
-# # This will run "dev" (internal shopify tool that pulls all dependencies) to
-# # ensure that I can easily run test. This is typically my default command to
-# # run! Might extend this with generic Ruby, Docker, and Vagrant support later..
-# review-test() {
-#   local default_branch=$(git rev-parse --abbrev-ref HEAD)
-#   local branch="${1:-$default_branch}"
-#   local base="${2:-master}"
-
-#   if [[ -a "dev.yml" ]]; then
-#     dev up
-#   fi
-
-#   review $branch $base
-# }
+alias bx='bundle exec'
+alias rt='bx ruby -I.:test'
+alias knife='chruby 2.3 && BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
+alias vim=nvim
+alias vi=vim
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
