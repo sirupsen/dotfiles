@@ -58,6 +58,14 @@ gdf() {
 # Git Diff Files Test
 alias gdft='gdf | rg "test/.*_test"'
 
+alias git_diff_commit='git diff-tree --no-commit-id --name-only -r HEAD'
+alias gdc=git_diff_commit
+
+review-latest-commit() {
+  nvim -c "let g:gitgutter_diff_base = 'HEAD~1'" -c ":e!" $(git_diff_commit)
+}
+alias rlc='review-latest-commit'
+
 garch() {
   local commit=$(git rev-list -n 1 --before="$1" master)
   git checkout ${commit}
@@ -68,6 +76,7 @@ alias rt='bx ruby -I.:test'
 alias knife='chruby 2.3 && BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
 alias vim=nvim
 alias vi=vim
+alias g='gcloud'
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
@@ -88,17 +97,8 @@ reset-camera () {
   sudo killall VDCAssistant
 }
 
-brew() {
-  local brew_user=$(gstat -c "%U" /usr/local/Homebrew/)
-  if [[ ${brew_user} == $(whoami) ]]; then
-    /usr/local/bin/brew $@
-  else
-    sudo -u $brew_user -- /usr/local/bin/brew $@
-  fi
-}
-
 refresh() {
-  dev cd $1
+  dev clone $1
   gfogro
   dev up
 }
@@ -110,12 +110,20 @@ refreshall () {
   refresh cloudplatform
   refresh cusco
   refresh nginx-routing-modules
+  refresh storefront-renderer
+  refresh dog
+  refresh magellan
 
   cd ~/.chef
   gpl
   bundle
 
   vim +PlugUpdate +qall
+  gcloud components update
+
+  brew update
+  brew upgrade fzf neovim bash tmux ripgrep git ctags fd go curl wireguard-go wireguard-tools
+  rustup update
 
   sudo killall xhyve
 }

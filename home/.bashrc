@@ -4,6 +4,8 @@ for file in ~/.bash/*.bash; do
   source "${file}"
 done
 
+source /etc/bashrc_Apple_Terminal
+
 unset DISPLAY
 
 source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc'
@@ -30,5 +32,5 @@ fi
 
 # cloudplatform: add Shopify clusters to your local kubernetes config
 export KUBECONFIG=/Users/$(whoami)/.kube/config:/Users/$(whoami)/.kube/config.shopify.cloudplatform
-for file in /Users/simon/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
+for file in /Users/simoneskildsen/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
 kubectl-short-aliases
