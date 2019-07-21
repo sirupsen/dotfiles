@@ -10,6 +10,7 @@ call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'zxqfl/tabnine-vim'
+let g:ycm_add_preview_to_completeopt = 0
 
 " Plug 'Valloric/YouCompleteMe', { 'do': './install.py --rust-completer --go-completer' }
 " " {{{
@@ -98,6 +99,8 @@ Plug 'w0rp/ale'
 " {{{
 let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
 let b:ale_fixers = ['rustfmt']
+let g:ale_cursor_detail = 0
+let g:ale_close_preview_on_insert = 1
 " }}}
 
 Plug 'thalesmello/webcomplete.vim'
@@ -138,6 +141,7 @@ Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 " {{{
 autocmd FileType rust map <leader>f :RustFmt<CR>
+let g:rustfmt_autosave = 1
 " }}}
 Plug 'uarun/vim-protobuf'
 Plug 'leafgarland/typescript-vim'
