@@ -78,7 +78,7 @@ let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
 " }}}
 
-Plug 'airblade/vim-gitgutter'
+" Plug 'airblade/vim-gitgutter'
 " {{{
 nmap [h <Plug>GitGutterPrevHunk
 nmap ]h <Plug>GitGutterNextHunk
@@ -120,6 +120,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-obsession'
 
 Plug 'altercation/vim-colors-solarized'
+Plug 'chriskempson/base16-vim'
 
 Plug 'nickhutchinson/vim-systemtap'
 Plug 'tpope/vim-liquid'
@@ -141,7 +142,7 @@ Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 " {{{
 autocmd FileType rust map <leader>f :RustFmt<CR>
-let g:rustfmt_autosave = 1
+let g:rustfmt_autosave = 0
 " }}}
 Plug 'uarun/vim-protobuf'
 Plug 'leafgarland/typescript-vim'
@@ -160,8 +161,9 @@ set nobackup
 set wildignore+=.git/**,public/assets/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
 syntax enable
-colorscheme solarized
-set background=dark " Set dark solarized theme
+let base16colorspace=256
+colorscheme base16-default-dark
+" set background=dark " Set dark solarized theme
 set t_Co=256  " 2000s plz
 set textwidth=80  " Switch line at 80 characters
 set scrolloff=5   " Keep some distance to the bottom"

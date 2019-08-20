@@ -103,6 +103,14 @@ refresh() {
   dev up
 }
 
+refreshsystem() {
+  vim +PlugUpdate +qall
+
+  brew update
+  brew upgrade fzf neovim bash tmux ripgrep git ctags fd go curl wireguard-go wireguard-tools
+  rustup update
+}
+
 refreshall () {
   refresh shopify
   refresh activefailover
@@ -117,13 +125,7 @@ refreshall () {
   cd ~/.chef
   gpl
   bundle
-
-  vim +PlugUpdate +qall
   gcloud components update
-
-  brew update
-  brew upgrade fzf neovim bash tmux ripgrep git ctags fd go curl wireguard-go wireguard-tools
-  rustup update
 
   sudo killall xhyve
 }
