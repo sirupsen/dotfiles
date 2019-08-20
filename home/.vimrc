@@ -10,13 +10,14 @@ call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'zxqfl/tabnine-vim'
-let g:ycm_add_preview_to_completeopt = 0
 
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.py --rust-completer --go-completer' }
-" " {{{
-" nmap K :YcmCompleter GetDoc<CR>
+" {{{
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_max_num_candidates = 10
 " }}}
-"
+
 Plug 'junegunn/fzf.vim'
 " {{{
 " The nice thing about the immediate one below is that it'll start searching
