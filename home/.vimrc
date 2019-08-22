@@ -60,7 +60,7 @@ endfunction
 command! -nargs=* FZFGem call FzfGem(<f-args>)
 
 " Hack to set the working directory in the new tab
-au TabEnter * if exists("g:wd") | exe "tcd " . g:wd | endif 
+au TabNewEntered * if exists("g:wd") | exe "tcd " . g:wd | let g:wd = 0 | endif 
 function! TabGem(name)
   let path = system("bundle show " . a:name)
   let path = substitute(path, '\n', '', '')
