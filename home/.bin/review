@@ -14,8 +14,17 @@ options = OpenStruct.new(
 )
 
 GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/pull\/(\d+)/
+GITHUB_COMPARE_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/compare\/([\w_-]+)/
 
 REMOTE_BRANCH_SPLIT = /[:|\/]/
+
+def ensure_in_right_directory(org, repo)
+  unless `pwd`.include?(repo)
+    possible_path = "~/src/github.com/#{org}/#{repo}"
+    # system("exec cd #{possible_path}")
+    raise "#{repo} is not in the path, please change directory to it!"
+  end
+end
 
 def remote_branch(string)
   return ['origin', string] unless string =~ REMOTE_BRANCH_SPLIT
@@ -67,7 +76,10 @@ def current_branch_tracking_remote
   rev_parse.match(/refs\/remotes\/(.+)$/)[1]
 end
 
-def remote_from_url(url)
+def org_repo_branch_from_url(url)
+  _, org, repo, branch_name = url.match(GITHUB_COMPARE_REGEX).to_a
+  return [org, repo, branch_name] if branch_name
+
   _, org, repo, pr = url.match(GITHUB_PR_REGEX).to_a
 
   http = Net::HTTP.new("api.github.com", 443)
@@ -100,7 +112,7 @@ def remote_from_url(url)
   response = http.request(request)
   pr = JSON.parse(response.body)["data"]["repository"]["pullRequest"]
   pr["headRefName"] unless pr["isCrossRepository"]
-  "#{pr["headRepository"]["owner"]["login"]}/#{pr["headRefName"]}"
+  [org, repo, "#{pr["headRepository"]["owner"]["login"]}/#{pr["headRefName"]}"]
 end
 
 OptionParser.new { |opts|
@@ -156,7 +168,7 @@ if options.chrome
   remote = `chrome-cli info`[GITHUB_PR_REGEX]
   raise "Unable to find a Github pull request in current Chrome tab"
 end
-remote = remote_from_url(remote) if remote && remote.start_with?("https://")
+org, repo, remote = org_repo_branch_from_url(remote) if remote && remote.start_with?("https://")
 remote ||= current_branch_tracking_remote
 
 base_remote, base_branch = remote_branch(options.base)
@@ -166,6 +178,8 @@ review_diff = "#{base_remote}/#{base_branch}...#{target_remote}/#{target_branch}
 unless options.changed_files
   $stderr.puts "Reviewing #{review_diff}"
 end
+
+ensure_in_right_directory(org, repo)
 
 if options.refresh
   ensure_remote(base_remote)
