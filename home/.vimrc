@@ -124,9 +124,19 @@ nmap <leader>K <Plug>(devdocs-under-cursor)
 Plug 'w0rp/ale'
 " {{{
 let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
-let b:ale_fixers = ['rustfmt']
+let g:ale_fixers = {'rust': ['rustfmt'], 'ruby': ['bundle exec rubocop -a']}
+let g:ale_ruby_rubocop_executable = 'bundle'
+let g:ale_rust_cargo_check_tests = 1
+let g:ale_rust_cargo_check_examples = 1
+
+let g:ale_set_highlights = 0 " signs are enough
 let g:ale_cursor_detail = 0
 let g:ale_close_preview_on_insert = 1
+
+map <leader>f :ALEFix<CR>
+map [a :ALEPrevious<CR>
+map ]a :ALENext<CR>
+
 " }}}
 
 Plug 'thalesmello/webcomplete.vim'
@@ -167,9 +177,9 @@ Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 " {{{
-autocmd FileType rust map <leader>f :RustFmt<CR>
 let g:rustfmt_autosave = 0
 " }}}
+Plug 'cespare/vim-toml', { 'for': 'toml' }
 Plug 'uarun/vim-protobuf'
 Plug 'leafgarland/typescript-vim'
 Plug 'jparise/vim-graphql'
