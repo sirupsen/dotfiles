@@ -104,7 +104,7 @@ let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
 " }}}
 
-" Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 " {{{
 nmap [h <Plug>GitGutterPrevHunk
 nmap ]h <Plug>GitGutterNextHunk
