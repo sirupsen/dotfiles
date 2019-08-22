@@ -18,11 +18,16 @@ GITHUB_COMPARE_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/compare\/([\
 
 REMOTE_BRANCH_SPLIT = /[:|\/]/
 
+# TODO: In order to change directory of the parent-shell, we need to make
+# .bin/review a shell script that calls .bin/review-rb. For the most part, it
+# just proxies all calls to it, however, if it gets a 42 error code, it can call
+# review to attempt to get the right path and `cd` to it.
 def ensure_in_right_directory(org, repo)
   unless `pwd`.include?(repo)
-    possible_path = "~/src/github.com/#{org}/#{repo}"
+    # possible_path = "~/src/github.com/#{org}/#{repo}"
     # system("exec cd #{possible_path}")
-    raise "#{repo} is not in the path, please change directory to it!"
+    $stderr.puts "#{repo} is not in the path, please change directory to it!"
+    exit 42
   end
 end
 
