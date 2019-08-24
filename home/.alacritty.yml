@@ -492,6 +492,7 @@ key_bindings:
   - { key: NumpadEnter,             chars: "\n"                          }
   - { key: Left,     mods: Alt,     chars: "\x1bb"                       }
   - { key: Right,    mods: Alt,     chars: "\x1bf"                       }
+  - { key: F,        mods: Control|Command, action: ToggleSimpleFullscreen   }
 
   # TMUX
   - { key: LBracket, mods: Command|Shift, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t:-"] } }

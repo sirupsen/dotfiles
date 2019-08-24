@@ -9,6 +9,7 @@ set mouse=v " Allow copy-pasting
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
+Plug 'junegunn/goyo.vim'
 Plug 'zxqfl/tabnine-vim'
 
 " {{{
@@ -27,26 +28,23 @@ Plug 'junegunn/fzf.vim'
 map <C-g> :Rg<CR>
 map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
 map <Space>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
-
 map <C-t> :FZF<CR>
-
-" autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
+map <C-j> :Buffers<CR>
+map <C-t> :FZF<CR>
 map <C-j> :Buffers<CR>
 
-" map <C-l> :Tags <C-R><C-W><CR>
-map <C-t> :FZF<CR>
-" autocmd FileType ruby map <C-t> :call fzf#run(fzf#wrap({'source': 'rg --files --no-ignore-vcs --hidden ./ `echo /Users/simon/.gem/ruby/2.5.3`'}))<CR>
-map <C-j> :Buffers<CR>
+" Ctags
 map <C-l> :Tags<CR>
 map <Space><C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
-
-" map <leader>L :Tags<CR>
+set tags=tags,.git/tags " Use commit hook tags, see ~/.git_template
 map <leader>rl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && ~/.git_template/hooks/ctags )"'<CR>
+
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
   copen
   cc
 endfunction
+
 " command! CrateOpen `cargo metadata --format-version 1 | rb 'from_json["packages"].find { |c| c["name"] =~ /feed/ }["targets"][0]["src_path"]'`
 " TODO: Do this automatically when ftype is Rust (or there's a Cargo.toml in root)
 command! FZFCrate :FZF ~/.cargo/registry/src
@@ -82,11 +80,6 @@ let g:fzf_action = {
   \ 'ctrl-x': 'split',
   \ 'ctrl-v': 'vsplit' }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
-
-command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))
-
-map <Space>b :Breakpoint<CR>
-command! Style :call VimuxRunCommand("dev style")<CR>
 " }}}
 
 Plug 'janko-m/vim-test'
@@ -115,16 +108,15 @@ Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 " {{{
 map <leader>n :NERDTreeToggle<CR>
 " }}}
-
 Plug 'rhysd/devdocs.vim'
 " {{{
-nmap <leader>K <Plug>(devdocs-under-cursor)
+nmap K <Plug>(devdocs-under-cursor)
 " }}}
-"
 Plug 'w0rp/ale'
 " {{{
 let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
 let g:ale_fixers = {'rust': ['rustfmt'], 'ruby': ['bundle exec rubocop -a']}
+let g:ale_lint_delay = 1000
 let g:ale_ruby_rubocop_executable = 'bundle'
 let g:ale_rust_cargo_check_tests = 1
 let g:ale_rust_cargo_check_examples = 1
@@ -136,14 +128,10 @@ let g:ale_close_preview_on_insert = 1
 map <leader>f :ALEFix<CR>
 map [a :ALEPrevious<CR>
 map ]a :ALENext<CR>
-
 " }}}
-
 Plug 'thalesmello/webcomplete.vim'
 Plug 'milkypostman/vim-togglelist'
-
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
-
 Plug 'tpope/vim-fugitive'
 " {{{
 map <leader>gs :Gstatus<CR>
@@ -154,20 +142,26 @@ Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-obsession'
-
-Plug 'altercation/vim-colors-solarized'
 Plug 'chriskempson/base16-vim'
-
 Plug 'nickhutchinson/vim-systemtap'
 Plug 'tpope/vim-liquid'
-
 Plug 'plasticboy/vim-markdown'
 " {{{
 let g:vim_markdown_folding_disabled = 1
 " }}}
-"
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
+Plug 'junegunn/vim-emoji'
+" {{
+command! -range EmojiReplace <line1>,<line2>s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g
+" }}
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
+" {{
+let ruby_operators = 1
+let ruby_space_errors = 1
+let ruby_fold = 1
+let ruby_no_expensive = 1
+let ruby_spellcheck_strings = 1
+" }}
 Plug 'vim-scripts/VimClojure', { 'for': 'clojure' }
 Plug 'kchmck/vim-coffee-script'
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
@@ -220,17 +214,28 @@ set listchars=tab:>-,trail:.,extends:>,precedes:<
 
 set nohlsearch " Don't highlight search results
 
-set tags=tags,.git/tags " Use commit hook tags, see ~/.git_template
-
 set diffopt=filler,vertical
-set inccommand=split " Neovim will preview search
+
+if has('nvim')
+  set inccommand=split " Neovim will preview search
+end
 
 imap jk <esc>
 map <leader>d :bd<CR>
-
 " Sane behavior on long lines
 nmap k gk
 nmap j gj
+" Make Y behave like other capitals
+nnoremap Y y$
+nnoremap ]t :tabn<cr>
+nnoremap [t :tabp<cr>
+nmap L :set invnumber<CR>
+
+command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))
+
+map <leader>c :let @*=expand("%:p")<CR>
+map <Space>b :Breakpoint<CR>
+command! Style :call VimuxRunCommand("dev style")<CR>
 
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
@@ -244,30 +249,28 @@ function! RenameFile()
 endfunction
 map <leader>r :call RenameFile()<cr>
 
-" Sane default tab-key, replaces Supertab.
-" function! InsertTabWrapper()
-"   let col = col('.') - 1
-"   if !col || getline('.')[col - 1] !~ '\k'
-"     return "\<tab>"
-"   else
-"     return "\<c-p>"
-"   endif
-" endfunction
-" imap <tab>   <c-r>=InsertTabWrapper()<cr>
-" imap <s-tab> <c-n>
-
 au BufNewFile,BufRead *.ejson set filetype=json
 au BufNewFile,BufRead *.sxx set filetype=stp
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
-nmap L :set invnumber<CR>
 set hidden
+
+function! s:statusline_expr()
+  let mod = "%{&modified ? '[+] ' : !&modifiable ? '[x] ' : ''}"
+  let ro  = "%{&readonly ? '[RO] ' : ''}"
+  let ft  = "%{len(&filetype) ? '['.&filetype.'] ' : ''}"
+  let fug = "%{exists('g:loaded_fugitive') ? fugitive#statusline() : ''}"
+  let sep = ' %= '
+  let pos = ' %-12(%l : %c%V%) '
+  let pct = ' %P'
+
+  return '[%n] %F %<'.mod.ro.ft.fug.sep.pos.'%*'.pct
+endfunction
+let &statusline = s:statusline_expr()
 
 let g:go_def_mapping_enabled = 0 " don't override ctrl-T
 let g:python2_host_prog = '/usr/local/bin/python'
 let g:python3_host_prog = '/usr/local/bin/python3'
-
-map <leader>c :let @*=expand("%:p")<CR>
 
 function! MRIIndent()
   setlocal cindent
@@ -281,4 +284,3 @@ function! MRIIndent()
 endfunction
 
 autocmd BufNewFile,BufRead /Users/simon/src/github.com/ruby/ruby/**/*.c call MRIIndent()
-
