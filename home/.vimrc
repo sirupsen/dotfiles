@@ -45,7 +45,6 @@ function! s:build_quickfix_list(lines)
   cc
 endfunction
 
-" command! CrateOpen `cargo metadata --format-version 1 | rb 'from_json["packages"].find { |c| c["name"] =~ /feed/ }["targets"][0]["src_path"]'`
 " TODO: Do this automatically when ftype is Rust (or there's a Cargo.toml in root)
 command! FZFCrate :FZF ~/.cargo/registry/src
 command! SqlFormat :%!sqlformat --reindent --keywords upper --identifiers lower -
@@ -59,20 +58,31 @@ command! -nargs=* FZFGem call FzfGem(<f-args>)
 
 " Hack to set the working directory in the new tab
 au TabNewEntered * if exists("g:wd") | exe "tcd " . g:wd | let g:wd = 0 | endif 
-function! TabGem(name)
+function! Gem(name)
   let path = system("bundle show " . a:name)
   let path = substitute(path, '\n', '', '')
   let g:wd = path
   execute ":tabnew " . path
 endfunction
-command! -nargs=* TabGem call TabGem(<f-args>)
+command! -nargs=* Gem call Gem(<f-args>)
 
-function! FzfGems()
+function! Gems()
   let path = system("ruby -e 'puts Gem.user_dir'")
   let path = substitute(path, '\n', '', '')
   execute ":FZF " . path
 endfunction
-command! -nargs=* FZFGems call FzfGems()
+command! -nargs=* Gems call Gems()
+
+function! Crate(name)
+  let path = system("bash -c \"cargo metadata --format-version 1 | rb 'from_json[:packages].find { |c| c[:name] =~ /" . a:name . "/ }[:targets][0][:src_path]'\"")
+  let path = substitute(path, '\n', '', '')
+  let dir_path = fnamemodify(path, ':p:h') . "/../"
+  let g:wd = dir_path
+  execute ":tabnew " . path
+endfunction
+command! -nargs=* Crate call Crate(<f-args>)
+
+" command! CrateOpen `cargo metadata --format-version 1 | rb 'from_json["packages"].find { |c| c["name"] =~ /feed/ }["targets"][0]["src_path"]'`
 
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
@@ -254,6 +264,7 @@ au BufNewFile,BufRead *.sxx set filetype=stp
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 set hidden
+autocmd! BufWritePost $MYVIMRC source $MYVIMRC
 
 function! s:statusline_expr()
   let mod = "%{&modified ? '[+] ' : !&modifiable ? '[x] ' : ''}"
