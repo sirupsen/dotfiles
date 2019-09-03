@@ -57,7 +57,9 @@ endfunction
 command! -nargs=* FZFGem call FzfGem(<f-args>)
 
 " Hack to set the working directory in the new tab
-au TabNewEntered * if exists("g:wd") | exe "tcd " . g:wd | let g:wd = 0 | endif 
+if has('nvim')
+  au TabNewEntered * if exists("g:wd") | exe "tcd " . g:wd | let g:wd = 0 | endif 
+end
 function! Gem(name)
   let path = system("bundle show " . a:name)
   let path = substitute(path, '\n', '', '')
@@ -168,8 +170,6 @@ Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 " {{
 let ruby_operators = 1
 let ruby_space_errors = 1
-let ruby_fold = 1
-let ruby_no_expensive = 1
 let ruby_spellcheck_strings = 1
 " }}
 Plug 'vim-scripts/VimClojure', { 'for': 'clojure' }

@@ -184,7 +184,7 @@ unless options.changed_files
   $stderr.puts "Reviewing #{review_diff}"
 end
 
-ensure_in_right_directory(org, repo)
+ensure_in_right_directory(org, repo) if org
 
 if options.refresh
   ensure_remote(base_remote)
