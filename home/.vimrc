@@ -261,6 +261,7 @@ map <leader>r :call RenameFile()<cr>
 
 au BufNewFile,BufRead *.ejson set filetype=json
 au BufNewFile,BufRead *.sxx set filetype=stp
+set nospell
 autocmd BufNewFile,BufRead *.md,*.markdown set spell
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 set hidden
