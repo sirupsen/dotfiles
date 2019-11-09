@@ -35,7 +35,7 @@ map <C-j> :Buffers<CR>
 
 " Ctags
 map <C-l> :Tags<CR>
-map <Space><C-l> :call fzf#vim#tags(expand('<cword>'))<CR>
+map <Space>l :call fzf#vim#tags(expand('<cword>'))<CR>
 set tags=tags,.git/tags " Use commit hook tags, see ~/.git_template
 map <leader>rl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && ~/.git_template/hooks/ctags )"'<CR>
 
