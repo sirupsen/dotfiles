@@ -160,6 +160,35 @@ Plug 'tpope/vim-liquid'
 Plug 'plasticboy/vim-markdown'
 " {{{
 let g:vim_markdown_folding_disabled = 1
+autocmd FileType markdown setlocal spell
+augroup my_spelling_colors
+  " Underline, don't do intrusive red things.
+  autocmd!
+  " autocmd ColorScheme * hi clear SpellBad
+  autocmd ColorScheme * hi SpellBad cterm=underline ctermfg=NONE ctermbg=NONE term=Reverse
+  autocmd ColorScheme * hi SpellCap cterm=underline ctermfg=NONE ctermbg=NONE term=Reverse
+  autocmd ColorScheme * hi SpellLocal cterm=underline ctermfg=NONE ctermbg=NONE term=Reverse
+  autocmd ColorScheme * hi SpellRare cterm=underline ctermfg=NONE ctermbg=NONE term=Reverse
+augroup END
+set spell spelllang=en_ca
+" }}}
+Plug 'junegunn/goyo.vim'
+" {{{
+function! s:auto_goyo()
+  echo &ft
+  if &ft == 'markdown'
+    Goyo 80
+  elseif exists('#goyo')
+    let bufnr = bufnr('%')
+    Goyo!
+    execute 'b '.bufnr
+  endif
+endfunction
+
+augroup goyo_markdown
+  autocmd!
+  autocmd BufNewFile,BufRead,FileType * call s:auto_goyo()
+augroup END
 " }}}
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
 Plug 'junegunn/vim-emoji'
@@ -262,23 +291,10 @@ map <leader>r :call RenameFile()<cr>
 au BufNewFile,BufRead *.ejson set filetype=json
 au BufNewFile,BufRead *.sxx set filetype=stp
 set nospell
-autocmd BufNewFile,BufRead *.md,*.markdown set spell
+
 autocmd FileType go,gitcommit,qf,gitset setlocal nolist " Go fmt will use tabs
 set hidden
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC
-
-function! s:statusline_expr()
-  let mod = "%{&modified ? '[+] ' : !&modifiable ? '[x] ' : ''}"
-  let ro  = "%{&readonly ? '[RO] ' : ''}"
-  let ft  = "%{len(&filetype) ? '['.&filetype.'] ' : ''}"
-  let fug = "%{exists('g:loaded_fugitive') ? fugitive#statusline() : ''}"
-  let sep = ' %= '
-  let pos = ' %-12(%l : %c%V%) '
-  let pct = ' %P'
-
-  return '[%n] %F %<'.mod.ro.ft.fug.sep.pos.'%*'.pct
-endfunction
-let &statusline = s:statusline_expr()
 
 let g:go_def_mapping_enabled = 0 " don't override ctrl-T
 let g:python2_host_prog = '/usr/local/bin/python'
