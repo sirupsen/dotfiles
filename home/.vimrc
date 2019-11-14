@@ -149,7 +149,7 @@ Plug 'tpope/vim-fugitive'
 map <leader>gs :Gstatus<CR>
 map <leader>gc :Gcommit<CR>
 " }}}
-"
+Plug 'AndrewRadev/splitjoin.vim'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
@@ -199,7 +199,7 @@ Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 " {{
 let ruby_operators = 1
 let ruby_space_errors = 1
-let ruby_spellcheck_strings = 1
+let ruby_spellcheck_strings = 0
 " }}
 Plug 'vim-scripts/VimClojure', { 'for': 'clojure' }
 Plug 'kchmck/vim-coffee-script'
