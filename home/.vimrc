@@ -10,8 +10,7 @@ call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'junegunn/goyo.vim'
-Plug 'zxqfl/tabnine-vim'
-
+Plug 'zxqfl/tabnine-vim', { 'for': ['rust', 'vim', 'ruby', 'html', 'go', 'python'] }
 " {{{
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_autoclose_preview_window_after_completion = 1
@@ -189,6 +188,14 @@ augroup goyo_markdown
   autocmd!
   autocmd BufNewFile,BufRead,FileType * call s:auto_goyo()
 augroup END
+
+function! s:goyo_enter()
+  set linebreak
+  let g:goyo_height="70%"
+endfunction
+
+autocmd! User GoyoEnter call <SID>goyo_enter()
+" autocmd! User GoyoLeave call <SID>goyo_leave()
 " }}}
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
 Plug 'junegunn/vim-emoji'
