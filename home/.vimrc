@@ -174,7 +174,6 @@ set spell spelllang=en_ca
 Plug 'junegunn/goyo.vim'
 " {{{
 function! s:auto_goyo()
-  echo &ft
   if &ft == 'markdown'
     Goyo 80
   elseif exists('#goyo')
