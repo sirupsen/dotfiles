@@ -133,5 +133,5 @@ refreshall () {
 
 note() {
   local args="$@"
-  nvim "$HOME/Documents/Zettelkasten/$(date +"%Y%m%d%H%M") $args.md"
+  nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/$(date +"%Y%m%d%H%M") $args.md"
 }

@@ -159,6 +159,8 @@ Plug 'tpope/vim-liquid'
 Plug 'plasticboy/vim-markdown'
 " {{{
 let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_auto_insert_bullets = 1
+
 autocmd FileType markdown setlocal spell
 augroup my_spelling_colors
   " Underline, don't do intrusive red things.
