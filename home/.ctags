@@ -68,4 +68,4 @@
 
 --langdef=markdown
 --langmap=markdown:.md
---regex-markdown=/#([a-zA-Z\-_]+)/#\1/h,tag,tags/
+--regex-markdown=/#([a-zA-Z0-9_\-]{3,})/#\1/h,tag,tags/

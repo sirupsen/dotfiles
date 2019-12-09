@@ -9,7 +9,7 @@ set mouse=v " Allow copy-pasting
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
-Plug 'junegunn/goyo.vim'
+" Plug 'junegunn/goyo.vim'
 Plug 'zxqfl/tabnine-vim', { 'for': ['rust', 'vim', 'ruby', 'html', 'go', 'python'] }
 " {{{
 let g:ycm_add_preview_to_completeopt = 0
@@ -27,8 +27,6 @@ Plug 'junegunn/fzf.vim'
 map <C-g> :Rg<CR>
 map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
 map <Space>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
-map <C-t> :FZF<CR>
-map <C-j> :Buffers<CR>
 map <C-t> :FZF<CR>
 map <C-j> :Buffers<CR>
 
@@ -137,6 +135,7 @@ let g:ale_cursor_detail = 0
 let g:ale_close_preview_on_insert = 1
 
 map <leader>f :ALEFix<CR>
+command! Style :call VimuxRunCommand("dev style")<CR>
 map [a :ALEPrevious<CR>
 map ]a :ALENext<CR>
 " }}}
@@ -156,7 +155,7 @@ Plug 'tpope/vim-obsession'
 Plug 'chriskempson/base16-vim'
 Plug 'nickhutchinson/vim-systemtap'
 Plug 'tpope/vim-liquid'
-Plug 'plasticboy/vim-markdown'
+Plug 'tpope/vim-markdown'
 " {{{
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_auto_insert_bullets = 1
@@ -173,29 +172,29 @@ augroup my_spelling_colors
 augroup END
 set spell spelllang=en_ca
 " }}}
-Plug 'junegunn/goyo.vim'
+" Plug 'junegunn/goyo.vim'
 " {{{
-function! s:auto_goyo()
-  if &ft == 'markdown'
-    Goyo 80
-  elseif exists('#goyo')
-    let bufnr = bufnr('%')
-    Goyo!
-    execute 'b '.bufnr
-  endif
-endfunction
+" function! s:auto_goyo()
+"   if &ft == 'markdown'
+"     Goyo 80
+"   elseif exists('#goyo')
+"     let bufnr = bufnr('%')
+"     Goyo!
+"     execute 'b '.bufnr
+"   endif
+" endfunction
 
-augroup goyo_markdown
-  autocmd!
-  autocmd BufNewFile,BufRead,FileType * call s:auto_goyo()
-augroup END
+" augroup goyo_markdown
+"   autocmd!
+"   autocmd BufNewFile,BufRead,FileType * call s:auto_goyo()
+" augroup END
 
-function! s:goyo_enter()
-  set linebreak
-  let g:goyo_height="70%"
-endfunction
+" function! s:goyo_enter()
+"   set linebreak
+"   let g:goyo_height="70%"
+" endfunction
 
-autocmd! User GoyoEnter call <SID>goyo_enter()
+" autocmd! User GoyoEnter call <SID>goyo_enter()
 " autocmd! User GoyoLeave call <SID>goyo_leave()
 " }}}
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
@@ -240,9 +239,9 @@ set wildignore+=.git/**,public/assets/**,log/**,tmp/**,Cellar/**,app/assets/imag
 syntax enable
 let base16colorspace=256
 colorscheme base16-default-dark
-" set background=dark " Set dark solarized theme
+
 set t_Co=256  " 2000s plz
-set textwidth=80  " Switch line at 80 characters
+"set textwidth=80  " Switch line at 80 characters
 set scrolloff=5   " Keep some distance to the bottom"
 set showmatch     " Show matching of: () [] {}
 set ignorecase    " Required for smartcase to work
@@ -278,11 +277,13 @@ nnoremap ]t :tabn<cr>
 nnoremap [t :tabp<cr>
 nmap L :set invnumber<CR>
 
-command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))
+" Yank the file name without extension
+map cf :let @" = expand("%:r")<CR>
+" Yank the full current file pathk
+map cF :let @* = expand("%:p")<CR>
 
-map <leader>c :let @*=expand("%:p")<CR>
+command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))
 map <Space>b :Breakpoint<CR>
-command! Style :call VimuxRunCommand("dev style")<CR>
 
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
@@ -319,4 +320,4 @@ function! MRIIndent()
   setlocal cinoptions=(0,t0
 endfunction
 
-autocmd BufNewFile,BufRead /Users/simon/src/github.com/ruby/ruby/**/*.c call MRIIndent()
+autocmd BufNewFile,BufRead /Users/simoneskildsen/src/github.com/ruby/ruby/**/*.c call MRIIndent()
