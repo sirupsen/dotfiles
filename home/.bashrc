@@ -15,10 +15,7 @@ source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.
 export FZF_DEFAULT_OPTS="--height=40% --multi"
 export FZF_DEFAULT_COMMAND='fd --no-ignore-vcs --exclude tmp --type f --follow --exclude .git --exclude rbi'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-export BACKTRACE=1
 export GOPATH=$HOME
-export DISABLE_DATABASE_ENVIRONMENT_CHECK=1
 
 # export RUST_LOG=info
 export RIPGREP_CONFIG_PATH="$HOME/.rgrc"

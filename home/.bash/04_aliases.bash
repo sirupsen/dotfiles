@@ -135,3 +135,7 @@ note() {
   local args="$@"
   nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/$(date +"%Y%m%d%H%M") $args.md"
 }
+
+zk-tags() {
+  rg -o "#[\w\-_]{3,}" -t md -N --no-filename "$HOME/Documents/Zettelkasten" | rg -v "^#(notes-|import-)" | sort | uniq -c | sort
+}
