@@ -53,35 +53,28 @@ function! FzfGem(name)
 endfunction
 command! -nargs=* FZFGem call FzfGem(<f-args>)
 
-" Hack to set the working directory in the new tab
-if has('nvim')
-  au TabNewEntered * if exists("g:wd") | exe "tcd " . g:wd | let g:wd = 0 | endif 
-end
 function! Gem(name)
   let path = system("bundle show " . a:name)
   let path = substitute(path, '\n', '', '')
-  let g:wd = path
-  execute ":tabnew " . path
+  silent execute ":!tmux new-window bash -c 'cd " . path . " && vim -c \':FZF\''"
 endfunction
 command! -nargs=* Gem call Gem(<f-args>)
-
-function! Gems()
-  let path = system("ruby -e 'puts Gem.user_dir'")
-  let path = substitute(path, '\n', '', '')
-  execute ":FZF " . path
-endfunction
-command! -nargs=* Gems call Gems()
 
 function! Crate(name)
   let path = system("bash -c \"cargo metadata --format-version 1 | rb 'from_json[:packages].find { |c| c[:name] =~ /" . a:name . "/ }[:targets][0][:src_path]'\"")
   let path = substitute(path, '\n', '', '')
   let dir_path = fnamemodify(path, ':p:h') . "/../"
-  let g:wd = dir_path
-  execute ":tabnew " . path
+  silent execute ":!tmux new-window bash -c 'cd " . dir_path . " && vim -c \':FZF\''"
 endfunction
 command! -nargs=* Crate call Crate(<f-args>)
 
-" command! CrateOpen `cargo metadata --format-version 1 | rb 'from_json["packages"].find { |c| c["name"] =~ /feed/ }["targets"][0]["src_path"]'`
+function! FzfCrate(name)
+  let path = system("bash -c \"cargo metadata --format-version 1 | rb 'from_json[:packages].find { |c| c[:name] =~ /" . a:name . "/ }[:targets][0][:src_path]'\"")
+  let path = substitute(path, '\n', '', '')
+  let dir_path = fnamemodify(path, ':p:h') . "/../"
+  execute ":FZF " . dir_path
+endfunction
+command! -nargs=* FZFCrate call FzfCrate(<f-args>)
 
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
@@ -94,7 +87,6 @@ let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
 Plug 'janko-m/vim-test'
 " {{{
 let test#strategy = "vimux"
-let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
 map <leader>t :TestNearest<CR>
 map <leader>T :TestFile<CR>
 map <Space>t :TestLast<CR>
@@ -102,6 +94,7 @@ map <Space>t :TestLast<CR>
 
 Plug 'benmills/vimux'
 " {{{
+let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
 let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
 " }}}
