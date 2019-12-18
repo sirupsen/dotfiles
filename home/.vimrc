@@ -56,7 +56,7 @@ command! -nargs=* FZFGem call FzfGem(<f-args>)
 function! Gem(name)
   let path = system("bundle show " . a:name)
   let path = substitute(path, '\n', '', '')
-  silent execute ":!tmux new-window bash -c 'cd " . path . " && vim -c \':FZF\''"
+  silent execute ":!tmux new-window -n 'gem:" . a:name . "' bash -c 'cd " . path . " && vim -c \':FZF\''"
 endfunction
 command! -nargs=* Gem call Gem(<f-args>)
 
@@ -64,7 +64,7 @@ function! Crate(name)
   let path = system("bash -c \"cargo metadata --format-version 1 | rb 'from_json[:packages].find { |c| c[:name] =~ /" . a:name . "/ }[:targets][0][:src_path]'\"")
   let path = substitute(path, '\n', '', '')
   let dir_path = fnamemodify(path, ':p:h') . "/../"
-  silent execute ":!tmux new-window bash -c 'cd " . dir_path . " && vim -c \':FZF\''"
+  silent execute ":!tmux new-window -n 'crate:" . a:name . "' bash -c 'cd " . dir_path . " && vim -c \':FZF\''"
 endfunction
 command! -nargs=* Crate call Crate(<f-args>)
 
