@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+# Paste an ugly URL from Github anywhere and launch a Tmux Window with a Vim session in it.
+
+GITHUB_REPO_REGEX = /https:\/\/github.com\/(?<org>[\w\._-]+)\/(?<project>[\w\._-]+)/
+SLASH_REGEX = /(?<org>[\w\._-]+)\/(?<project>[\w\._-]+)/
+FILE_REGEX = /\/blob\/(?<sha>\w+)\/(?<path>[\w\/\.-_]+)(#L?)?(?<line>\d+)?/
+
+url = ARGV[0]
+
+match = url.match(GITHUB_REPO_REGEX)
+match ||= url.match(SLASH_REGEX)
+file_match = url.match(FILE_REGEX)
+
+
+vim_command = "vim -c \":FZF\""
+if file_match
+  vim_command = "vim '#{file_match['path']}'"
+  vim_command << " +#{file_match['line']}" if file_match['line']
+end
+
+local_path = File.expand_path("~/src/github.com/#{match['org']}/#{match['project']}")
+remote_url = "git@github.com:#{match['org']}/#{match['project']}"
+
+unless Dir.exists?(local_path)
+  system("git clone #{remote_url} #{local_path}")
+end
+
+new_window_commands = [
+  "cd #{local_path}",
+  file_match && file_match['sha'] && "git checkout #{file_match['sha']}",
+  vim_command
+]
+
+new_window_commands = new_window_commands.compact.join(" && ")
+
+system("tmux new-window -c \"#{local_path}\" -n '#{match['project']}' \"bash --rcfile <(echo '. ~/.bashrc && #{new_window_commands}')\" \\; split-window -h -c \"#{local_path}\" \\; select-pane -t:.1")
