@@ -27,6 +27,10 @@ if [[ -f ~/.env ]]; then
   source ~/.env
 fi
 
+if [[ $(whoami) == 'personal' ]]; then
+  source /usr/local/share/chruby/chruby.sh
+fi
+
 # cloudplatform: add Shopify clusters to your local kubernetes config
 export KUBECONFIG=/Users/$(whoami)/.kube/config:/Users/$(whoami)/.kube/config.shopify.cloudplatform
 for file in /Users/simoneskildsen/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
