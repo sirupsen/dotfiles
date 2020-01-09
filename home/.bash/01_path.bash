@@ -18,7 +18,6 @@ if [[ -d $GOPATH ]]; then
   export PATH="$PATH:$GOPATH/bin"
 fi
 
-# export PYTHONPATH=/usr/local/lib/python2.7/site-packages
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/.yarn/bin"
 

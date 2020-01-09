@@ -1,4 +1,3 @@
 . ~/.bashrc
 
-export PATH="$HOME/.cargo/bin:$PATH"
-if [ -e /Users/simoneskildsen/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/simoneskildsen/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+if [ -e /Users/$(whoami)/.nix-profile/etc/profile.d/nix.sh ]; then .  /Users/$(whoami)/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
