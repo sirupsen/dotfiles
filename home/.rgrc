@@ -1,7 +1,4 @@
---color
-always
 --type-add
 rbtest:*_test.rb
 --type-add
 liquid:*.liquid
---vimgrep
