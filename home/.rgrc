@@ -2,3 +2,4 @@
 rbtest:*_test.rb
 --type-add
 liquid:*.liquid
+--no-heading

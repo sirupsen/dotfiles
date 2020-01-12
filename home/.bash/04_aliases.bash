@@ -78,6 +78,7 @@ alias knife='chruby 2.3 && BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
 alias vim=nvim
 alias vi=vim
 alias g='gcloud'
+alias rgi="rg -i"
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'

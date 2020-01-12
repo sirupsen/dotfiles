@@ -13,8 +13,7 @@ source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_OPTS="--height=40% --multi"
-export FZF_DEFAULT_COMMAND='fd --no-ignore-vcs --exclude tmp --type f --follow
---exclude .git --exclude rbi --exclude sorbet'
+export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git/*'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export GOPATH=$HOME
 

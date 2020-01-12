@@ -9,11 +9,12 @@ set mouse=v " Allow copy-pasting
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
-" Plug 'junegunn/goyo.vim'
-" Plug 'zxqfl/tabnine-vim', { 'for': ['rust', 'vim', 'ruby', 'html', 'go', 'python'] }
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'deoplete-plugins/deoplete-tag'
 Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
+
+  " 'for': ['rust', 'vim', 'ruby', 'html', 'go', 'python'] },
+  " 'for': ['rust', 'vim', 'ruby', 'html', 'go', 'python'] },
 " {{{
 let g:deoplete#enable_at_startup = 1
 
@@ -33,6 +34,12 @@ endfunction"}}}
 " let g:ycm_max_num_candidates = 10
 " }}}
 
+Plug 'majutsushi/tagbar'
+" {{{
+nmap \l :TagbarToggle<CR>
+map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+" }}}
 Plug 'junegunn/fzf.vim'
 " {{{
 " The nice thing about the immediate one below is that it'll start searching
@@ -44,8 +51,10 @@ map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
 map <Space>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
 map <C-t> :FZF<CR>
 map <C-j> :Buffers<CR>
+
 map <C-l> :Tags<CR>
 map <Space>l :call fzf#vim#tags(expand('<cword>'))<CR>
+
 set tags=tags,.git/tags " Use commit hook tags, see ~/.git_template
 map <leader>rl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && ~/.git_template/hooks/ctags )"'<CR>
 
@@ -119,11 +128,11 @@ set updatetime=100
 
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 " {{{
-map <leader>n :NERDTreeToggle<CR>
+map \t :NERDTreeToggle<CR>
 " }}}
 Plug 'rhysd/devdocs.vim'
 " {{{
-" nmap K <Plug>(devdocs-under-cursor)
+nmap K <Plug>(devdocs-under-cursor)
 " }}}
 Plug 'w0rp/ale'
 " {{{
@@ -212,7 +221,7 @@ call plug#end()
 call deoplete#custom#option({
 \ 'smart_case': v:true,
 \ 'prev_completion_mode': "prev_completion_mode",
-\ 'ignore_sourcees': {'_': ['around', 'buffer']}
+\ 'ignore_sourcees': ['around', 'buffer']
 \ })
 
 autocmd FileType markdown call deoplete#custom#buffer_option('auto_complete', v:false)
