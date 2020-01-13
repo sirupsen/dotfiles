@@ -49,7 +49,11 @@ Plug 'junegunn/fzf.vim'
 map <C-g> :Rg<CR>
 map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
 map <Space>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
-map <C-t> :FZF<CR>
+
+command! -bang -nargs=? -complete=dir Files
+    \ call fzf#vim#files(<q-args>, {'options': ['--tiebreak=begin']}, <bang>0)
+map <C-t> :Files<CR>
+
 map <C-j> :Buffers<CR>
 
 map <C-l> :Tags<CR>
@@ -168,7 +172,7 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'chriskempson/base16-vim'
 Plug 'nickhutchinson/vim-systemtap'
 Plug 'tpope/vim-liquid'
-Plug 'tpope/vim-markdown'
+Plug 'plasticboy/vim-markdown'
 " {{{
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_auto_insert_bullets = 1
@@ -221,10 +225,13 @@ call plug#end()
 call deoplete#custom#option({
 \ 'smart_case': v:true,
 \ 'prev_completion_mode': "prev_completion_mode",
-\ 'ignore_sourcees': ['around', 'buffer']
+\ 'sources': {
+\ '_': ['tabnine'],
+\ 'markdown': ['tag'],
+\ }
 \ })
 
-autocmd FileType markdown call deoplete#custom#buffer_option('auto_complete', v:false)
+autocmd FileType markdown call deoplete#custom#buffer_option('ignore_sources', ['around', 'buffer', 'tabnine'])
 
 " Don't completee in strings and comments
 call deoplete#custom#source('_',
