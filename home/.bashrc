@@ -1,5 +1,3 @@
-source /opt/dev/dev.sh
-
 for file in ~/.bash/*.bash; do
   source "${file}"
 done
