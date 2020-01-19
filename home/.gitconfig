@@ -35,5 +35,6 @@
 	insteadOf = ssh://git@github.com/shopify/
 [core]
 	commitGraph = true
+	excludesfile = /Users/personal/.global_gitignore
 [gc]
 	writeCommitGraph = true

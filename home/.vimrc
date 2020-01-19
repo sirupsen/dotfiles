@@ -6,15 +6,34 @@ set encoding=utf-8
 set history=1000  " Keep more history, default is 20
 set mouse=v " Allow copy-pasting
 
+set statusline=
+set statusline+=%f:%l:%c
+set statusline+=%{tagbar#currenttag('\ [%s]\ ','','fs')}
+set statusline+=%=
+set statusline+=%{FugitiveStatusline()}
+
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
+Plug 'hari-rangarajan/CCTree'
+" {{
+function LoadCscopeDB()
+  if filereadable('cscope.out')
+    CCTreeLoadDB cscope.out
+  endif
+endfunction
+au VimEnter * call LoadCscopeDB()
+" }}
+Plug 'majutsushi/tagbar'
+" {{{
+nmap \l :TagbarToggle<CR>
+map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+let g:tagbar_compact = 1
+let g:tagbar_indent = 1
+" }}}
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'deoplete-plugins/deoplete-tag'
 Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
-
-  " 'for': ['rust', 'vim', 'ruby', 'html', 'go', 'python'] },
-  " 'for': ['rust', 'vim', 'ruby', 'html', 'go', 'python'] },
 " {{{
 let g:deoplete#enable_at_startup = 1
 
@@ -27,18 +46,6 @@ function! s:check_back_space() abort "{{{
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~ '\s'
 endfunction"}}}
-
-" let g:ycm_add_preview_to_completeopt = 0
-" let g:ycm_autoclose_preview_window_after_completion = 1
-" let g:ycm_autoclose_preview_window_after_insertion = 1
-" let g:ycm_max_num_candidates = 10
-" }}}
-
-Plug 'majutsushi/tagbar'
-" {{{
-nmap \l :TagbarToggle<CR>
-map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-
 " }}}
 Plug 'junegunn/fzf.vim'
 " {{{
@@ -58,9 +65,6 @@ map <C-j> :Buffers<CR>
 
 map <C-l> :Tags<CR>
 map <Space>l :call fzf#vim#tags(expand('<cword>'))<CR>
-
-set tags=tags,.git/tags " Use commit hook tags, see ~/.git_template
-map <leader>rl :silent exec '!bash -c "( cd $(git rev-parse --show-toplevel) && ~/.git_template/hooks/ctags )"'<CR>
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -121,6 +125,9 @@ Plug 'benmills/vimux'
 let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
 let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
+
+command! CurrentBuffer :call VimuxRunCommand(bufname("%") . ":" . line("."))
+map <Space>b :CurrentBuffer<CR>
 " }}}
 
 Plug 'airblade/vim-gitgutter'
@@ -136,7 +143,14 @@ map \t :NERDTreeToggle<CR>
 " }}}
 Plug 'rhysd/devdocs.vim'
 " {{{
-nmap K <Plug>(devdocs-under-cursor)
+function! LookupDocs()
+  if &filetype ==# 'c' || &filetype ==# 'cpp'
+    call system("open 'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
+  else
+    call devdocs#open(expand('<cword>'), &l:ft)
+  endif
+endfunction
+nmap K :call LookupDocs()<cr>
 " }}}
 Plug 'w0rp/ale'
 " {{{
@@ -282,8 +296,6 @@ end
 
 imap jk <esc>
 map <leader>d :bd<CR>
-" nmap k gk " Sane behavior on long lines
-" nmap j gj
 nnoremap Y y$ " Make Y behave like other capitals
 nmap L :set invnumber<CR>
 
@@ -291,9 +303,6 @@ nmap L :set invnumber<CR>
 map cf :let @" = expand("%:r")<CR>
 " Yank the full current file pathk
 map cF :let @* = expand("%:p")<CR>
-
-command! Breakpoint :call VimuxRunCommand("b " . bufname("%") . ":" . line("."))
-map <Space>b :Breakpoint<CR>
 
 " Rename current file, thanks Gary Bernhardt via Ben Orenstein
 function! RenameFile()
@@ -313,6 +322,7 @@ set nospell
 
 set hidden
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC
+map <leader>v :source $MYVIMRC<CR>
 
 let g:go_def_mapping_enabled = 0 " don't override ctrl-T
 " let g:python2_host_prog = '/usr/local/bin/python'

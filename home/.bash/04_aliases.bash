@@ -140,3 +140,28 @@ note() {
 zk-tags() {
   rg -o "#[\w\-_]{3,}" -t md -N --no-filename "$HOME/Documents/Zettelkasten" | rg -v "^#(notes-|import-)" | sort | uniq -c | sort
 }
+
+# Get the latest drawing from the Zettelkasten notebook into latest ZK note.
+zk-remarkable() {
+  if [[ ! $1 ]]; then
+    echo 'need an argument with the note id'
+  else
+    rmapi geta 'Zettelkasten'
+    pdftk Zettelkasten-annotations.pdf cat end output zk.pdf
+    convert -density 400 -trim +repage zk.pdf -quality 100 -flatten -define profile:skip=ICC zk.png
+    mv zk.png "$HOME/Documents/Zettelkasten/media/$1.png"
+    echo "$HOME/Documents/Zettelkasten/media/$1.png"
+    echo "![](media/$1.png)"
+    rm Zettelkasten-annotations.pdf zk.pdf
+  fi
+}
+
+cscope-build() {
+  rm -f cscope*
+  cscope -bcqR
+}
+
+# make this better at cargo too
+ctags-build() {
+  ctags -R . $(bundle list --paths) -f .tags
+}

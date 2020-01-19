@@ -11,7 +11,8 @@ source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin"
-export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git/*'"
+# We depend on this in .vimrc too for file listing.
+export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export GOPATH=$HOME
 

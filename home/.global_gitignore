@@ -29,6 +29,8 @@ nbproject
 .yardoc
 COMMIT
 TAGS
+tags
+cscope.out*
 .svn
 autom4te.cache
 code-cache
