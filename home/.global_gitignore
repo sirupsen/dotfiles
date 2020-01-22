@@ -46,3 +46,4 @@ setuptools-*
 log/*.log  
 tmp/**/*  
 Procfile.simon
+.file_list_tags

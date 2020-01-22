@@ -8,7 +8,7 @@ set mouse=v " Allow copy-pasting
 
 set statusline=
 set statusline+=%f:%l:%c
-set statusline+=%{tagbar#currenttag('\ [%s]\ ','','fs')}
+set statusline+=%{tagbar#currenttag('\ [%s]\ ','','')}
 set statusline+=%=
 set statusline+=%{FugitiveStatusline()}
 
@@ -19,10 +19,18 @@ Plug 'hari-rangarajan/CCTree'
 " {{
 function LoadCscopeDB()
   if filereadable('cscope.out')
-    CCTreeLoadDB cscope.out
+    cscope add cscope.out
   endif
 endfunction
 au VimEnter * call LoadCscopeDB()
+let g:CCTreeSplitProg = 'gsplit'
+set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
+
+" who calls this function ('greater than')
+map ><C-]> :cs find c <C-R>=expand("<cword>")<CR><CR>
+" what this function calls ('less than')
+map <<C-]> :cs find d <C-R>=expand("<cword>")<CR><CR>
+
 " }}
 Plug 'majutsushi/tagbar'
 " {{{
@@ -49,10 +57,8 @@ endfunction"}}}
 " }}}
 Plug 'junegunn/fzf.vim'
 " {{{
-" The nice thing about the immediate one below is that it'll start searching
-" immediately. However, everything will buffer inside of FZF which is so much
-" flower than providing an initial query.
-" map <C-g> :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
+let g:fzf_tags_command = 'bash -c "build-ctags"'
+
 map <C-g> :Rg<CR>
 map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
 map <Space>/ :execute 'Rg ' . input('Rg/', expand('<cword>'))<CR>
@@ -62,9 +68,12 @@ command! -bang -nargs=? -complete=dir Files
 map <C-t> :Files<CR>
 
 map <C-j> :Buffers<CR>
+map <A-c> :Commands<CR>
 
 map <C-l> :Tags<CR>
 map <Space>l :call fzf#vim#tags(expand('<cword>'))<CR>
+map <A-l> :BTags<CR>
+map <Space><A-l> :call fzf#vim#buffer_tags(expand('<cword>'))<CR>
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -108,6 +117,8 @@ let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
+  \ 'ctrl-o': ':r !basename',
+  \ 'alt-o':  ':r !echo',
   \ 'ctrl-v': 'vsplit' }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
 " }}}
@@ -126,7 +137,8 @@ let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
 let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
 
-command! CurrentBuffer :call VimuxRunCommand(bufname("%") . ":" . line("."))
+" this is useful for debuggers etc
+command! CurrentBuffer :call VimuxSendText(bufname("%") . ":" . line("."))
 map <Space>b :CurrentBuffer<CR>
 " }}}
 
@@ -221,6 +233,9 @@ Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'mxw/vim-jsx', { 'for': 'javascript' }
 Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
 Plug 'fatih/vim-go', { 'for': 'go' }
+" {{
+let g:fzf_tags_command = 'ctags -R'
+" }}
 Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 " {{{
@@ -322,11 +337,8 @@ set nospell
 
 set hidden
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC
-map <leader>v :source $MYVIMRC<CR>
-
-let g:go_def_mapping_enabled = 0 " don't override ctrl-T
-" let g:python2_host_prog = '/usr/local/bin/python'
-" let g:python3_host_prog = '/usr/local/bin/python3'
+map <space>v :source $MYVIMRC<CR>
+map <leader>v :sp $MYVIMRC<CR>
 
 function! MRIIndent()
   setlocal cindent
@@ -359,3 +371,13 @@ nnoremap <silent> <expr> k ScreenMovement("k")
 nnoremap <silent> <expr> 0 ScreenMovement("0")
 nnoremap <silent> <expr> ^ ScreenMovement("^")
 nnoremap <silent> <expr> $ ScreenMovement("$")
+
+function! BuildCtags()
+  silent execute ":!bash -lc ctags-build"
+endfunction
+command! -nargs=* BuildCtags call BuildCtags()<CR>
+
+function! BuildCscope()
+  silent execute ":!bash -lc cscope-build"
+endfunction
+command! -nargs=* BuildCscope call BuildCscope()<CR>

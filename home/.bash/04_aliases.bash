@@ -133,8 +133,13 @@ refreshall () {
 }
 
 note() {
-  local args="$@"
-  nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/$(date +"%Y%m%d%H%M") $args.md"
+  if [[ -z $1 ]]; then
+    cd "$HOME/Documents/Zettelkasten"
+    vim "+FZF"
+  else
+    local args="$@"
+    nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/$(date +"%Y%m%d%H%M") $args.md"
+  fi
 }
 
 zk-tags() {
@@ -150,18 +155,27 @@ zk-remarkable() {
     pdftk Zettelkasten-annotations.pdf cat end output zk.pdf
     convert -density 400 -trim +repage zk.pdf -quality 100 -flatten -define profile:skip=ICC zk.png
     mv zk.png "$HOME/Documents/Zettelkasten/media/$1.png"
-    echo "$HOME/Documents/Zettelkasten/media/$1.png"
     echo "![](media/$1.png)"
+    open "media/$1.png"
     rm Zettelkasten-annotations.pdf zk.pdf
+  fi
+}
+
+# if it's a big project you'll want to build this yourself.
+file-list-tags() {
+  if [[ ! -f __file_list_tags ]]; then
+    rg --sort path --files > .file_list_tags
   fi
 }
 
 cscope-build() {
   rm -f cscope*
-  cscope -bcqR
+  file-list-tags
+  cscope -b -q -i .file_list_tags
 }
 
 # make this better at cargo too
 ctags-build() {
-  ctags -R . $(bundle list --paths) -f .tags
+  file-list-tags
+  ctags -f tags -L .file_list_tags
 }
