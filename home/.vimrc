@@ -299,8 +299,8 @@ set backspace=2 " Backspace deletes 2 spaces
 set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
 
 set list " Highlight trailings, stolen from @teoljungberg
-set listchars=tab:>-,trail:.,extends:>,precedes:<
-set listchars=trail:.,extends:>,precedes:<
+" set listchars=tab:>-,trail:.,extends:>,precedes:<
+" set listchars=trail:.,extends:>,precedes:<
 autocmd FileType go,gitcommit,qf,gitset,gas,asm setlocal nolist
 
 set nohlsearch " Don't highlight search results
