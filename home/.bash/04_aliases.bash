@@ -134,8 +134,7 @@ refreshall () {
 
 note() {
   if [[ -z $1 ]]; then
-    cd "$HOME/Documents/Zettelkasten"
-    vim "+FZF"
+    zk-search
   else
     local args="$@"
     nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/$(date +"%Y%m%d%H%M") $args.md"
@@ -145,6 +144,8 @@ note() {
 zk-tags() {
   rg -o "#[\w\-_]{3,}" -t md -N --no-filename "$HOME/Documents/Zettelkasten" | rg -v "^#(notes-|import-)" | sort | uniq -c | sort
 }
+
+alias zk-tagsr='zk-tags | sort -r'
 
 # Get the latest drawing from the Zettelkasten notebook into latest ZK note.
 zk-remarkable() {
@@ -159,6 +160,11 @@ zk-remarkable() {
     open "media/$1.png"
     rm Zettelkasten-annotations.pdf zk.pdf
   fi
+}
+
+zk-search() {
+  cd $HOME/Documents/Zettelkasten
+  ruby scripts/search.rb $@
 }
 
 # if it's a big project you'll want to build this yourself.

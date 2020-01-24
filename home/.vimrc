@@ -14,7 +14,6 @@ set statusline+=%{FugitiveStatusline()}
 
 call plug#begin('~/.config/nvim/plugged')
 
-Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'hari-rangarajan/CCTree'
 " {{
 function LoadCscopeDB()
@@ -26,11 +25,6 @@ au VimEnter * call LoadCscopeDB()
 let g:CCTreeSplitProg = 'gsplit'
 set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
 
-" who calls this function ('greater than')
-map ><C-]> :cs find c <C-R>=expand("<cword>")<CR><CR>
-" what this function calls ('less than')
-map <<C-]> :cs find d <C-R>=expand("<cword>")<CR><CR>
-
 " }}
 Plug 'majutsushi/tagbar'
 " {{{
@@ -39,8 +33,35 @@ map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 let g:tagbar_compact = 1
 let g:tagbar_indent = 1
 " }}}
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+" {{{
+function! LookupDocs()
+  if &filetype ==# 'c' || &filetype ==# 'cpp'
+    call system("open 'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
+  else
+    call devdocs#open(expand('<cword>'), &l:ft)
+  endif
+endfunction
+
+nmap K :call LookupDocs()<cr>
+
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+    \ }
+
+function LC_maps()
+  if has_key(g:LanguageClient_serverCommands, &filetype)
+    nnoremap <buffer> <silent> K :call LanguageClient#textDocument_hover()<cr>
+    nnoremap <buffer> <silent> <C-]> :call LanguageClient#textDocument_definition()<CR>
+  endif
+endfunction
+
+autocmd FileType * call LC_maps()
+" }}}
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'deoplete-plugins/deoplete-tag'
 Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
 " {{{
 let g:deoplete#enable_at_startup = 1
@@ -55,6 +76,7 @@ function! s:check_back_space() abort "{{{
   return !col || getline('.')[col - 1]  =~ '\s'
 endfunction"}}}
 " }}}
+Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 " {{{
 let g:fzf_tags_command = 'bash -c "build-ctags"'
@@ -155,14 +177,6 @@ map \t :NERDTreeToggle<CR>
 " }}}
 Plug 'rhysd/devdocs.vim'
 " {{{
-function! LookupDocs()
-  if &filetype ==# 'c' || &filetype ==# 'cpp'
-    call system("open 'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
-  else
-    call devdocs#open(expand('<cword>'), &l:ft)
-  endif
-endfunction
-nmap K :call LookupDocs()<cr>
 " }}}
 Plug 'w0rp/ale'
 " {{{
