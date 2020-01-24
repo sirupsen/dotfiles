@@ -182,8 +182,15 @@ cscope-build() {
 
 # make this better at cargo too
 ctags-build() {
-  file-list-tags
-  ctags -f tags -L .file_list_tags
+  if [[ -f Gemfile.lock ]]; then
+    if [[ ! -f __file_list_tags ]]; then
+      rg --sort path --files -t ruby > .file_list_tags
+    fi
+    ripper-tags -R -L .file_list_tags -f tags
+  else
+    file-list-tags
+    ctags -f tags -L .file_list_tags
+  fi
 }
 
 man() {

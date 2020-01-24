@@ -33,33 +33,6 @@ map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 let g:tagbar_compact = 1
 let g:tagbar_indent = 1
 " }}}
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-" {{{
-function! LookupDocs()
-  if &filetype ==# 'c' || &filetype ==# 'cpp'
-    call system("open 'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
-  else
-    call devdocs#open(expand('<cword>'), &l:ft)
-  endif
-endfunction
-
-nmap K :call LookupDocs()<cr>
-
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-    \ }
-
-function LC_maps()
-  if has_key(g:LanguageClient_serverCommands, &filetype)
-    nnoremap <buffer> <silent> K :call LanguageClient#textDocument_hover()<cr>
-    nnoremap <buffer> <silent> <C-]> :call LanguageClient#textDocument_definition()<CR>
-  endif
-endfunction
-
-autocmd FileType * call LC_maps()
 " }}}
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
@@ -328,7 +301,16 @@ map <leader>d :bd<CR>
 nnoremap Y y$ " Make Y behave like other capitals
 nmap L :set invnumber<CR>
 " https://medium.com/@vinodkri/zooming-vim-window-splits-like-a-pro-d7a9317d40
-map <c-w>z <c-w>_ \| <c-w>\|
+" map <c-w>z <c-w>_ \| <c-w>\|
+function! s:zoom()
+  if winnr('$') > 1
+    tab split
+  elseif len(filter(map(range(tabpagenr('$')), 'tabpagebuflist(v:val + 1)'),
+                  \ 'index(v:val, '.bufnr('').') >= 0')) > 1
+    tabclose
+  endif
+endfunction
+nnoremap <silent> <c-w>z :call <sid>zoom()<cr>
 
 " Yank the file name without extension
 map cf :let @" = expand("%:r")<CR>
@@ -397,3 +379,13 @@ function! BuildCscope()
   silent execute ":!bash -lc cscope-build"
 endfunction
 command! -nargs=* BuildCscope call BuildCscope()<CR>
+
+function! LookupDocs()
+  if &filetype ==# 'c' || &filetype ==# 'cpp'
+    call system("open 'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
+  else
+    call devdocs#open(expand('<cword>'), &l:ft)
+  endif
+endfunction
+
+nmap K :call LookupDocs()<cr>
