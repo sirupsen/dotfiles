@@ -179,3 +179,15 @@ ctags-build() {
   file-list-tags
   ctags -f tags -L .file_list_tags
 }
+
+man() {
+  echo "use tldr or manf!"
+}
+
+tldr() {
+  curl "cheat.sh/$@"
+}
+
+manf() {
+  /usr/bin/man $@
+}

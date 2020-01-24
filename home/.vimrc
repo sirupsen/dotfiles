@@ -184,13 +184,13 @@ map ]a :ALENext<CR>
 " }}}
 Plug 'milkypostman/vim-togglelist'
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
+Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-fugitive'
 " {{{
 map <leader>gs :Gstatus<CR>
 map <leader>gc :Gcommit<CR>
 " }}}
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-obsession'
@@ -313,6 +313,8 @@ imap jk <esc>
 map <leader>d :bd<CR>
 nnoremap Y y$ " Make Y behave like other capitals
 nmap L :set invnumber<CR>
+" https://medium.com/@vinodkri/zooming-vim-window-splits-like-a-pro-d7a9317d40
+map <c-w>z <c-w>_ \| <c-w>\|
 
 " Yank the file name without extension
 map cf :let @" = expand("%:r")<CR>
