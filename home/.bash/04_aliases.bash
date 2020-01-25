@@ -164,12 +164,12 @@ zk-remarkable() {
 
 zk-search() {
   cd $HOME/Documents/Zettelkasten
-  ruby scripts/search.rb $@
+  ruby scripts/search.rb $@ | bat
 }
 
 # if it's a big project you'll want to build this yourself.
 file-list-tags() {
-  if [[ ! -f __file_list_tags ]]; then
+  if [[ ! -f .file_list_tags ]]; then
     rg --sort path --files > .file_list_tags
   fi
 }
@@ -201,6 +201,7 @@ tldr() {
   curl "cheat.sh/$@"
 }
 
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 manf() {
   /usr/bin/man $@
 }

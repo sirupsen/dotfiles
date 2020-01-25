@@ -7,7 +7,7 @@ set history=1000  " Keep more history, default is 20
 set mouse=v " Allow copy-pasting
 
 set statusline=
-set statusline+=%f:%l:%c
+set statusline+=%f:%l:%c\ %m
 set statusline+=%{tagbar#currenttag('\ [%s]\ ','','')}
 set statusline+=%=
 set statusline+=%{FugitiveStatusline()}
@@ -242,8 +242,7 @@ call deoplete#custom#option({
 \ 'smart_case': v:true,
 \ 'prev_completion_mode': "prev_completion_mode",
 \ 'sources': {
-\ '_': ['tabnine'],
-\ 'markdown': ['tag'],
+\   '_': ['tabnine'],
 \ }
 \ })
 
@@ -370,6 +369,8 @@ nnoremap <silent> <expr> 0 ScreenMovement("0")
 nnoremap <silent> <expr> ^ ScreenMovement("^")
 nnoremap <silent> <expr> $ ScreenMovement("$")
 
+set autochdir
+set tags=./tags,tags;
 function! BuildCtags()
   silent execute ":!bash -lc ctags-build"
 endfunction
@@ -389,3 +390,9 @@ function! LookupDocs()
 endfunction
 
 nmap K :call LookupDocs()<cr>
+
+function! Note(name)
+  let path = strftime("%Y%m%d%H%M") . " " . a:name . ".md"
+  execute ":sp " . path
+endfunction
+command! -nargs=* Note call Note(<args>)<CR>
