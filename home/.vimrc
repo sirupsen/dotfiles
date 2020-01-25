@@ -139,8 +139,8 @@ map <Space>b :CurrentBuffer<CR>
 
 Plug 'airblade/vim-gitgutter'
 " {{{
-nmap [h <Plug>GitGutterPrevHunk
-nmap ]h <Plug>GitGutterNextHunk
+nmap [h <Plug>(GitGutterPrevHunk)
+nmap ]h <Plug>(GitGutterNextHunk)
 set updatetime=100
 " }}}
 
