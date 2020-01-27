@@ -167,6 +167,11 @@ zk-search() {
   ruby scripts/search.rb $@ | bat
 }
 
+zks() {
+  cd $HOME/Documents/Zettelkasten
+  ruby scripts/search.rb $@ -f | fzf --ansi --preview 'bat {}.md' --height 100%
+}
+
 # if it's a big project you'll want to build this yourself.
 file-list-tags() {
   if [[ ! -f .file_list_tags ]]; then
@@ -186,7 +191,7 @@ ctags-build() {
     if [[ ! -f __file_list_tags ]]; then
       rg --sort path --files -t ruby > .file_list_tags
     fi
-    ripper-tags -R -L .file_list_tags -f tags
+    ripper-tags -R -L .file_list_tags -f tags --extra=q
   else
     file-list-tags
     ctags -f tags -L .file_list_tags
@@ -204,4 +209,8 @@ tldr() {
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 manf() {
   /usr/bin/man $@
+}
+
+zk-uniq() {
+  rg --files -t md | rg -o "\A\d+" | sort | uniq -c | sort
 }

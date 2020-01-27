@@ -33,6 +33,41 @@ map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 let g:tagbar_compact = 1
 let g:tagbar_indent = 1
 " }}}
+function! LookupDocs()
+  if &filetype ==# 'c' || &filetype ==# 'cpp'
+    call system("open 'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
+  elseif &filetype ==# 'rust'
+    let crate_link = "file:///" . getcwd() . "/target/doc/settings.html?search=" . expand('<cword>')
+    let stdlib_link = 'https://doc.rust-lang.org/std/?search=' . expand('<cword>')
+
+    let stdlib_tab = trim(system("chrome-cli list links | grep 'doc.rust-lang.org' | grep -oE '[0-9]+'"))
+    let crate_tab = trim(system("chrome-cli list links | grep '" . getcwd() . "' | grep -oE '[0-9]+'"))
+    let active_tab = trim(system("chrome-cli info | grep -Eo '\d+' | head -n1"))
+
+    if stdlib_tab
+      call system("chrome-cli open " . stdlib_link . " -t " . stdlib_tab)
+    else
+      call system("chrome-cli open " . stdlib_link)
+    end
+
+    if crate_tab
+      call system("chrome-cli open " . crate_link . " -t " . crate_tab)
+      if active_tab != stdlib_tab && active_tab != crate_tab
+        call system("chrome-cli activate -t " . crate_tab)
+      end
+    else
+      call VimuxRunCommand("cargo doc &")
+      call system("chrome-cli open " . crate_link)
+    end
+  elseif &filetype ==# 'ruby'
+    " could prob make this use ri(1)
+    call system("chrome-cli open https://ruby-doc.com/search.html?q=" . expand('<cword>'))
+  else
+    call system("chrome-cli open https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
+  endif
+endfunction
+
+nmap K :call LookupDocs()<cr>
 " }}}
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
@@ -131,6 +166,13 @@ Plug 'benmills/vimux'
 let g:VimuxTmuxCommand = "/usr/local/bin/tmux"
 let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
+let g:VimuxUseNearest = 1
+
+function! RepeatLastTmuxCommand()
+  call VimuxSendKeys("Up")
+  call VimuxSendKeys("Enter")
+endfunction
+map <C-e> :call RepeatLastTmuxCommand()<CR>
 
 " this is useful for debuggers etc
 command! CurrentBuffer :call VimuxSendText(bufname("%") . ":" . line("."))
@@ -147,9 +189,6 @@ set updatetime=100
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 " {{{
 map \t :NERDTreeToggle<CR>
-" }}}
-Plug 'rhysd/devdocs.vim'
-" {{{
 " }}}
 Plug 'w0rp/ale'
 " {{{
@@ -227,6 +266,7 @@ Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 " {{{
 let g:rustfmt_autosave = 0
+let g:rust_recommended_style = 1
 " }}}
 Plug 'cespare/vim-toml', { 'for': 'toml' }
 Plug 'uarun/vim-protobuf'
@@ -285,8 +325,8 @@ set backspace=2 " Backspace deletes 2 spaces
 set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
 
 set list " Highlight trailings, stolen from @teoljungberg
-" set listchars=tab:>-,trail:.,extends:>,precedes:<
-" set listchars=trail:.,extends:>,precedes:<
+set listchars=tab:>-,trail:.,extends:>,precedes:<
+set listchars=trail:.,extends:>,precedes:<
 autocmd FileType go,gitcommit,qf,gitset,gas,asm setlocal nolist
 
 set nohlsearch " Don't highlight search results
@@ -331,7 +371,8 @@ map <leader>r :call RenameFile()<cr>
 au BufNewFile,BufRead *.ejson set filetype=json
 au BufNewFile,BufRead *.s set filetype=gas
 set nospell
-
+" allow spaces in file-names, which makes gf more useful
+set isfname+=32
 set hidden
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC
 map <space>v :source $MYVIMRC<CR>
@@ -369,7 +410,7 @@ nnoremap <silent> <expr> 0 ScreenMovement("0")
 nnoremap <silent> <expr> ^ ScreenMovement("^")
 nnoremap <silent> <expr> $ ScreenMovement("$")
 
-set autochdir
+" set autochdir
 set tags=./tags,tags;
 function! BuildCtags()
   silent execute ":!bash -lc ctags-build"
@@ -381,18 +422,8 @@ function! BuildCscope()
 endfunction
 command! -nargs=* BuildCscope call BuildCscope()<CR>
 
-function! LookupDocs()
-  if &filetype ==# 'c' || &filetype ==# 'cpp'
-    call system("open 'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
-  else
-    call devdocs#open(expand('<cword>'), &l:ft)
-  endif
-endfunction
-
-nmap K :call LookupDocs()<cr>
-
-function! Note(name)
-  let path = strftime("%Y%m%d%H%M") . " " . a:name . ".md"
+function! Note(...)
+  let path = strftime("%Y%m%d%H%M")." ".join(a:000).".md"
   execute ":sp " . path
 endfunction
-command! -nargs=* Note call Note(<args>)<CR>
+command! -nargs=* Note call Note(<f-args>)<CR>
