@@ -155,6 +155,14 @@ zk-tags() {
 }
 alias zkt="zk-tags"
 
+pbcopyfile() {
+  osascript -e 'on run argv' \
+    -e 'set currentDir to do shell script "pwd"' \
+    -e 'set the clipboard to (read POSIX file (POSIX path of (currentDir as text & (first item of argv) )) as JPEG picture)' \
+    -e 'end run' "/$1"
+}
+
+
 # Get the latest drawing from the Zettelkasten notebook into latest ZK note.
 zk-remarkable() {
   if [[ ! $1 ]]; then
@@ -168,6 +176,12 @@ zk-remarkable() {
     open "media/$1.png"
     rm Zettelkasten-annotations.pdf zk.pdf
   fi
+}
+
+remarkable() {
+  rmapi geta 'Quick sheets'
+  pdftk Quick\ sheets-annotations.pdf cat end output quick.pdf
+  convert -density 400 -trim +repage zk.pdf -quality 100 -flatten -define profile:skip=ICC quick.png
 }
 
 zk-search() {

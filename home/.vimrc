@@ -167,16 +167,16 @@ endfunction
 command! SqlFormat :%!sqlformat --reindent --keywords upper --identifiers lower -
 
 function! FzfGem(name)
-  let path = system("bundle show " . a:name)
+  let path = system("bundle info ".a:name." | rg -oP '(?<=Path: )(.+)$'")
   let path = substitute(path, '\n', '', '')
   execute ":FZF " . path
 endfunction
 command! -nargs=* FZFGem call FzfGem(<f-args>)
 
 function! Gem(name)
-  let path = system("bundle show " . a:name)
+  let path = system("bundle info ".a:name." | rg -oP '(?<=Path: )(.+)$'")
   let path = substitute(path, '\n', '', '')
-  silent execute ":!tmux new-window -n 'gem:" . a:name . "' bash -c 'cd " . path . " && vim -c \':FZF\''"
+  silent execute ":!tmux new-window -n 'gem:" . a:name . "' bash -l -c 'cd " . path . " && vim -c \':FZF\''"
 endfunction
 command! -nargs=* Gem call Gem(<f-args>)
 
@@ -376,9 +376,9 @@ set tabstop=2 " Tabs are 2 spaces
 set backspace=2 " Backspace deletes 2 spaces
 set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
 
-set list " Highlight trailings, stolen from @teoljungberg
-set listchars=tab:>-,trail:.,extends:>,precedes:<
-set listchars=trail:.,extends:>,precedes:<
+" set list " Highlight trailings, stolen from @teoljungberg
+" set listchars=tab:>-,trail:.,extends:>,precedes:<
+" set listchars=trail:.,extends:>,precedes:<
 autocmd FileType go,gitcommit,qf,gitset,gas,asm setlocal nolist
 
 set nohlsearch " Don't highlight search results

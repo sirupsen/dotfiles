@@ -38,3 +38,5 @@
 	excludesfile = /Users/personal/.global_gitignore
 [gc]
 	writeCommitGraph = true
+[credential]
+	helper = store --file /opt/dev/var/private/git_credential_store
