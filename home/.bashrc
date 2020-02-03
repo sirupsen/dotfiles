@@ -6,9 +6,6 @@ source /etc/bashrc_Apple_Terminal
 
 unset DISPLAY
 
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc'
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc'
-
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin"
 # We depend on this in .vimrc too for file listing.

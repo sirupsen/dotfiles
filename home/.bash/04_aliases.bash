@@ -141,11 +141,19 @@ note() {
   fi
 }
 
-zk-tags() {
-  rg -o "#[\w\-_]{3,}" -t md -N --no-filename "$HOME/Documents/Zettelkasten" | rg -v "^#(notes-|import-)" | sort | uniq -c | sort
+zk-tags-raw() {
+  rg -o "#[\w\-_]{3,}" -t md -N --no-filename "$HOME/Documents/Zettelkasten" |
+    rg -v "^#(notes-|import-)" | \
+    awk ' { tot[$0]++ } END { for (i in tot) print tot[i], "\t", i } ' | \
+    gsort -r --numeric-sort
 }
 
-alias zk-tagsr='zk-tags | sort -r'
+# can't get rg to work here for some reason..
+# https://github.com/junegunn/fzf/issues/1846 for why no preview (can't nest!)
+zk-tags() {
+  zk-tags-raw | fzf --height 100% --nth 2 --bind "enter:execute[ggrep -F --color=always -i {2} *.md -l | fzf --ansi --height 100% --preview-window=top:65% --preview 'bat --color always --language md --style plain \{}']"
+}
+alias zkt="zk-tags"
 
 # Get the latest drawing from the Zettelkasten notebook into latest ZK note.
 zk-remarkable() {
@@ -164,19 +172,23 @@ zk-remarkable() {
 
 zk-search() {
   cd $HOME/Documents/Zettelkasten
-  ruby scripts/search.rb $@ | bat
-}
+  (
+    ruby ./scripts/search.rb -r &
+  ) > /dev/null 2>&1
 
-zks() {
+  fzf --ansi --height 100% --preview 'bat --language md --color=always {} --style=plain' \
+    --bind "change:reload:ruby scripts/search.rb -f '{q}'" --phony --preview-window=top:65%
+}
+alias zks=zk-search
+
+zkf() {
   cd $HOME/Documents/Zettelkasten
-  ruby scripts/search.rb $@ -f | fzf --ansi --preview 'bat {}.md' --height 100%
+  rg --files -t md | fzf --ansi --height 100% --preview "bat --color always --language md --style plain {}" --preview-window=top:65%
 }
 
 # if it's a big project you'll want to build this yourself.
 file-list-tags() {
-  if [[ ! -f .file_list_tags ]]; then
-    rg --sort path --files > .file_list_tags
-  fi
+  rg --sort path --files --glob '!target' > .file_list_tags
 }
 
 cscope-build() {
@@ -188,9 +200,7 @@ cscope-build() {
 # make this better at cargo too
 ctags-build() {
   if [[ -f Gemfile.lock ]]; then
-    if [[ ! -f __file_list_tags ]]; then
-      rg --sort path --files -t ruby > .file_list_tags
-    fi
+    rg --sort path --files -t ruby > .file_list_tags
     ripper-tags -R -L .file_list_tags -f tags --extra=q
   else
     file-list-tags

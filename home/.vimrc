@@ -36,6 +36,8 @@ let g:tagbar_indent = 1
 function! LookupDocs()
   if &filetype ==# 'c' || &filetype ==# 'cpp'
     call system("open 'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
+  elseif &filetype ==# 'markdown'
+    call system("chrome-cli open https://google.com/search?q=define%20" . expand('<cword>'))
   elseif &filetype ==# 'rust'
     let crate_link = "file:///" . getcwd() . "/target/doc/settings.html?search=" . expand('<cword>')
     let stdlib_link = 'https://doc.rust-lang.org/std/?search=' . expand('<cword>')
@@ -223,7 +225,6 @@ Plug 'tpope/vim-obsession'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'chriskempson/base16-vim'
 Plug 'nickhutchinson/vim-systemtap'
-Plug 'tpope/vim-liquid'
 Plug 'plasticboy/vim-markdown'
 " {{{
 let g:vim_markdown_folding_disabled = 1
