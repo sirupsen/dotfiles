@@ -139,8 +139,9 @@ endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 " Completely use RG, don't use fzf's fuzzy-matching
-map <C-g> :RG<CR>
+" map <C-g> :RG<CR>
 map <Space>/ :execute 'RG ' . expand('<cword>')<CR>
+map <leader>/ :RG <CR>
 
 " map <C-g> :Rg<CR>
 " map <leader>/ :execute 'RG ' . input('Rg/')<CR>
@@ -222,10 +223,16 @@ let g:VimuxHeight = "40"
 let g:VimuxUseNearest = 1
 
 function! RepeatLastTmuxCommand()
-  call VimuxSendKeys("Up")
-  call VimuxSendKeys("Enter")
+  call VimuxRunCommand('Up')
 endfunction
 map <C-e> :call RepeatLastTmuxCommand()<CR>
+
+function! RunSomethingInTmux()
+  if &filetype ==# 'markdown'
+    call VimuxRunCommand(expand('%'))
+  end
+endfunction
+map <A-e> :call RunSomethingInTmux()<CR>
 
 " this is useful for debuggers etc
 command! CurrentBuffer :call VimuxSendText(bufname("%") . ":" . line("."))
