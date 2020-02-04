@@ -7,7 +7,12 @@ source /etc/bashrc_Apple_Terminal
 unset DISPLAY
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin"
+export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin \
+  --bind 'ctrl-y:execute-silent(echo {} | pbcopy)' \
+  --bind \"ctrl-o:execute-silent[tmux send-keys -t \{left\} :read Space ! Space echo Space && \
+           tmux send-keys -t \{left\} -l '\"'{2}'\"' && \
+           tmux send-keys -t \{left\} Enter]\""
+
 # We depend on this in .vimrc too for file listing.
 export FZF_DEFAULT_COMMAND="rg --files --follow --hidden --glob '!.git/*' --glob '!sorbet/**' --glob '!tags'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
