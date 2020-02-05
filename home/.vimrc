@@ -139,9 +139,9 @@ endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 " Completely use RG, don't use fzf's fuzzy-matching
-" map <C-g> :RG<CR>
-map <Space>/ :execute 'RG ' . expand('<cword>')<CR>
-map <leader>/ :RG <CR>
+map <C-g> :RG<CR>
+map <Space>/ :execute 'Rg ' . expand('<cword>')<CR>
+map <leader>/ :Rg <CR>
 
 " map <C-g> :Rg<CR>
 " map <leader>/ :execute 'RG ' . input('Rg/')<CR>

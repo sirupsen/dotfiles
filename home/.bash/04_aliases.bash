@@ -152,7 +152,7 @@ zk-tags-raw() {
 # https://github.com/junegunn/fzf/issues/1846 for why no preview (can't nest!)
 zk-tags() {
   zk-tags-raw | fzf --header "Ctrl-Y to yank" --height 100% \
-    --bind "ctrl-o:execute-silent[tmux send-keys -t \{left\} :read Space ! Space echo Space && \
+    --bind "ctrl-o:execute-silent[tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
             tmux send-keys -t \{left\} -l '\"\\'{2}'\"' && \
             tmux send-keys -t \{left\} Enter]" \
     --bind "ctrl-y:execute-silent(echo {2} | pbcopy),enter:execute[ggrep -F --color=always -i {2} *.md -l | fzf --ansi --height 100% --preview-window=top:65% --preview 'bat --color always --language md --style plain \{}']"
@@ -195,7 +195,7 @@ zk-search() {
   ) > /dev/null 2>&1
 
   fzf --ansi --height 100% --preview 'bat --language md --color=always {1..-2} --style=plain' \
-    --bind "ctrl-o:execute-silent[tmux send-keys -t \{left\} :read Space ! Space echo Space && \
+    --bind "ctrl-o:execute-silent[tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
             tmux send-keys -t \{left\} -l '\"'{1..-2}'\"' && \
             tmux send-keys -t \{left\} Enter]" \
     --bind "change:reload:ruby scripts/search.rb -s -f '{q}'" --phony --preview-window=top:65%
