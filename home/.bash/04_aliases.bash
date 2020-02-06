@@ -190,15 +190,12 @@ remarkable() {
 
 zk-search() {
   cd $HOME/Documents/Zettelkasten
-  (
-    ruby ./scripts/search.rb -r &
-  ) > /dev/null 2>&1
 
-  fzf --ansi --height 100% --preview 'bat --language md --color=always {1..-2} --style=plain' \
-    --bind "ctrl-o:execute-silent[tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
-            tmux send-keys -t \{left\} -l '\"'{1..-2}'\"' && \
-            tmux send-keys -t \{left\} Enter]" \
-    --bind "change:reload:ruby scripts/search.rb -s -f '{q}'" --phony --preview-window=top:65%
+  fzf --ansi --height 100% --preview 'ruby scripts/search2.rb -f {} {q} | bat --language md --style=plain --color always' \
+    --bind "ctrl-o:execute-silent@tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
+            tmux send-keys -t \{left\} -l '\"'[[{}]]'\"' && \
+            tmux send-keys -t \{left\} Enter@" \
+    --bind "change:reload:ruby scripts/search2.rb '{q}'" --phony --preview-window=top:65%
 }
 alias zks=zk-search
 

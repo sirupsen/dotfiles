@@ -123,6 +123,18 @@ if has('nvim')
 
   let g:fzf_layout = { 'window': 'call FloatingFZF(0.9, 0.6, "Comment")' }
 endif
+
+function! FzfSpellSink(word)
+  exe 'normal! "_ciw'.a:word
+endfunction
+
+function! FzfSpell()
+  let suggestions = spellsuggest(expand("<cword>"))
+  return fzf#run(fzf#wrap({'source': suggestions, 'sink': function("FzfSpellSink"), 'window': 'call FloatingFZF(0.6, 0.3, "Comment")'}))
+endfunction
+
+nnoremap z= :call FzfSpell()<CR>
+
 let g:fzf_tags_command = 'bash -c "build-ctags"'
 
 let g:fzf_history_dir = '~/.fzf-history'
@@ -419,9 +431,9 @@ map cF :let @* = expand("%:p")<CR>
 function! RenameFile()
   let old_name = expand('%')
   let new_name = input('New file name: ', expand('%'), 'file')
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    exec ':silent !rm "' . old_name . '"'
+  if new_name != '' && new_name !=# old_name
+    exec ':saveas ' . fnameescape(new_name)
+    exec ':silent !rm ' . fnameescape(old_name)
     redraw!
   endif
 endfunction
