@@ -9,6 +9,7 @@ unset DISPLAY
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin \
   --bind 'ctrl-y:execute-silent(echo {} | pbcopy)' \
+  --bind 'alt-j:preview-down,alt-k:preview-up' \
   --bind \"ctrl-o:execute-silent[tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
            tmux send-keys -t \{left\} -l \\\"{}\\\" && \
            tmux send-keys -t \{left\} Enter]\""
