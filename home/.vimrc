@@ -300,7 +300,10 @@ Plug 'plasticboy/vim-markdown'
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_auto_insert_bullets = 1
 
+" https://agilesysadmin.net/how-to-manage-long-lines-in-vim/
+autocmd FileType markdown set formatoptions+=a " auto-format paragraphs to textwidth
 autocmd FileType markdown setlocal spell
+autocmd FileType markdown set linebreak " wrap on words, not characters
 
 augroup my_spelling_colors
   " Underline, don't do intrusive red things.
