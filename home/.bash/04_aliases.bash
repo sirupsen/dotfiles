@@ -179,7 +179,7 @@ zk-search() {
       tmux send-keys -t \{left\} Escape :e Space && \
       tmux send-keys -t \{left\} -l {} && \
       tmux send-keys -t \{left\} Enter \
-    ]"
+    ]" \
     --bind "change:reload:ruby scripts/search2.rb '{q}'" --phony --preview-window=top:65%
 }
 alias zks=zk-search
