@@ -151,7 +151,7 @@ zk-tags-raw() {
 # can't get rg to work here for some reason..
 # https://github.com/junegunn/fzf/issues/1846 for why no preview (can't nest!)
 zk-tags() {
-  zk-tags-raw | fzf --header "Ctrl-Y to yank" --height 100% \
+  zk-tags-raw | fzf --height 100% --no-info --no-multi \
     --bind "ctrl-o:execute-silent[tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
             tmux send-keys -t \{left\} -l '\"\\'{2}'\"' && \
             tmux send-keys -t \{left\} Enter]" \
@@ -170,6 +170,10 @@ alias zkt="zk-tags"
 
 zk-search() {
   cd $HOME/Documents/Zettelkasten
+  
+  if [[ ! -f "backup/$(date "+%Y-%m-%d")-index.db" ]]; then
+    cp index.db backup/$(date "+%Y-%m-%d")-index.db
+  fi
 
   fzf --ansi --height 100% --preview 'ruby scripts/search2.rb -f {} {q} | bat --language md --style=plain --color always' \
     --bind "ctrl-o:execute-silent@tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
@@ -180,7 +184,8 @@ zk-search() {
       tmux send-keys -t \{left\} -l {} && \
       tmux send-keys -t \{left\} Enter \
     ]" \
-    --bind "change:reload:ruby scripts/search2.rb '{q}'" --phony --preview-window=top:65%
+    --bind "change:reload:ruby scripts/search2.rb '{q}'" \
+    --phony --preview-window=top:65% --no-info --no-multi
 }
 alias zks=zk-search
 
