@@ -7,12 +7,27 @@ source /etc/bashrc_Apple_Terminal
 unset DISPLAY
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# I always have vim in left-most one... makes things easier. We could probably
+# do something here to find the vim pid..?
 export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin \
   --bind 'ctrl-y:execute-silent(echo {} | pbcopy)' \
   --bind 'alt-j:preview-down,alt-k:preview-up' \
-  --bind \"ctrl-o:execute-silent[tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
-           tmux send-keys -t \{left\} -l \\\"{}\\\" && \
-           tmux send-keys -t \{left\} Enter]\""
+  --bind \"ctrl-v:execute-silent[ \
+    tmux send-keys -t \{left\} Escape :vs Space && \
+    tmux send-keys -t \{left\} -l {} && \
+    tmux send-keys -t \{left\} Enter \
+  ]\"
+  --bind \"ctrl-x:execute-silent[ \
+    tmux send-keys -t \{left\} Escape :sp Space && \
+    tmux send-keys -t \{left\} -l {} && \
+    tmux send-keys -t \{left\} Enter \
+  ]\"
+  --bind \"ctrl-o:execute-silent[ \
+    tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
+    tmux send-keys -t \{left\} -l \\\"{}\\\" && \
+    tmux send-keys -t \{left\} Enter \
+  ]\""
 
 # We depend on this in .vimrc too for file listing.
 export FZF_DEFAULT_COMMAND="rg --files --follow --hidden --glob '!.git/*' --glob '!sorbet/**' --glob '!tags'"

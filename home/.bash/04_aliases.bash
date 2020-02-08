@@ -155,9 +155,39 @@ zk-tags() {
     --bind "ctrl-o:execute-silent[tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
             tmux send-keys -t \{left\} -l '\"\\'{2}'\"' && \
             tmux send-keys -t \{left\} Enter]" \
-    --bind "ctrl-y:execute-silent(echo {2} | pbcopy),enter:execute[ggrep -F --color=always -i {2} *.md -l | fzf --ansi --height 100% --preview-window=top:65% --preview 'bat --color always --language md --style plain \{}']"
+    --bind "ctrl-y:execute-silent(echo {2} | pbcopy),enter:execute[ \
+      ggrep -F --color=always -i {2} *.md -l | \
+        fzf --ansi --height 100% --preview-window=top:65% \
+          --bind 'enter:execute-silent$ \
+            tmux send-keys -t \{left\} Escape :e Space && \
+            tmux send-keys -t \{left\} -l \{} && \
+            tmux send-keys -t \{left\} Enter \
+          $' \
+          --preview 'bat --color always --language md --style plain \{}' \
+    ]"
 }
 alias zkt="zk-tags"
+
+zk-search() {
+  cd $HOME/Documents/Zettelkasten
+
+  fzf --ansi --height 100% --preview 'ruby scripts/search2.rb -f {} {q} | bat --language md --style=plain --color always' \
+    --bind "ctrl-o:execute-silent@tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
+            tmux send-keys -t \{left\} -l '\"'[[{}]]'\"' && \
+            tmux send-keys -t \{left\} Enter@" \
+    --bind "enter:execute-silent[ \
+      tmux send-keys -t \{left\} Escape :e Space && \
+      tmux send-keys -t \{left\} -l {} && \
+      tmux send-keys -t \{left\} Enter \
+    ]"
+    --bind "change:reload:ruby scripts/search2.rb '{q}'" --phony --preview-window=top:65%
+}
+alias zks=zk-search
+
+zkf() {
+  cd $HOME/Documents/Zettelkasten
+  rg --files -t md | fzf --ansi --height 100% --preview "bat --color always --language md --style plain {}" --preview-window=top:65%
+}
 
 pbcopyfile() {
   osascript -e 'on run argv' \
@@ -186,22 +216,6 @@ remarkable() {
   rmapi geta 'Quick sheets'
   pdftk Quick\ sheets-annotations.pdf cat end output quick.pdf
   convert -density 400 -trim +repage zk.pdf -quality 100 -flatten -define profile:skip=ICC quick.png
-}
-
-zk-search() {
-  cd $HOME/Documents/Zettelkasten
-
-  fzf --ansi --height 100% --preview 'ruby scripts/search2.rb -f {} {q} | bat --language md --style=plain --color always' \
-    --bind "ctrl-o:execute-silent@tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
-            tmux send-keys -t \{left\} -l '\"'[[{}]]'\"' && \
-            tmux send-keys -t \{left\} Enter@" \
-    --bind "change:reload:ruby scripts/search2.rb '{q}'" --phony --preview-window=top:65%
-}
-alias zks=zk-search
-
-zkf() {
-  cd $HOME/Documents/Zettelkasten
-  rg --files -t md | fzf --ansi --height 100% --preview "bat --color always --language md --style plain {}" --preview-window=top:65%
 }
 
 # if it's a big project you'll want to build this yourself.
