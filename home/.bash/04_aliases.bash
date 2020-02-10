@@ -171,8 +171,11 @@ alias zkt="zk-tags"
 zk-search() {
   cd $HOME/Documents/Zettelkasten
   
-  if [[ ! -f "backup/$(date "+%Y-%m-%d")-index.db" ]]; then
-    cp index.db backup/$(date "+%Y-%m-%d")-index.db
+  local file="backup/$(date "+%Y-%m-%d")-index.db"
+  if [[ ! -f  $file ]]; then
+    cp index.db $file
+  # elif ( `gstat --format=%Y $file` -le `date "+%s"` - 60 ); then 
+  #   cp index.db $file
   fi
 
   fzf --ansi --height 100% --preview 'ruby scripts/search2.rb -f {} {q} | bat --language md --style=plain --color always' \

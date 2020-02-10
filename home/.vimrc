@@ -97,7 +97,7 @@ endfunction
 
 function! FzfSpell()
   let suggestions = spellsuggest(expand("<cword>"))
-  return fzf#run(fzf#wrap({'source': suggestions, 'sink': function("FzfSpellSink"), 'window': { 'width': 0.6, 'height': '0.3' }}))
+  return fzf#run(fzf#wrap({'source': suggestions, 'sink': function("FzfSpellSink"), 'window': { 'width': 0.6, 'height': 0.3 }}))
 endfunction
 
 nnoremap z= :call FzfSpell()<CR>
@@ -120,7 +120,7 @@ command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 " Completely use RG, don't use fzf's fuzzy-matching
 map <C-g> :RG<CR>
 map <Space>/ :execute 'Rg ' . expand('<cword>')<CR>
-map <leader>/ :Rg <CR>
+map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
 
 " map <C-g> :Rg<CR>
 " map <leader>/ :execute 'RG ' . input('Rg/')<CR>
@@ -268,9 +268,8 @@ let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_auto_insert_bullets = 1
 
 " https://agilesysadmin.net/how-to-manage-long-lines-in-vim/
-autocmd FileType markdown set formatoptions+=a " auto-format paragraphs to textwidth
 autocmd FileType markdown setlocal spell
-autocmd FileType markdown set linebreak " wrap on words, not characters
+autocmd FileType markdown setlocal linebreak " wrap on words, not characters
 
 augroup my_spelling_colors
   " Underline, don't do intrusive red things.
@@ -407,7 +406,7 @@ function! RenameFile()
     redraw!
   endif
 endfunction
-map <leader>r :call RenameFile()<cr>
+nnoremap <leader>r :call RenameFile()<cr>
 
 au BufNewFile,BufRead *.ejson set filetype=json
 au BufNewFile,BufRead *.s set filetype=gas
@@ -430,7 +429,7 @@ function! MRIIndent()
   setlocal cinoptions=(0,t0
 endfunction
 
-autocmd BufNewFile,BufRead /Users/simoneskildsen/src/github.com/ruby/ruby/**/*.c call MRIIndent()
+autocmd BufNewFile,BufRead ~/src/github.com/ruby/ruby/**/*.c call MRIIndent()
 
 " https://stackoverflow.com/questions/4946421/vim-moving-with-hjkl-in-long-lines-screen-lines
 function! ScreenMovement(movement)
@@ -456,15 +455,35 @@ set tags=./tags,tags;
 function! BuildCtags()
   silent execute ":!bash -lc ctags-build"
 endfunction
-command! -nargs=* BuildCtags call BuildCtags()<CR>
+command! -nargs=* BuildCtags call BuildCtags()
 
 function! BuildCscope()
   silent execute ":!bash -lc cscope-build"
 endfunction
-command! -nargs=* BuildCscope call BuildCscope()<CR>
+command! -nargs=* BuildCscope call BuildCscope()
+
+function! SNote(...)
+  let path = strftime("%Y%m%d%H%M")." ".trim(join(a:000)).".md"
+  execute ":sp " . fnameescape(path)
+endfunction
+command! -nargs=* SNote call SNote(<f-args>)
 
 function! Note(...)
-  let path = strftime("%Y%m%d%H%M")." ".join(a:000).".md"
-  execute ":sp " . path
+  let path = strftime("%Y%m%d%H%M")." ".trim(join(a:000)).".md"
+  execute ":e " . fnameescape(path)
 endfunction
-command! -nargs=* Note call Note(<f-args>)<CR>
+command! -nargs=* Note call Note(<f-args>)
+
+function! ZettelkastenSetup()
+  syn region mkdFootnotes matchgroup=mkdDelimiter start="\[\["    end="\]\]"
+
+  inoremap <expr> <plug>(fzf-complete-path-custom) fzf#vim#complete#path("rg --files -t md \| sed 's/^/[[/g' \| sed 's/$/]]/'")
+  imap [[ <plug>(fzf-complete-path-custom)
+
+  inoremap <expr> <plug>(fzf-complete-tag) fzf#vim#complete#path("rg -o \"#[a-zA-Z0-9-_]\{3,\}\" -t md -N --no-filename \| sort \| uniq')
+  imap # <plug>(fzf-complete-tag) <esc>
+
+  " setlocal formatoptions+=a
+  imap -- —
+endfunction
+autocmd BufNew,BufRead ~/Documents/Zettelkasten/*.md call ZettelkastenSetup()

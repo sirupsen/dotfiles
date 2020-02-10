@@ -21,9 +21,9 @@
 --languages=-json
 --languages=-sql
 
---languages=-markdown
---langdef=md
---langmap=md:.md
---regex-md=/#([a-zA-Z0-9_\-]{3,})/#\1/h,tag,tags/
+/* --languages=-markdown */
+/* --langdef=md */
+/* --langmap=md:.md */
+/* --regex-md=/#([a-zA-Z0-9_\-]{3,})/#\1/h,tag,tags/ */
 
 --extras=+q
