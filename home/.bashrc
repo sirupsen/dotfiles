@@ -12,7 +12,7 @@ unset DISPLAY
 # do something here to find the vim pid..?
 export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin \
   --bind 'ctrl-y:execute-silent(echo {} | pbcopy)' \
-  --bind 'alt-j:preview-down,alt-k:preview-up' \
+  --bind 'alt-down:preview-down,alt-up:preview-up' \
   --bind \"ctrl-v:execute-silent[ \
     tmux send-keys -t \{left\} Escape :vs Space && \
     tmux send-keys -t \{left\} -l {} && \

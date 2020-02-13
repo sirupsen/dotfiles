@@ -286,7 +286,7 @@ set spell spelllang=en_ca
 Plug 'tpope/vim-rails', { 'for': 'ruby' }
 Plug 'junegunn/vim-emoji'
 " {{
-command! -range EmojiReplace <line1>,<line2>s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g
+command! -range Emoji <line1>,<line2>s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g
 " }}
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 " {{
@@ -480,12 +480,24 @@ function! ZettelkastenSetup()
   syn region mkdFootnotes matchgroup=mkdDelimiter start="\[\["    end="\]\]"
 
   inoremap <expr> <plug>(fzf-complete-path-custom) fzf#vim#complete#path("rg --files -t md \| sed 's/^/[[/g' \| sed 's/$/]]/'")
-  imap [[ <plug>(fzf-complete-path-custom)
+  imap <buffer> [[ <plug>(fzf-complete-path-custom)
 
-  inoremap <expr> <plug>(fzf-complete-tag) fzf#vim#complete#path("rg -o \"#[a-zA-Z0-9-_]\{3,\}\" -t md -N --no-filename \| sort \| uniq')
-  imap # <plug>(fzf-complete-tag) <esc>
+  function! s:CompleteTagsReducer(lines)
+    if len(a:lines) == 1
+      return "#" . a:lines[0]
+    else
+      return split(a:lines[1], '\t ')[1]
+    end
+  endfunction
+
+  inoremap <expr> <plug>(fzf-complete-tags) fzf#vim#complete(fzf#wrap({
+        \ 'source': 'bash -lc "zk-tags-raw"',
+        \ 'options': '--ansi --nth 2 --print-query --header "Enter without a selection creates new tag"',
+        \ 'reducer': function('<sid>CompleteTagsReducer')
+        \ }))
+  imap <buffer> # <plug>(fzf-complete-tags)
 
   " setlocal formatoptions+=a
-  imap -- —
+  imap <imap> -- —
 endfunction
-autocmd BufNew,BufRead ~/Documents/Zettelkasten/*.md call ZettelkastenSetup()
+autocmd BufNew,BufNewFile,BufRead ~/Documents/Zettelkasten/*.md call ZettelkastenSetup()
