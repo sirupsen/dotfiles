@@ -116,7 +116,7 @@ function! RipgrepFzf(query, fullscreen)
   call fzf#vim#grep(initial_command, 1, options, a:fullscreen)
 endfunction
 
-command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+" command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 " Completely use RG, don't use fzf's fuzzy-matching
 map <C-g> :RG<CR>
 map <Space>/ :execute 'Rg ' . expand('<cword>')<CR>
@@ -263,9 +263,10 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'chriskempson/base16-vim'
 Plug 'nickhutchinson/vim-systemtap'
 Plug 'plasticboy/vim-markdown'
-" {{{
+" {{
 let g:vim_markdown_folding_disabled = 1
-let g:vim_markdown_auto_insert_bullets = 1
+let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_auto_insert_bullets = 0
 
 " https://agilesysadmin.net/how-to-manage-long-lines-in-vim/
 autocmd FileType markdown setlocal spell
@@ -301,6 +302,7 @@ Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
 Plug 'fatih/vim-go', { 'for': 'go' }
 " {{
 let g:fzf_tags_command = 'ctags -R'
+let g:go_def_mapping_enabled = 0
 " }}
 Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
