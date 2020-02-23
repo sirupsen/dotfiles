@@ -116,7 +116,7 @@ function! RipgrepFzf(query, fullscreen)
   call fzf#vim#grep(initial_command, 1, options, a:fullscreen)
 endfunction
 
-" command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 " Completely use RG, don't use fzf's fuzzy-matching
 map <C-g> :RG<CR>
 map <Space>/ :execute 'Rg ' . expand('<cword>')<CR>
@@ -214,7 +214,7 @@ endfunction
 map <A-e> :call RunSomethingInTmux()<CR>
 
 " this is useful for debuggers etc
-command! CurrentBuffer :call VimuxSendText(bufname("%") . ":" . line("."))
+command! CurrentBuffer :call VimuxSendCommand(bufname("%") . ":" . line("."))
 map <Space>b :CurrentBuffer<CR>
 " }}}
 
@@ -261,12 +261,16 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-obsession'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'chriskempson/base16-vim'
-Plug 'nickhutchinson/vim-systemtap'
 Plug 'plasticboy/vim-markdown'
 " {{
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_new_list_item_indent = 0
-let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_auto_insert_bullets = 1
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_no_extensions_in_markdown = 1
+let g:vim_markdown_follow_anchor = 1
+let g:vim_markdown_strikethrough = 1
+let g:vim_markdown_autowrite = 1
 
 " https://agilesysadmin.net/how-to-manage-long-lines-in-vim/
 autocmd FileType markdown setlocal spell
@@ -315,6 +319,7 @@ Plug 'uarun/vim-protobuf'
 Plug 'leafgarland/typescript-vim'
 Plug 'jparise/vim-graphql'
 Plug 'racer-rust/vim-racer'
+Plug 'mmarchini/bpftrace.vim'
 Plug 'Shirk/vim-gas'
 
 call plug#end()
@@ -492,12 +497,25 @@ function! ZettelkastenSetup()
 
   inoremap <expr> <plug>(fzf-complete-tags) fzf#vim#complete(fzf#wrap({
         \ 'source': 'bash -lc "zk-tags-raw"',
-        \ 'options': '--ansi --nth 2 --print-query --header "Enter without a selection creates new tag"',
+        \ 'options': '--ansi --nth 2 --print-query --exact --header "Enter without a selection creates new tag"',
         \ 'reducer': function('<sid>CompleteTagsReducer')
         \ }))
   imap <buffer> # <plug>(fzf-complete-tags)
 
+
   " setlocal formatoptions+=a
   imap <imap> -- —
 endfunction
+
+function! InsertAfterTab(line)
+  " execute 'read !echo ' .. split(a:e[0], '\t')[1]
+  exe 'normal! i' .. split(a:line, '\t')[1]
+endfunction
+
+command! ZKR call fzf#run(fzf#wrap({
+        \ 'source': 'ruby scripts/tag-related.rb "' .. bufname("%") .. '"',
+        \ 'options': '--ansi --exact --nth 2',
+        \ 'sink':    function("InsertSecondColumn") " Don't know why I can't get FZF to return {2}
+      \}))
+
 autocmd BufNew,BufNewFile,BufRead ~/Documents/Zettelkasten/*.md call ZettelkastenSetup()

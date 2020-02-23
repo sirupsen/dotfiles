@@ -178,7 +178,7 @@ zk-search() {
   #   cp index.db $file
   fi
 
-  fzf --ansi --height 100% --preview 'ruby scripts/search2.rb -f {} {q} | bat --language md --style=plain --color always' \
+  fzf --ansi --height 100% --preview 'ruby --disable-gems scripts/search2.rb -f {} {q} | bat --language md --style=plain --color always' \
     --bind "ctrl-o:execute-silent@tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
             tmux send-keys -t \{left\} -l '\"'[[{}]]'\"' && \
             tmux send-keys -t \{left\} Enter@" \
@@ -187,7 +187,7 @@ zk-search() {
       tmux send-keys -t \{left\} -l {} && \
       tmux send-keys -t \{left\} Enter \
     ]" \
-    --bind "change:reload:ruby scripts/search2.rb '{q}'" \
+    --bind "change:reload:ruby --disable-gems scripts/search2.rb '{q}'" \
     --phony --preview-window=top:65% --no-info --no-multi
 }
 alias zks=zk-search

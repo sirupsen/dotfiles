@@ -5,6 +5,7 @@ GITHUB_REPO_REGEX = /https:\/\/github.com\/(?<org>[\w\._-]+)\/(?<project>[\w\._-
 SLASH_REGEX = /(?<org>[\w\._-]+)\/(?<project>[\w\._-]+)/
 FILE_REGEX = /\/blob\/(?<sha>\w+)\/(?<path>[\w\/\.-_]+)(#L?)?(?<line>\d+)?/
 
+local = ARGV.delete("-l")
 url = ARGV[0]
 
 match = url.match(GITHUB_REPO_REGEX)
@@ -33,4 +34,10 @@ new_window_commands = [
 
 new_window_commands = new_window_commands.compact.join(" && ")
 
-system("tmux new-window -c \"#{local_path}\" -n '#{match['project']}' \"bash --rcfile <(echo '. ~/.bashrc && #{new_window_commands}')\" \\; split-window -h -c \"#{local_path}\" \\; select-pane -t:.1")
+if local
+  system("tmux split-window -h -c \"#{local_path}\"")
+  system("#{new_window_commands}")
+  system("tmux select-pane -t:.1")
+else
+  system("tmux new-window -c \"#{local_path}\" -n '#{match['project']}' \"bash --rcfile <(echo '. ~/.bashrc && #{new_window_commands}')\" \\; split-window -h -c \"#{local_path}\" \\; select-pane -t:.1")
+end
