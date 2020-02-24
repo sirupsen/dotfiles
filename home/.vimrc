@@ -507,15 +507,16 @@ function! ZettelkastenSetup()
   imap <imap> -- —
 endfunction
 
-function! InsertAfterTab(line)
+" Don't know why I can't get FZF to return {2}
+function! InsertSecondColumn(line)
   " execute 'read !echo ' .. split(a:e[0], '\t')[1]
-  exe 'normal! i' .. split(a:line, '\t')[1]
+  exe 'normal! o' .. split(a:line, '\t')[1]
 endfunction
 
 command! ZKR call fzf#run(fzf#wrap({
         \ 'source': 'ruby scripts/tag-related.rb "' .. bufname("%") .. '"',
         \ 'options': '--ansi --exact --nth 2',
-        \ 'sink':    function("InsertSecondColumn") " Don't know why I can't get FZF to return {2}
+        \ 'sink':    function("InsertSecondColumn")
       \}))
 
 autocmd BufNew,BufNewFile,BufRead ~/Documents/Zettelkasten/*.md call ZettelkastenSetup()
