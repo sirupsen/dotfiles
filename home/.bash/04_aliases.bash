@@ -109,7 +109,12 @@ refreshsystem() {
   vim +PlugUpdate +qall
 
   brew update
-  brew upgrade fzf neovim bash tmux ripgrep git ctags fd go curl wireguard-go wireguard-tools
+  brew upgrade fzf neovim bash tmux ripgrep git ctags \
+    fd go curl wireguard-go wireguard-tools redis ruby-install \
+    mysql youtube-dl curl cmake docker gdb wget universal-ctags \
+    lua luajit markdown gh hub htop reattach-to-user-namespace \
+    jq sqlite kubernetes-cli wrk hugo htop
+
   rustup update
 }
 
@@ -174,11 +179,9 @@ zk-search() {
   local file="backup/$(date "+%Y-%m-%d")-index.db"
   if [[ ! -f  $file ]]; then
     cp index.db $file
-  # elif ( `gstat --format=%Y $file` -le `date "+%s"` - 60 ); then 
-  #   cp index.db $file
   fi
 
-  fzf --ansi --height 100% --preview 'ruby --disable-gems scripts/search2.rb -f {} {q} | bat --language md --style=plain --color always' \
+  fzf --ansi --height 100% --preview 'ruby ~/.bin/fts-search.rb -f {} {q} | bat --language md --style=plain --color always' \
     --bind "ctrl-o:execute-silent@tmux send-keys -t \{left\} Escape :read Space ! Space echo Space && \
             tmux send-keys -t \{left\} -l '\"'[[{}]]'\"' && \
             tmux send-keys -t \{left\} Enter@" \
@@ -187,7 +190,7 @@ zk-search() {
       tmux send-keys -t \{left\} -l {} && \
       tmux send-keys -t \{left\} Enter \
     ]" \
-    --bind "change:reload:ruby --disable-gems scripts/search2.rb '{q}'" \
+    --bind "change:reload:ruby ~/.bin/fts-search.rb '{q}'" \
     --phony --preview-window=top:65% --no-info --no-multi
 }
 alias zks=zk-search

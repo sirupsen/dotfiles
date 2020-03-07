@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+all_tags = {}
+
+Dir["*.md"].each do |file|
+  content = File.read(file)
+  file_tags = content.scan(/#[\w-]+/)
+  file_tags.each do |file_tag|
+    all_tags[file_tag] ||= []
+    all_tags[file_tag] += file_tags
+  end
+end
+
+all_tags = Hash[all_tags.map { |(tag, related)|
+  related = Hash[related.group_by { |e| e }.map { |(k, tags)|
+      [k, tags.size]
+    }.sort_by { |(_k, count)| -count }]
+
+  related.delete(tag)
+  related.delete("#notes-permanent")
+  related.delete("#import-dynalist")
+  related.delete("#zettelkasten")
+  related.delete("#zettelkasten-import")
+  related.reject! { |e| e.size <= 3 }
+
+  [tag, related]
+}]
+
+graph = ARGV.delete("--graph")
+tags_and_files = ARGV.dup
+raise "pass one or more tag or file" if !graph && tags_and_files.empty?
+
+tags = tags_and_files.flat_map do |tag_or_file|
+  if tag_or_file.end_with?(".md")
+    content = File.read(tag_or_file)
+    content.scan(/#[\w-]+/)
+  else
+    tag_or_file.start_with?("#") ? tag_or_file : "##{tag_or_file}"
+  end
+end
+
+if graph
+  File.open("graph.dot", "w+") do |f|
+    f.write "digraph G {\n"
+    all_tags.first(10).each do |(tag, connections)|
+      connections.each do |(connection, count)|
+        f.write "  #{tag[1..-1].gsub("-", "_")} -> #{connection[1..-1].gsub("-", "_")} [weight=#{count}];\n"
+      end
+    end
+    f.write "}\n"
+  end
+else
+  composite = {}
+  tags.each do |tag|
+    all_tags[tag].each do |(k, v)|
+      if composite[k]
+        composite[k] += v
+      else
+        composite[k] = v
+      end
+    end
+  end
+  composite = composite.sort_by { |(_k, v)| -v }
+  composite.take(10).each do |(tag, n)|
+    puts "#{n}\t#{tag}"
+  end
+end

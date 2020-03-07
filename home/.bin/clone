@@ -20,7 +20,7 @@ if file_match
 end
 
 local_path = File.expand_path("~/src/github.com/#{match['org']}/#{match['project']}")
-remote_url = "git@github.com:#{match['org']}/#{match['project']}"
+remote_url = "git@github.com:#{match['org']}/#{match['project']}.git"
 
 unless Dir.exists?(local_path)
   system("git clone #{remote_url} #{local_path}")

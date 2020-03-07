@@ -72,6 +72,7 @@ endfunction
 nmap K :call LookupDocs()<cr>
 " }}}
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'bouk/deoplete-markdown-links'
 Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
 " {{{
 let g:deoplete#enable_at_startup = 1
@@ -330,6 +331,7 @@ call deoplete#custom#option({
 \ 'prev_completion_mode': "prev_completion_mode",
 \ 'sources': {
 \   '_': ['tabnine'],
+\   'markdown': ['markdown_links', 'markdown_tags']
 \ }
 \ })
 
@@ -482,29 +484,28 @@ endfunction
 command! -nargs=* Note call Note(<f-args>)
 
 function! ZettelkastenSetup()
-  syn region mkdFootnotes matchgroup=mkdDelimiter start="\[\["    end="\]\]"
+  " syn region mkdFootnotes matchgroup=mkdDelimiter start="\[\["    end="\]\]"
 
-  inoremap <expr> <plug>(fzf-complete-path-custom) fzf#vim#complete#path("rg --files -t md \| sed 's/^/[[/g' \| sed 's/$/]]/'")
-  imap <buffer> [[ <plug>(fzf-complete-path-custom)
+  " inoremap <expr> <plug>(fzf-complete-path-custom) fzf#vim#complete#path("rg --files -t md \| sed 's/^/[[/g' \| sed 's/$/]]/'")
+  " imap <buffer> [[ <plug>(fzf-complete-path-custom)
 
-  function! s:CompleteTagsReducer(lines)
-    if len(a:lines) == 1
-      return "#" . a:lines[0]
-    else
-      return split(a:lines[1], '\t ')[1]
-    end
-  endfunction
+  " function! s:CompleteTagsReducer(lines)
+  "   if len(a:lines) == 1
+  "     return "#" . a:lines[0]
+  "   else
+  "     return split(a:lines[1], '\t ')[1]
+  "   end
+  " endfunction
 
-  inoremap <expr> <plug>(fzf-complete-tags) fzf#vim#complete(fzf#wrap({
-        \ 'source': 'bash -lc "zk-tags-raw"',
-        \ 'options': '--ansi --nth 2 --print-query --exact --header "Enter without a selection creates new tag"',
-        \ 'reducer': function('<sid>CompleteTagsReducer')
-        \ }))
-  imap <buffer> # <plug>(fzf-complete-tags)
-
+  " inoremap <expr> <plug>(fzf-complete-tags) fzf#vim#complete(fzf#wrap({
+  "       \ 'source': 'bash -lc "zk-tags-raw"',
+  "       \ 'options': '--ansi --nth 2 --print-query --exact --header "Enter without a selection creates new tag"',
+  "       \ 'reducer': function('<sid>CompleteTagsReducer')
+  "       \ }))
+  " imap <buffer> # <plug>(fzf-complete-tags)
 
   " setlocal formatoptions+=a
-  imap <imap> -- —
+  " imap <imap> -- —
 endfunction
 
 " Don't know why I can't get FZF to return {2}
