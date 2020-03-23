@@ -5,6 +5,7 @@ filetype off
 set encoding=utf-8
 set history=1000  " Keep more history, default is 20
 set mouse=v " Allow copy-pasting
+set mmp=5000 " Some files need more memory for syntax highlight
 
 set statusline=
 set statusline+=%f:%l:%c\ %m
@@ -72,7 +73,7 @@ endfunction
 nmap K :call LookupDocs()<cr>
 " }}}
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'bouk/deoplete-markdown-links'
+" Plug 'bouk/deoplete-markdown-links'
 Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
 " {{{
 let g:deoplete#enable_at_startup = 1
@@ -215,7 +216,7 @@ endfunction
 map <A-e> :call RunSomethingInTmux()<CR>
 
 " this is useful for debuggers etc
-command! CurrentBuffer :call VimuxSendCommand(bufname("%") . ":" . line("."))
+command! CurrentBuffer :call VimuxRunCommand(bufname("%") . ":" . line("."))
 map <Space>b :CurrentBuffer<CR>
 " }}}
 
@@ -262,7 +263,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-obsession'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'chriskempson/base16-vim'
-Plug 'plasticboy/vim-markdown'
+Plug 'bouk/vim-markdown', { 'branch': 'wikilinks' }
 " {{
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_new_list_item_indent = 0
@@ -486,23 +487,23 @@ command! -nargs=* Note call Note(<f-args>)
 function! ZettelkastenSetup()
   " syn region mkdFootnotes matchgroup=mkdDelimiter start="\[\["    end="\]\]"
 
-  " inoremap <expr> <plug>(fzf-complete-path-custom) fzf#vim#complete#path("rg --files -t md \| sed 's/^/[[/g' \| sed 's/$/]]/'")
-  " imap <buffer> [[ <plug>(fzf-complete-path-custom)
+  inoremap <expr> <plug>(fzf-complete-path-custom) fzf#vim#complete#path("rg --files -t md \| sed 's/^/[[/g' \| sed 's/$/]]/'")
+  imap <buffer> [[ <plug>(fzf-complete-path-custom)
 
-  " function! s:CompleteTagsReducer(lines)
-  "   if len(a:lines) == 1
-  "     return "#" . a:lines[0]
-  "   else
-  "     return split(a:lines[1], '\t ')[1]
-  "   end
-  " endfunction
+  function! s:CompleteTagsReducer(lines)
+    if len(a:lines) == 1
+      return "#" . a:lines[0]
+    else
+      return split(a:lines[1], '\t ')[1]
+    end
+  endfunction
 
-  " inoremap <expr> <plug>(fzf-complete-tags) fzf#vim#complete(fzf#wrap({
-  "       \ 'source': 'bash -lc "zk-tags-raw"',
-  "       \ 'options': '--ansi --nth 2 --print-query --exact --header "Enter without a selection creates new tag"',
-  "       \ 'reducer': function('<sid>CompleteTagsReducer')
-  "       \ }))
-  " imap <buffer> # <plug>(fzf-complete-tags)
+  inoremap <expr> <plug>(fzf-complete-tags) fzf#vim#complete(fzf#wrap({
+        \ 'source': 'bash -lc "zk-tags-raw"',
+        \ 'options': '--ansi --nth 2 --print-query --exact --header "Enter without a selection creates new tag"',
+        \ 'reducer': function('<sid>CompleteTagsReducer')
+        \ }))
+  imap <buffer> # <plug>(fzf-complete-tags)
 
   " setlocal formatoptions+=a
   " imap <imap> -- —
@@ -515,7 +516,7 @@ function! InsertSecondColumn(line)
 endfunction
 
 command! ZKR call fzf#run(fzf#wrap({
-        \ 'source': 'ruby scripts/tag-related.rb "' .. bufname("%") .. '"',
+        \ 'source': 'ruby ~/.bin/zk-related.rb "' .. bufname("%") .. '"',
         \ 'options': '--ansi --exact --nth 2',
         \ 'sink':    function("InsertSecondColumn")
       \}))

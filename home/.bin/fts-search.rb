@@ -33,7 +33,8 @@ existing = {}
 raw_existing = db.execute("SELECT title, mtime FROM zettelkasten")
 raw_existing.each { |(title, mtime)| existing[title] = mtime.to_i }
 
-Dir["*.md"].each do |path|
+directories = Dir["*.md"] + Dir["highlights/*.md"]
+directories.each do |path|
   mtime = File.stat(path).mtime.to_i
 
   # Any file that's been modified since its entry in the full-text search index
@@ -78,9 +79,7 @@ if file_cat
     SQL
   end
 elsif ARGV[0]
-  # Ideally we'd use the search to also `cat` instead of using `bat`, in order
-  # to provide highlighting within the document.
-  results = db.execute(<<-SQL, ARGV.join(" "))
+  results = db.execute(<<-SQL, ARGV.join(" ").gsub(/-_/, ' '))
     SELECT rank, highlight(zettelkasten, 0, '\x1b[0;41m', '\x1b[0m'), tags
       FROM zettelkasten WHERE zettelkasten MATCH ? ORDER BY rank;
   SQL

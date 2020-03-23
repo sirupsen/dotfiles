@@ -33,6 +33,8 @@ when (0.15...0.2)
   open_url "things:///show?query=Zettelkasten to Readwise"
 when (0.2...0.25)
   open_url "https://memoryleague.com/#!/train"
+when (0.25...0.30)
+  open_url "https://ourworldindata.org/charts"
 when (0.25..1.0)
   open_url(urls.first)
 end

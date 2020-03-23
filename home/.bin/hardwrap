@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# Convert 80-space documents into line-wrapped.
+
+if ARGV.empty?
+  body = STDIN.read
+else
+  body = File.read(ARGV[0])
+end
+
+body.gsub!("\n\n", "PARAGRAPH")
+body.gsub!("\n", " ")
+body.gsub!("PARAGRAPH", "\n\n")
+
+puts body
