@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
-all_tags = {}
 
+# Crate a hash with all tags, their counts, and tags they relate to
+all_tags = {}
 Dir["*.md"].each do |file|
   content = File.read(file)
   file_tags = content.scan(/#[\w-]+/)
@@ -9,7 +10,6 @@ Dir["*.md"].each do |file|
     all_tags[file_tag] += file_tags
   end
 end
-
 all_tags = Hash[all_tags.map { |(tag, related)|
   related = Hash[related.group_by { |e| e }.map { |(k, tags)|
       [k, tags.size]
@@ -25,31 +25,70 @@ all_tags = Hash[all_tags.map { |(tag, related)|
   [tag, related]
 }]
 
-graph = ARGV.delete("--graph")
+recurse = ARGV.delete("-r")
+# Get the list of files and tags, then merge together all the counts
 tags_and_files = ARGV.dup
-raise "pass one or more tag or file" if !graph && tags_and_files.empty?
+raise "pass one or more tag or file" if tags_and_files.empty?
 
-tags = tags_and_files.flat_map do |tag_or_file|
-  if tag_or_file.end_with?(".md")
-    content = File.read(tag_or_file)
-    content.scan(/#[\w-]+/)
-  else
-    tag_or_file.start_with?("#") ? tag_or_file : "##{tag_or_file}"
+if recurse
+  def recurse(file, depth = 0, visited = {})
+    visited[file] = file
+    return unless File.exists?(file)
+    content = File.read(file)
+    tags = content.scan(/#[\w-]+/)
+    links = content.scan(/\[\[(.+?)\]\]+/)
+
+    padding = "  " * depth
+    puts padding + "\x1b[31m" + file
+
+    tags.each do |tag|
+      puts padding + "  \x1b[34m" + tag
+    end
+    puts
+
+    links.each do |(link)|
+      recurse(link, depth + 1, visited) unless visited[link]
+    end
   end
-end
 
-if graph
-  File.open("graph.dot", "w+") do |f|
-    f.write "digraph G {\n"
-    all_tags.first(10).each do |(tag, connections)|
-      connections.each do |(connection, count)|
-        f.write "  #{tag[1..-1].gsub("-", "_")} -> #{connection[1..-1].gsub("-", "_")} [weight=#{count}];\n"
+  recurse(tags_and_files[0])
+else
+  tags = tags_and_files.flat_map do |tag_or_file|
+    if tag_or_file.end_with?(".md")
+      content = File.read(tag_or_file)
+      content.scan(/#[\w-]+/)
+    else
+      tag_or_file.start_with?("#") ? tag_or_file : "##{tag_or_file}"
+    end
+  end
+
+  composite = {}
+  related_files = tags_and_files.flat_map do |tag_or_file|
+    if tag_or_file.end_with?(".md")
+      file = tag_or_file
+      content = File.read(tag_or_file)
+      linked_files = content.scan(/\[\[(.+?)\]\]+/)
+
+      composite[file] = 1
+
+      # Only depth = 1 for now, allow deeper!
+      linked_files.each do |(linked_file)|
+        linked_file_content = File.read(linked_file)
+        linked_file_tags = linked_file_content.scan(/#[\w-]+/)
+        linked_file_links = linked_file_content.scan(/\[\[(.+?)\]\]+/) + [linked_file]
+
+        linked_file_links.each do |(link)|
+          # tag += linked_file_tags
+          if composite[link]
+            composite[link] += 1
+          else
+            composite[link] = 1
+          end
+        end
       end
     end
-    f.write "}\n"
   end
-else
-  composite = {}
+
   tags.each do |tag|
     all_tags[tag].each do |(k, v)|
       if composite[k]
@@ -59,8 +98,9 @@ else
       end
     end
   end
+
   composite = composite.sort_by { |(_k, v)| -v }
-  composite.take(10).each do |(tag, n)|
+  composite.each do |(tag, n)|
     puts "#{n}\t#{tag}"
   end
 end
