@@ -92,6 +92,8 @@ Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 " {{{
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+let g:fzf_preview_window = ''
+let g:fzf_tags_command = 'bash -c "build-ctags"'
 
 function! FzfSpellSink(word)
   exe 'normal! "_ciw'.a:word
@@ -103,8 +105,6 @@ function! FzfSpell()
 endfunction
 
 nnoremap z= :call FzfSpell()<CR>
-
-let g:fzf_tags_command = 'bash -c "build-ctags"'
 
 let g:fzf_history_dir = '~/.fzf-history'
 function! RipgrepFzf(query, fullscreen)
