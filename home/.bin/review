@@ -198,7 +198,7 @@ if options.refresh
 end
 
 if options.tmux
-  system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile <(echo '. ~/.bashrc && review -r #{ARGV[0]}')\" \\; split-window -h -c \"#{repo_path}\" \"bash --rcfile <(echo '. ~/.bashrc && dev up')\"")
+  system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review -r #{ARGV[0]}')\" \\; split-window -h -c \"#{repo_path}\" \"bash --login --rcfile <(echo '. ~/.bashrc && dev up')\"")
 else
   system("dev up") if options.dev_up
   vim_command = "nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{review_diff})"
