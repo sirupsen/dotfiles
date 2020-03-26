@@ -231,7 +231,7 @@ remarkable() {
 
 # if it's a big project you'll want to build this yourself.
 file-list-tags() {
-  rg --sort path --files --glob '!target' > .file_list_tags
+  rg --sort path --files --glob '!target' --glob '!vendor' > .file_list_tags
 }
 
 cscope-build() {

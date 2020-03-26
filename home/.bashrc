@@ -30,7 +30,8 @@ export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin \
   ]\""
 
 # We depend on this in .vimrc too for file listing.
-export FZF_DEFAULT_COMMAND="rg --files --follow --hidden --glob '!.git/*' --glob '!sorbet/**' --glob '!tags'"
+export FZF_DEFAULT_COMMAND="rg --files --follow --hidden --glob '!.git/*' --glob \
+  '!sorbet/**' --glob '!tags' --glob '!yarn.lock' --glob '!package.json'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export GOPATH=$HOME
 

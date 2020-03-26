@@ -24,15 +24,6 @@
   fix = "!f() { ${EDITOR} `git diff --name-only`; }; f"
 [diff]
 	algorithm = patience
-[protocol]
-	version = 2
-[credential]
-	helper = osxkeychain
-[url "https://github.com/Shopify/"]
-	insteadOf = git@github.com:Shopify/
-	insteadOf = git@github.com:shopify/
-	insteadOf = ssh://git@github.com/Shopify/
-	insteadOf = ssh://git@github.com/shopify/
 [core]
 	commitGraph = true
 	excludesfile = /Users/personal/.global_gitignore
@@ -40,3 +31,10 @@
 	writeCommitGraph = true
 [credential]
 	helper = store --file /opt/dev/var/private/git_credential_store
+[protocol]
+	version = 2
+[url "https://github.com/Shopify/"]
+	insteadOf = git@github.com:Shopify/
+	insteadOf = git@github.com:shopify/
+	insteadOf = ssh://git@github.com/Shopify/
+	insteadOf = ssh://git@github.com/shopify/

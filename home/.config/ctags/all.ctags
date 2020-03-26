@@ -22,3 +22,5 @@
 --languages=-sql
 
 --extras=+q
+
+--map-TypeScript=+.tsx
