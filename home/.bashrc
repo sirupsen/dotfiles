@@ -49,8 +49,11 @@ if [[ $(whoami) == 'personal' ]]; then
   source /usr/local/share/chruby/chruby.sh
 fi
 
-if ! git --git-dir="$(z -e dotfiles)/.git" --work-tree="$(z -e dotfiles)" diff --quiet --exit-code; then
-  echo -e "\x1b[33mDotfiles have uncomitted changes.\x1b[0m"
+# interactive
+if [[ $- == *i* ]]; then
+  if ! git --git-dir="$(z -e dotfiles)/.git" --work-tree="$(z -e dotfiles)" diff --quiet --exit-code; then
+    echo -e "\x1b[33mDotfiles have uncomitted changes.\x1b[0m"
+  fi
 fi
 
 # cloudplatform: add Shopify clusters to your local kubernetes config
