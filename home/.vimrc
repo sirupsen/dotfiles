@@ -271,6 +271,7 @@ Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
 Plug 'fatih/vim-go', { 'for': 'go' }
 " {{
 let g:go_def_mapping_enabled = 0
+let g:go_fmt_fail_silently = 1
 " }}
 Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }

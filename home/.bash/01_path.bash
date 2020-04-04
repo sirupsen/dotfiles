@@ -20,5 +20,5 @@ fi
 
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/.yarn/bin"
-
 export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+export PATH="${PATH}:${HOME}/.krew/bin"

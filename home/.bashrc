@@ -49,6 +49,10 @@ if [[ $(whoami) == 'personal' ]]; then
   source /usr/local/share/chruby/chruby.sh
 fi
 
+if ! git --git-dir="$(z -e dotfiles)/.git" diff --quiet; then
+  echo -e "\x1b[33mDotfiles have uncomitted changes.\x1b[0m"
+fi
+
 # cloudplatform: add Shopify clusters to your local kubernetes config
 export KUBECONFIG=/Users/$(whoami)/.kube/config:/Users/$(whoami)/.kube/config.shopify.cloudplatform
 for file in /Users/simoneskildsen/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
