@@ -490,38 +490,39 @@ autocmd BufNew,BufNewFile,BufRead ~/Documents/Zettelkasten/*.md call Zettelkaste
 map \d :put =strftime(\"%Y-%m-%d\")<CR>
 
 function! LookupDocs()
+  let browser = "/Applications/Firefox.app/Contents/MacOS/firefox --new-tab "
+
   if &filetype ==# 'c' || &filetype ==# 'cpp'
-    call system("open 'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
+    call system(browser "'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
   elseif &filetype ==# 'markdown'
-    call system("chrome-cli open https://google.com/search?q=define%20" . expand('<cword>'))
+    call system(browser . "'https://google.com/search?q=define%20" . expand('<cword>') . "'")
   elseif &filetype ==# 'rust'
     let crate_link = "file:///" . getcwd() . "/target/doc/settings.html?search=" . expand('<cword>')
     let stdlib_link = 'https://doc.rust-lang.org/std/?search=' . expand('<cword>')
 
-    let stdlib_tab = trim(system("chrome-cli list links | grep 'doc.rust-lang.org' | grep -oE '[0-9]+'"))
-    let crate_tab = trim(system("chrome-cli list links | grep '" . getcwd() . "' | grep -oE '[0-9]+'"))
-    let active_tab = trim(system("chrome-cli info | grep -Eo '\d+' | head -n1"))
+    " let stdlib_tab = trim(system("chrome-cli list links | grep 'doc.rust-lang.org' | grep -oE '[0-9]+'"))
+    " let crate_tab = trim(system("chrome-cli list links | grep '" . getcwd() . "' | grep -oE '[0-9]+'"))
+    " let active_tab = trim(system("chrome-cli info | grep -Eo '\d+' | head -n1"))
 
-    if stdlib_tab
-      call system("chrome-cli open " . stdlib_link . " -t " . stdlib_tab)
-    else
-      call system("chrome-cli open " . stdlib_link)
-    end
+    " if stdlib_tab
+    "   call system("chrome-cli open " . stdlib_link . " -t " . stdlib_tab)
+    " else
+      " call system(browser . stdlib_link)
+    " end
 
-    if crate_tab
-      call system("chrome-cli open " . crate_link . " -t " . crate_tab)
-      if active_tab != stdlib_tab && active_tab != crate_tab
-        call system("chrome-cli activate -t " . crate_tab)
-      end
-    else
-      call VimuxRunCommand("cargo doc &")
-      call system("chrome-cli open " . crate_link)
-    end
+    " if crate_tab
+      " call system(browser . " " . crate_link . " -t " . crate_tab)
+      " if active_tab != stdlib_tab && active_tab != crate_tab
+      "   call system("chrome-cli activate -t " . crate_tab)
+      " end
+    " else
+      " call VimuxRunCommand("cargo doc &")
+    call system(browser . crate_link)
   elseif &filetype ==# 'ruby'
     " could prob make this use ri(1)
-    call system("chrome-cli open https://ruby-doc.com/search.html?q=" . expand('<cword>'))
+    call system(browser . "https://ruby-doc.com/search.html?q=" . expand('<cword>'))
   else
-    call system("chrome-cli open https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
+    call system(browser . "https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
   endif
 endfunction
 

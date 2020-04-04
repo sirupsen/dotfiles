@@ -33,6 +33,8 @@
 	helper = store --file /opt/dev/var/private/git_credential_store
 [protocol]
 	version = 2
+[web]
+    browser = /Applications/Firefox.app/Contents/MacOS/firefox --new-tab
 [url "https://github.com/Shopify/"]
 	insteadOf = git@github.com:Shopify/
 	insteadOf = git@github.com:shopify/
