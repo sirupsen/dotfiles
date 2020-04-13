@@ -247,7 +247,7 @@ ctags-build() {
     ripper-tags -R -L .file_list_tags -f tags --extra=q
   else
     file-list-tags
-    ctags -f tags -L .file_list_tags
+    ctags -f tags -L .file_list_tags --extras=q --sort=yes
   fi
 }
 
@@ -266,4 +266,9 @@ manf() {
 
 zk-uniq() {
   rg --files -t md | rg -o "\A\d+" | sort | uniq -c | sort
+}
+
+scratch() {
+  ln -fs "$HOME/Documents/Zettelkasten/scratch.md" ~/scratch.md
+  nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/scratch.md"
 }

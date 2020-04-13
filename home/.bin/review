@@ -5,10 +5,11 @@ require "net/http"
 require 'json'
 
 options = OpenStruct.new(
-  base: "origin/master",
+  base: "master",
   dev_up: false,
   chrome: false,
   refresh: true,
+  noop: false,
   open: true,
   tmux: false,
 )
@@ -16,7 +17,7 @@ options = OpenStruct.new(
 GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/pull\/(\d+)/
 GITHUB_COMPARE_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/compare\/([\w_-]+)/
 
-REMOTE_BRANCH_SPLIT = /[:|\/]/
+REMOTE_BRANCH_SPLIT = /:/
 
 # TODO: In order to change directory of the parent-shell, we need to make
 # .bin/review a shell script that calls .bin/review-rb. For the most part, it
@@ -31,19 +32,28 @@ def ensure_in_right_directory(org, repo)
   end
 end
 
-def remote_branch(string)
-  return ['origin', string] unless string =~ REMOTE_BRANCH_SPLIT
-  remote_suggested_name, remote_branch = string.split(REMOTE_BRANCH_SPLIT)
+def ensure_remote(remote)
+  unless `git remote`[remote]
+    repo_git = "git@github.com:#{remote}/#{repo}"
+    `git remote add #{remote.inspect} #{repo_git}`
+  end
+end
 
+
+# TODO: Support separate origins.
+def remote_branch(string)
   # This is when a URL is passed and you get something like Shopify/shopify, but
   # you really want origin--but you also want to support forks. The more elegant
   # solution to this is probably we can in the API see if a repo is the "root",
   # which is what we're effectively doing here.
-  if `git remote -v | grep origin` =~ /github\.com:#{remote_suggested_name}/i
-    ['origin', remote_branch]
-  else
-    [remote_suggested_name, remote_branch]
+  origin_remote = `git remote -v | grep origin`
+  if origin_remote =~ /github\.com(:|\/)#{string.split("/").first}/i
+    return ['origin', string.split("/")[1..-1].join("/")]
   end
+
+  return ['origin', string] unless string =~ REMOTE_BRANCH_SPLIT
+  remote_suggested_name, remote_branch = string.split(REMOTE_BRANCH_SPLIT)
+  [remote_suggested_name, remote_branch]
 end
 
 def repo
@@ -52,13 +62,6 @@ end
 
 def repo_path
   `git rev-parse --show-toplevel`.strip
-end
-
-def ensure_remote(remote)
-  unless `git remote`[remote]
-    repo_git = "git@github.com:#{remote}/#{repo}"
-    `git remote add #{remote.inspect} #{repo_git}`
-  end
 end
 
 def pull(branch, remote)
@@ -153,6 +156,10 @@ OptionParser.new { |opts|
     options.chrome = true
   end
 
+  opts.on("", "--noop", "Don't do anything, just show what you would do") do |val|
+    options.noop = true
+  end
+
   opts.on("-r", "--no-refresh", "Don't fetch latest upstream changes (default: yes)") do
     options.refresh = false
   end
@@ -181,7 +188,8 @@ target_remote, target_branch = remote_branch(remote)
 review_diff = "#{base_remote}/#{base_branch}...#{target_remote}/#{target_branch}"
 
 unless options.changed_files
-  $stderr.puts "Reviewing #{review_diff}"
+  $stderr.puts "\x1b[33mReviewing #{review_diff}\x1b[0m"
+  exit 0 if options.noop
 end
 
 ensure_in_right_directory(org, repo) if org

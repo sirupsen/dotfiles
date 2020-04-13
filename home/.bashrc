@@ -28,7 +28,6 @@ export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin \
     tmux send-keys -t \{left\} -l \\\"{}\\\" && \
     tmux send-keys -t \{left\} Enter \
   ]\""
-
 # We depend on this in .vimrc too for file listing.
 export FZF_DEFAULT_COMMAND="rg --files --follow --hidden --glob '!.git/*' --glob \
   '!sorbet/**' --glob '!tags' --glob '!yarn.lock' --glob '!package.json'"

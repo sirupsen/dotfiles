@@ -7,33 +7,29 @@ set history=1000  " Keep more history, default is 20
 set mouse=v " Allow copy-pasting
 set mmp=5000 " Some files need more memory for syntax highlight
 
+" <cword> then includes - as part of the word
+set iskeyword+=-
+
 set statusline=
 set statusline+=%f:%l:%c\ %m
 set statusline+=%{tagbar#currenttag('\ [%s]\ ','','')}
 set statusline+=%=
 set statusline+=%{FugitiveStatusline()}
 
+let g:asyncrun_status = "stopped"
+augroup QuickfixStatus
+	au! BufWinEnter quickfix setlocal 
+		\ statusline+=%t\ [%{g:asyncrun_status}]\ %{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%-15(%l,%c%V%)\ %P
+augroup END
+
 call plug#begin('~/.config/nvim/plugged')
 
-Plug 'hari-rangarajan/CCTree'
-" {{
-function LoadCscopeDB()
-  if filereadable('cscope.out')
-    cscope add cscope.out
-  endif
-endfunction
-au VimEnter * call LoadCscopeDB()
-let g:CCTreeSplitProg = 'gsplit'
-set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
-
-" }}
 Plug 'majutsushi/tagbar'
 " {{{
 nmap \l :TagbarToggle<CR>
 map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 let g:tagbar_compact = 1
 let g:tagbar_indent = 1
-" }}}
 " }}}
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " Plug 'bouk/deoplete-markdown-links'
@@ -54,8 +50,12 @@ endfunction"}}}
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
 Plug 'junegunn/fzf.vim'
 " {{{
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
-let g:fzf_preview_window = ''
+if exists('$TMUX')
+  let g:fzf_layout = { 'tmux': '-p90%,60%' }
+else
+  let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+endif
+let g:fzf_preview_window = 'right:50%'
 let g:fzf_tags_command = 'bash -c "build-ctags"'
 
 function! FzfSpellSink(word)
@@ -92,12 +92,11 @@ map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
 " map <Space>/ :execute 'RG ' . input('Rg/', expand('<cword>'))<CR>
 
 command! -bang -nargs=? -complete=dir Files
-    \ call fzf#vim#files(<q-args>, {'options': ['--tiebreak=begin']}, <bang>0)
+    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--tiebreak=begin']}), <bang>0)
 map <C-t> :Files<CR>
 
 map <C-j> :Buffers<CR>
 map <A-c> :Commands<CR>
-
 map <C-l> :Tags<CR>
 map <Space>l :call fzf#vim#tags(expand('<cword>'))<CR>
 map <A-l> :BTags<CR>
@@ -179,10 +178,14 @@ endfunction
 map <A-e> :call RunSomethingInTmux()<CR>
 
 " this is useful for debuggers etc
-command! CurrentBuffer :call VimuxRunCommand(bufname("%") . ":" . line("."))
-map <Space>b :CurrentBuffer<CR>
+map <Space>b :call VimuxRunCommand(bufname("%") . ":" . line("."), 0)<CR>
+map !b :call VimuxRunCommand(bufname("%") . ":" . line("."), 1)<CR>
 " }}}
-
+Plug 'skywind3000/asyncrun.vim'
+" {{{
+let g:asyncrun_open = 0 " Never open the quickfix for me
+map !l :AsyncRun bash -lc 'ctags-build'<CR>
+" }}}
 Plug 'airblade/vim-gitgutter'
 " {{{
 nmap [h <Plug>(GitGutterPrevHunk)
@@ -196,19 +199,39 @@ map \t :NERDTreeToggle<CR>
 " }}}
 Plug 'w0rp/ale'
 " {{{
+let g:ale_sign_error = "✗"
+let g:ale_sign_warning = "⚠"
 let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
-let g:ale_fixers = {'rust': ['rustfmt'], 'ruby': ['bundle exec rubocop -a']}
+let g:ale_fixers = {
+      \'rust': ['rustfmt'],
+      \'ruby': ['bundle exec rubocop -a'],
+      \'go': ['gofmt'],
+      \'typescript': ['remove_trailing_lines', 'trim_whitespace', 'xo']
+    \}
+" Note that many of these have to be installed first!
+let g:ale_linters = {
+      \'javascript': [''],
+      \'typescript': ['tsserver', 'xo', 'tslint'],
+      \'go': ['gopls'],
+      \'rust': ['rls'],
+      \}
 let g:ale_lint_delay = 1000
 let g:ale_ruby_rubocop_executable = 'bundle'
 let g:ale_rust_cargo_check_tests = 1
 let g:ale_rust_cargo_check_examples = 1
+
+" Let's require everything to be explicit, because this is always a nightmare in
+" new files.
+let g:ale_linters_explicit = 1
+
+let g:ale_rust_rls_toolchain = 'stable'
 
 let g:ale_set_highlights = 0 " signs are enough
 let g:ale_cursor_detail = 0
 let g:ale_close_preview_on_insert = 1
 
 map <leader>f :ALEFix<CR>
-command! Style :call VimuxRunCommand("dev style")<CR>
+map !f :call VimuxRunCommand("dev style")<CR>
 map [a :ALEPrevious<CR>
 map ]a :ALENext<CR>
 " }}}
@@ -272,6 +295,7 @@ Plug 'fatih/vim-go', { 'for': 'go' }
 " {{
 let g:go_def_mapping_enabled = 0
 let g:go_fmt_fail_silently = 1
+let g:go_gopls_enabled = 0 " using ale
 " }}
 Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
@@ -282,6 +306,7 @@ let g:rust_recommended_style = 1
 Plug 'cespare/vim-toml', { 'for': 'toml' }
 Plug 'uarun/vim-protobuf'
 Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 Plug 'jparise/vim-graphql'
 Plug 'racer-rust/vim-racer'
 Plug 'mmarchini/bpftrace.vim'
@@ -316,6 +341,7 @@ filetype plugin indent on " Enable after Vundle loaded, #dunnolol
 set backupskip=/tmp/*,/private/tmp/* "
 set undodir=~/.vim/undo
 set noswapfile
+set nowritebackup
 set nobackup
 set wildignore+=.git/**,public/assets/**,log/**,tmp/**,Cellar/**,app/assets/images/**,_site/**,home/.vim/bundle/**,pkg/**,**/.gitkeep,**/.DS_Store,**/*.netrw*,node_modules/*
 
@@ -383,7 +409,7 @@ nnoremap <leader>r :call RenameFile()<cr>
 
 au BufNewFile,BufRead *.ejson set filetype=json
 au BufNewFile,BufRead *.s set filetype=gas
-au BufNewFile,BufRead *.tsx set filetype=typescript
+" au BufNewFile,BufRead *.tsx set filetype=typescript
 set nospell
 " allow spaces in file-names, which makes gf more useful
 set isfname+=32
@@ -426,15 +452,6 @@ nnoremap <silent> <expr> $ ScreenMovement("$")
 
 " set autochdir
 set tags=./tags,tags;
-function! BuildCtags()
-  silent execute ":!bash -lc ctags-build"
-endfunction
-command! -nargs=* BuildCtags call BuildCtags()
-
-function! BuildCscope()
-  silent execute ":!bash -lc cscope-build"
-endfunction
-command! -nargs=* BuildCscope call BuildCscope()
 
 function! SNote(...)
   let path = strftime("%Y%m%d%H%M")." ".trim(join(a:000)).".md"
@@ -489,7 +506,7 @@ autocmd BufNew,BufNewFile,BufRead ~/Documents/Zettelkasten/*.md call Zettelkaste
 
 map \d :put =strftime(\"%Y-%m-%d\")<CR>
 
-function! LookupDocs()
+function! LookupDocsLanguage()
   let browser = "/Applications/Firefox.app/Contents/MacOS/firefox --new-tab "
 
   if &filetype ==# 'c' || &filetype ==# 'cpp'
@@ -497,7 +514,7 @@ function! LookupDocs()
   elseif &filetype ==# 'markdown'
     call system(browser . "'https://google.com/search?q=define%20" . expand('<cword>') . "'")
   elseif &filetype ==# 'rust'
-    let crate_link = "file:///" . getcwd() . "/target/doc/settings.html?search=" . expand('<cword>')
+    " let crate_link = "file:///" . getcwd() . "/target/doc/settings.html?search=" . expand('<cword>')
     let stdlib_link = 'https://doc.rust-lang.org/std/?search=' . expand('<cword>')
 
     " let stdlib_tab = trim(system("chrome-cli list links | grep 'doc.rust-lang.org' | grep -oE '[0-9]+'"))
@@ -517,13 +534,21 @@ function! LookupDocs()
       " end
     " else
       " call VimuxRunCommand("cargo doc &")
-    call system(browser . crate_link)
+    call system(browser . stdlib_link)
   elseif &filetype ==# 'ruby'
     " could prob make this use ri(1)
     call system(browser . "https://ruby-doc.com/search.html?q=" . expand('<cword>'))
+  elseif &filetype =~ "typescript" || &filetype =~ "javascript"
+    call system(browser . "https://devdocs.io/#q=js%20" . expand('<cword>'))
   else
     call system(browser . "https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
   endif
 endfunction
 
-nmap K :call LookupDocs()<cr>
+function! LookupDocsLibrary()
+  let browser = "/Applications/Firefox.app/Contents/MacOS/firefox --new-tab "
+  call system(browser . "https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
+endfunction
+
+nmap K :call LookupDocsLanguage()<cr>
+nmap <A-k> :call LookupDocsLibrary<CR>
