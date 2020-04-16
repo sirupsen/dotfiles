@@ -178,6 +178,7 @@ endfunction
 map <A-e> :call RunSomethingInTmux()<CR>
 
 " this is useful for debuggers etc
+<<<<<<< HEAD
 map <Space>b :call VimuxRunCommand(bufname("%") . ":" . line("."), 0)<CR>
 map !b :call VimuxRunCommand(bufname("%") . ":" . line("."), 1)<CR>
 " }}}
@@ -185,6 +186,11 @@ Plug 'skywind3000/asyncrun.vim'
 " {{{
 let g:asyncrun_open = 0 " Never open the quickfix for me
 map !l :AsyncRun bash -lc 'ctags-build'<CR>
+=======
+" the 0 is to prevent a return after the command
+command! CurrentBuffer :call VimuxRunCommand(bufname("%") . ":" . line("."), 0)
+map <Space>b :CurrentBuffer<CR>
+>>>>>>> zk stuff
 " }}}
 Plug 'airblade/vim-gitgutter'
 " {{{
@@ -255,7 +261,7 @@ let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_auto_insert_bullets = 1
 let g:vim_markdown_frontmatter = 1
-let g:vim_markdown_no_extensions_in_markdown = 1
+let g:vim_markdown_no_extensions_in_markdown = 0
 let g:vim_markdown_follow_anchor = 1
 let g:vim_markdown_strikethrough = 1
 let g:vim_markdown_autowrite = 1
@@ -391,7 +397,7 @@ endfunction
 nnoremap <silent> <c-w>z :call <sid>zoom()<cr>
 
 " Yank the file name without extension
-map cf :let @" = expand("%:r")<CR>
+map cf :let @* = expand("%:t")<CR>
 " Yank the full current file pathk
 map cF :let @* = expand("%:p")<CR>
 
@@ -481,7 +487,7 @@ function! ZettelkastenSetup()
 
   inoremap <expr> <plug>(fzf-complete-tags) fzf#vim#complete(fzf#wrap({
         \ 'source': 'bash -lc "zk-tags-raw"',
-        \ 'options': '--ansi --nth 2 --print-query --exact --header "Enter without a selection creates new tag"',
+        \ 'options': '--multi --ansi --nth 2 --print-query --exact --header "Enter without a selection creates new tag"',
         \ 'reducer': function('<sid>CompleteTagsReducer')
         \ }))
   imap <buffer> # <plug>(fzf-complete-tags)

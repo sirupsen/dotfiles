@@ -35,6 +35,8 @@ when (0.2...0.25)
   open_url "https://memoryleague.com/#!/train"
 when (0.25...0.30)
   open_url "https://ourworldindata.org/charts"
+when (0.25..0.35)
+  open_url "https://www.gjopen.com/questions?filter=following"
 when (0.25..1.0)
   open_url(urls.first)
 end

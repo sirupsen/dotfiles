@@ -25,13 +25,13 @@ all_tags = Hash[all_tags.map { |(tag, related)|
   [tag, related]
 }]
 
-recurse = ARGV.delete("-r")
+tree = ARGV.delete("-t")
 # Get the list of files and tags, then merge together all the counts
 tags_and_files = ARGV.dup
 raise "pass one or more tag or file" if tags_and_files.empty?
 
-if recurse
-  def recurse(file, depth = 0, visited = {})
+if tree
+  def tree(file, depth = 0, visited = {})
     visited[file] = file
     return unless File.exists?(file)
     content = File.read(file)
@@ -47,11 +47,11 @@ if recurse
     puts
 
     links.each do |(link)|
-      recurse(link, depth + 1, visited) unless visited[link]
+      tree(link, depth + 1, visited) unless visited[link]
     end
   end
 
-  recurse(tags_and_files[0])
+  tree(tags_and_files[0])
 else
   tags = tags_and_files.flat_map do |tag_or_file|
     if tag_or_file.end_with?(".md")
