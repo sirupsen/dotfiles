@@ -178,7 +178,6 @@ endfunction
 map <A-e> :call RunSomethingInTmux()<CR>
 
 " this is useful for debuggers etc
-<<<<<<< HEAD
 map <Space>b :call VimuxRunCommand(bufname("%") . ":" . line("."), 0)<CR>
 map !b :call VimuxRunCommand(bufname("%") . ":" . line("."), 1)<CR>
 " }}}
@@ -186,11 +185,6 @@ Plug 'skywind3000/asyncrun.vim'
 " {{{
 let g:asyncrun_open = 0 " Never open the quickfix for me
 map !l :AsyncRun bash -lc 'ctags-build'<CR>
-=======
-" the 0 is to prevent a return after the command
-command! CurrentBuffer :call VimuxRunCommand(bufname("%") . ":" . line("."), 0)
-map <Space>b :CurrentBuffer<CR>
->>>>>>> zk stuff
 " }}}
 Plug 'airblade/vim-gitgutter'
 " {{{
