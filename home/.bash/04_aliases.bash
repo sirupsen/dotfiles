@@ -270,5 +270,6 @@ zk-uniq() {
 
 scratch() {
   ln -fs "$HOME/Documents/Zettelkasten/scratch.md" ~/scratch.md
+  tmux rename-window scratch
   nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/scratch.md"
 }

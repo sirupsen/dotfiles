@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+kube_status = if system("which kubectl", STDOUT => '/dev/null')
+  cur_location = `kubectl config current-context`.chomp
+  cur_namespace = `kubectl config view --minify --output 'jsonpath={..namespace}'`
+  "#[fg=yellow] #{cur_location} · #{cur_namespace} #[fg=yellow]#[fg=white]∣"
+end
+
+puts "#{kube_status}#[fg=white]"
