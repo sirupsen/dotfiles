@@ -190,6 +190,8 @@ Plug 'airblade/vim-gitgutter'
 " {{{
 nmap [h <Plug>(GitGutterPrevHunk)
 nmap ]h <Plug>(GitGutterNextHunk)
+nmap !h :GitGutterQuickFix<CR>
+nmap \h :GitGutterFold<CR>
 set updatetime=100
 " }}}
 
