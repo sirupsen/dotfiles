@@ -37,6 +37,9 @@ export GOPATH=$HOME
 # export RUST_LOG=info
 export RIPGREP_CONFIG_PATH="$HOME/.rgrc"
 
+# Big node projects will be bogged down otherwise.
+export NODE_OPTIONS='--max_old_space_size=4096'
+
 (ssh-add -l | grep -q "Error connecting to agent") && ssh-agent bash
 (ssh-add -l | grep -q "no identities") && ssh-add -K
 

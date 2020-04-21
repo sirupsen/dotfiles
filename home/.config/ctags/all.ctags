@@ -17,7 +17,7 @@
 --exclude=closure-library
 
 --languages=-html
---languages=-javascript
+--languages=-css
 --languages=-json
 --languages=-sql
 

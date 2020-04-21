@@ -206,12 +206,13 @@ let g:ale_fixers = {
       \'rust': ['rustfmt'],
       \'ruby': ['bundle exec rubocop -a'],
       \'go': ['gofmt'],
-      \'typescript': ['remove_trailing_lines', 'trim_whitespace', 'xo']
+      \'typescript': ['remove_trailing_lines', 'trim_whitespace', 'eslint'],
+      \'javascript': ['remove_trailing_lines', 'trim_whitespace', 'eslint']
     \}
 " Note that many of these have to be installed first!
 let g:ale_linters = {
       \'javascript': [''],
-      \'typescript': ['tsserver', 'xo', 'tslint'],
+      \'typescript': ['tsserver', 'eslint'],
       \'go': ['gopls'],
       \'rust': ['rls'],
       \}
@@ -219,6 +220,7 @@ let g:ale_lint_delay = 1000
 let g:ale_ruby_rubocop_executable = 'bundle'
 let g:ale_rust_cargo_check_tests = 1
 let g:ale_rust_cargo_check_examples = 1
+let g:ale_set_balloons = 1
 
 " Let's require everything to be explicit, because this is always a nightmare in
 " new files.
@@ -551,4 +553,5 @@ function! LookupDocsLibrary()
 endfunction
 
 nmap K :call LookupDocsLanguage()<cr>
+nmap \k :ALEHover<cr>
 nmap <A-k> :call LookupDocsLibrary<CR>
