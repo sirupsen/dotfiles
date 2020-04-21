@@ -226,7 +226,7 @@ zk-remarkable() {
 remarkable() {
   rmapi geta 'Quick sheets'
   pdftk Quick\ sheets-annotations.pdf cat end output quick.pdf
-  convert -density 400 -trim +repage zk.pdf -quality 100 -flatten -define profile:skip=ICC quick.png
+  convert -density 400 -trim +repage quick.pdf -quality 100 -flatten -define profile:skip=ICC quick.png
 }
 
 # if it's a big project you'll want to build this yourself.
