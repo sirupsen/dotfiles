@@ -228,7 +228,13 @@ let g:ale_set_balloons = 1
 " new files.
 let g:ale_linters_explicit = 1
 
-let g:ale_rust_rls_toolchain = 'stable'
+" let g:ale_rust_rls_toolchain = 'stable'
+let g:ale_rust_rls_executable = 'rust-analyzer'
+let g:ale_rust_rls_config = {
+	\ 'rust': {
+		\ 'clippy_preference': 'on'
+	\ }
+	\ }
 
 let g:ale_set_highlights = 0 " signs are enough
 let g:ale_cursor_detail = 0
@@ -470,6 +476,9 @@ endfunction
 command! -nargs=* Note call Note(<f-args>)
 
 function! ZettelkastenSetup()
+  if expand("%:t") !~ '^[0-9]\+'
+    return
+  endif
   " syn region mkdFootnotes matchgroup=mkdDelimiter start="\[\["    end="\]\]"
 
   inoremap <expr> <plug>(fzf-complete-path-custom) fzf#vim#complete#path("rg --files -t md \| sed 's/^/[[/g' \| sed 's/$/]]/'")
@@ -489,9 +498,6 @@ function! ZettelkastenSetup()
         \ 'reducer': function('<sid>CompleteTagsReducer')
         \ }))
   imap <buffer> # <plug>(fzf-complete-tags)
-
-  " setlocal formatoptions+=a
-  " imap <imap> -- —
 endfunction
 
 " Don't know why I can't get FZF to return {2}
