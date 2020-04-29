@@ -15,6 +15,8 @@ options = OpenStruct.new(
   path: false,
   server: false,
   clipboard: false,
+  up: false,
+  ctags: true,
 )
 
 GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/pull\/(\d+)/
@@ -152,8 +154,16 @@ OptionParser.new { |opts|
     options.dev_up = true
   end
 
+  opts.on("", "--up", "Install dependencies (default: no)") do |val|
+    options.up = true
+  end
+
   opts.on("-s", "--server", "Run server, implies -u (default: no)") do |val|
     options.server = true
+  end
+
+  opts.on("", "--no-ctags", "Don't try to build ctags (default: no)") do |val|
+    options.ctags = true
   end
 
   opts.on("-p", "--path", "Output just the path where the repo lives (default: no)") do |val|
@@ -191,6 +201,15 @@ OptionParser.new { |opts|
   end
 }.parse!
 
+if options.up
+  if !`command -v dev`.empty? && File.exists?("dev.yml")
+    system("bash -c -l 'source ~/.bash_profile && command -v dev && dev up'")
+  elsif File.exists?("Gemfile.lock")
+    system("bundle install")
+  end
+  exit 0
+end
+
 remote = ARGV[0]
 if options.chrome
   remote = `chrome-cli info`[GITHUB_PR_REGEX]
@@ -208,6 +227,12 @@ remote ||= current_branch_tracking_remote
 if options.path
   puts repo
   exit 0
+end
+
+if !remote || remote.empty?
+  puts "org: #{org}, remote: #{remote}, repo: #{repo}"
+  puts "invalid argument to infer pr/repo from: `#{remote}`"
+  exit 1
 end
 
 if !options.tmux
@@ -235,10 +260,16 @@ if options.refresh && !options.tmux
 end
 
 if options.tmux
-  maybe_dev_up = options.dev_up || options.server ? "dev up ;" : ""
+  maybe_dev_up = options.dev_up || options.server ? "review --up ;" : ""
   maybe_server = options.server ? "dev server ;" : ""
-  system("clone -n #{org}/#{repo}") if repo_path(repo).empty?
-  system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path(repo)}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review #{ARGV[0]}; bash -l -i')\" \\; split-window -h -c \"#{repo_path(repo)}\" bash -i -l -c \"#{maybe_dev_up} #{maybe_server} bash -l -i\"")
+  maybe_ctags = options.ctags ? "( command -v ctags-build >/dev/null 2>&1 && ctags-build & ) ;" : ""
+
+  repo_path = repo_path(repo)
+  if repo_path.empty?
+    system("clone -n #{org}/#{repo}")
+    repo_path = `clone --path #{org}/#{repo}`.strip
+  end
+  system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review \'#{ARGV[0]}\'; bash -l -i')\" \\; split-window -h -c \"#{repo_path}\" bash -i -l -c \"#{maybe_ctags} #{maybe_dev_up} #{maybe_server} bash -l -i\"")
 else
   system("dev up") if options.dev_up
   vim_command = "nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{review_diff})"
