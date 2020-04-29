@@ -225,6 +225,7 @@ end
 if options.tmux
   maybe_dev_up = options.dev_up || options.server ? "dev up ;" : ""
   maybe_server = options.server ? "dev server ;" : ""
+  system("clone -n #{org}/#{repo}") if repo_path(repo).empty?
   system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path(repo)}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review #{ARGV[0]}; bash -l -i')\" \\; split-window -h -c \"#{repo_path(repo)}\" bash -i -l -c \"#{maybe_dev_up} #{maybe_server} bash -l -i\"")
 else
   system("dev up") if options.dev_up

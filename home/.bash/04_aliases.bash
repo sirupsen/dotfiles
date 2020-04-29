@@ -243,7 +243,7 @@ cscope-build() {
 
 # make this better at cargo too
 ctags-build() {
-  if [[ -f Gemfile.lock ]]; then
+  if [[ -f Gemfile.lock ]] && [[ $(command -v ripper-tags) ]]; then
     rg --sort path --files -t ruby > .file_list_tags
     ripper-tags -R -L .file_list_tags -f tags --extra=q
   else

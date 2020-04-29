@@ -6,6 +6,7 @@ SLASH_REGEX = /(?<org>[\w\._-]+)\/(?<project>[\w\._-]+)/
 FILE_REGEX = /\/blob\/(?<sha>\w+)\/(?<path>[\w\/\.-_]+)(#L?)?(?<line>\d+)?/
 
 local = ARGV.delete("-l")
+no_vim = ARGV.delete("-n")
 url = ARGV[0]
 
 match = url.match(GITHUB_REPO_REGEX)
@@ -20,7 +21,7 @@ if file_match
 end
 
 local_path = File.expand_path("~/src/github.com/#{match['org']}/#{match['project']}")
-remote_url = "git@github.com:#{match['org']}/#{match['project']}.git"
+remote_url = "https://github.com/#{match['org']}/#{match['project']}.git"
 
 unless Dir.exists?(local_path)
   system("git clone #{remote_url} #{local_path}")
@@ -29,7 +30,7 @@ end
 new_window_commands = [
   "cd #{local_path}",
   file_match && file_match['sha'] && "git checkout #{file_match['sha']}",
-  vim_command
+  no_vim ? "" : vim_command
 ]
 
 new_window_commands = new_window_commands.compact.join(" && ")
