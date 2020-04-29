@@ -14,6 +14,7 @@ options = OpenStruct.new(
   tmux: false,
   path: false,
   server: false,
+  clipboard: false,
 )
 
 GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/pull\/(\d+)/
@@ -49,7 +50,7 @@ def remote_branch(string)
   # solution to this is probably we can in the API see if a repo is the "root",
   # which is what we're effectively doing here.
   origin_remote = `git remote -v | grep origin`
-  if origin_remote =~ /github\.com(:|\/)#{string.split("/").first}/i
+  if origin_remote =~ /github\.com(:|\/)#{string.split("/").first}/i || string.start_with?("origin/")
     return ['origin', string.split("/")[1..-1].join("/")]
   end
 
@@ -163,6 +164,10 @@ OptionParser.new { |opts|
     options.tmux = true
   end
 
+  opts.on("", "--clipboard", "Grab PR from clipboard if not passed (default: no)") do |val|
+    options.clipboard = true
+  end
+
   opts.on("-c", "--chrome", "Get content to review from Chrome's current tab (default: no)") do |val|
     options.chrome = true
   end
@@ -191,6 +196,13 @@ if options.chrome
   remote = `chrome-cli info`[GITHUB_PR_REGEX]
   raise "Unable to find a Github pull request in current Chrome tab"
 end
+
+if options.clipboard
+  if !remote || remote.empty?
+    remote = `pbpaste`.strip
+  end
+end
+
 org, repo, remote = org_repo_branch_from_url(remote) if remote && remote.start_with?("https://")
 remote ||= current_branch_tracking_remote
 if options.path
