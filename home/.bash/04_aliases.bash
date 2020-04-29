@@ -109,11 +109,12 @@ refreshsystem() {
   vim +PlugUpdate +qall
 
   brew update
-  brew upgrade fzf neovim bash tmux ripgrep git ctags \
-    fd go curl wireguard-go wireguard-tools redis ruby-install \
+  brew upgrade fzf neovim bash tmux ripgrep git universal-ctags \
+    fd go curl redis ruby-install telnet tree jemalloc ruby-install \
     mysql youtube-dl curl cmake docker gdb wget universal-ctags \
     lua luajit markdown gh hub htop reattach-to-user-namespace \
-    jq sqlite kubernetes-cli wrk hugo htop
+    jq sqlite kubernetes-cli wrk hugo htop toxiproxy grep graphviz \
+    entr fio aspell llvm
 
   rustup update
 }

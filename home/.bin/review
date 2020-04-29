@@ -12,6 +12,8 @@ options = OpenStruct.new(
   noop: false,
   open: true,
   tmux: false,
+  path: false,
+  server: false,
 )
 
 GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/pull\/(\d+)/
@@ -60,8 +62,10 @@ def repo
   `basename $(git rev-parse --show-toplevel)`.strip
 end
 
-def repo_path
-  `git rev-parse --show-toplevel`.strip
+def repo_path(repo_name)
+  `bash -l -c '_z -e #{repo_name}'`.strip
+  # FALLBACK TO THE BELOW
+  # `git rev-parse --show-toplevel`.strip
 end
 
 def pull(branch, remote)
@@ -116,7 +120,6 @@ def org_repo_branch_from_url(url)
   EOF
   request.body = query
 
-  $stderr.puts "Finding upstream from URL..."
   response = http.request(request)
   pr = JSON.parse(response.body)["data"]["repository"]["pullRequest"]
   pr["headRefName"] unless pr["isCrossRepository"]
@@ -146,6 +149,14 @@ OptionParser.new { |opts|
 
   opts.on("-u", "--dev-up", "Run dev up (default: no)") do |val|
     options.dev_up = true
+  end
+
+  opts.on("-s", "--server", "Run server, implies -u (default: no)") do |val|
+    options.server = true
+  end
+
+  opts.on("-p", "--path", "Output just the path where the repo lives (default: no)") do |val|
+    options.path = true
   end
 
   opts.on("-t", "--tmux", "Create new tmux window for review (default: no)") do |val|
@@ -182,19 +193,25 @@ if options.chrome
 end
 org, repo, remote = org_repo_branch_from_url(remote) if remote && remote.start_with?("https://")
 remote ||= current_branch_tracking_remote
-
-base_remote, base_branch = remote_branch(options.base)
-target_remote, target_branch = remote_branch(remote)
-review_diff = "#{base_remote}/#{base_branch}...#{target_remote}/#{target_branch}"
-
-unless options.changed_files
-  $stderr.puts "\x1b[33mReviewing #{review_diff}\x1b[0m"
-  exit 0 if options.noop
+if options.path
+  puts repo
+  exit 0
 end
 
-ensure_in_right_directory(org, repo) if org
+if !options.tmux
+  base_remote, base_branch = remote_branch(options.base)
+  target_remote, target_branch = remote_branch(remote)
+  review_diff = "#{base_remote}/#{base_branch}...#{target_remote}/#{target_branch}"
 
-if options.refresh
+  unless options.changed_files
+    $stderr.puts "\x1b[33mReviewing #{review_diff}\x1b[0m"
+    exit 0 if options.noop
+  end
+
+  ensure_in_right_directory(org, repo) if org
+end
+
+if options.refresh && !options.tmux
   ensure_remote(base_remote)
   pull(base_branch, base_remote)
 
@@ -206,7 +223,9 @@ if options.refresh
 end
 
 if options.tmux
-  system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review -r #{ARGV[0]}')\" \\; split-window -h -c \"#{repo_path}\" \"bash --login --rcfile <(echo '. ~/.bashrc && dev up')\"")
+  maybe_dev_up = options.dev_up || options.server ? "dev up ;" : ""
+  maybe_server = options.server ? "dev server ;" : ""
+  system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path(repo)}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review #{ARGV[0]}; bash -l -i')\" \\; split-window -h -c \"#{repo_path(repo)}\" bash -i -l -c \"#{maybe_dev_up} #{maybe_server} bash -l -i\"")
 else
   system("dev up") if options.dev_up
   vim_command = "nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{review_diff})"

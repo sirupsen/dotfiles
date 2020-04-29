@@ -192,6 +192,7 @@ nmap [h <Plug>(GitGutterPrevHunk)
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap !h :GitGutterQuickFix<CR>
 nmap \h :GitGutterFold<CR>
+nmap 'h :let g:gitgutter_diff_base = 'origin/master'<CR>
 set updatetime=100
 " }}}
 
@@ -223,6 +224,7 @@ let g:ale_ruby_rubocop_executable = 'bundle'
 let g:ale_rust_cargo_check_tests = 1
 let g:ale_rust_cargo_check_examples = 1
 let g:ale_set_balloons = 1
+let g:ale_typescript_tsserver_use_global = 1 " has hack for more memory
 
 " Let's require everything to be explicit, because this is always a nightmare in
 " new files.

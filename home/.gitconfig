@@ -22,19 +22,11 @@
   templatedir = ~/.git_template
 [diff]
 	algorithm = patience
-[protocol]
-	version = 2
-[credential]
-	helper = osxkeychain
 [core]
 	commitGraph = true
 	excludesfile = /Users/personal/.global_gitignore
 [gc]
 	writeCommitGraph = true
-[credential]
-	helper = store --file /opt/dev/var/private/git_credential_store
-[protocol]
-	version = 2
 [web]
     browser = /Applications/Firefox.app/Contents/MacOS/firefox --new-tab
 [url "https://github.com/Shopify/"]
@@ -44,3 +36,7 @@
 	insteadOf = ssh://git@github.com/shopify/
 [url "git@github.com:"]
 	insteadOf = https://github.com/
+[credential]
+	helper = store --file /opt/dev/var/private/git_credential_store
+[protocol]
+	version = 2
