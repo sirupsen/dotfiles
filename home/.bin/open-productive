@@ -3,6 +3,8 @@
 omphalos = File.expand_path("~/src/omphalos")
 binary = File.expand_path("~/src/omphalos/target/debug/omphalos")
 
+instapaper_only = ARGV.delete("-i")
+
 # re-hydrate instapaper urls async
 system("cd #{omphalos} && nohup #{binary} instapaper_list > \
          /tmp/instapaper_urls_$$ && \
@@ -23,20 +25,24 @@ def open_url(url)
   system("#{firefox_path} --new-tab #{url}")
 end
 
-random = Kernel.rand
-case random
-when (0.0...0.1)
-  open_url "https://readwise.io/tags/next"
-when (0.1..0.15)
-  open_url "https://dynalist.io/d/wrc4IfhJ7EzU5yIK6bNz1kYR"
-when (0.15...0.2)
-  open_url "things:///show?query=Zettelkasten to Readwise"
-when (0.2...0.25)
-  open_url "https://memoryleague.com/#!/train"
-when (0.25...0.30)
-  open_url "https://ourworldindata.org/charts"
-when (0.25..0.35)
-  open_url "https://www.gjopen.com/questions?filter=following"
-when (0.25..1.0)
+if instapaper_only
   open_url(urls.first)
+else
+  random = Kernel.rand
+  case random
+  when (0.0...0.1)
+    open_url "https://readwise.io/tags/next"
+  when (0.1..0.15)
+    open_url "https://dynalist.io/d/wrc4IfhJ7EzU5yIK6bNz1kYR"
+  when (0.15...0.2)
+    open_url "things:///show?query=Zettelkasten to Readwise"
+  when (0.2...0.25)
+    open_url "https://memoryleague.com/#!/train"
+  when (0.25...0.30)
+    open_url "https://ourworldindata.org/charts"
+  # when (0.25..0.35)
+  #   open_url "https://www.gjopen.com/questions?filter=following"
+  when (0.25..1.0)
+    open_url(urls.first)
+  end
 end
