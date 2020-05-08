@@ -19,7 +19,7 @@ options = OpenStruct.new(
   ctags: true,
 )
 
-GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/pull\/(\d+)/
+GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)(\/pull\/(\d+))?/
 GITHUB_COMPARE_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/compare\/([\w_-]+)/
 
 REMOTE_BRANCH_SPLIT = /:/
@@ -95,7 +95,8 @@ def org_repo_branch_from_url(url)
   _, org, repo, branch_name = url.match(GITHUB_COMPARE_REGEX).to_a
   return [org, repo, branch_name] if branch_name
 
-  _, org, repo, pr = url.match(GITHUB_PR_REGEX).to_a
+  _, org, repo, _, pr = url.match(GITHUB_PR_REGEX).to_a
+  return [org, repo, "master"] unless pr # support just cloning an empty repo
 
   http = Net::HTTP.new("api.github.com", 443)
   http.use_ssl = true
@@ -206,6 +207,8 @@ if options.up
     system("bash -c -l 'source ~/.bash_profile && command -v dev && dev up'")
   elsif File.exists?("Gemfile.lock")
     system("bundle install")
+  elsif File.exists?("Cargo.toml")
+    system("cargo build")
   end
   exit 0
 end
@@ -272,7 +275,10 @@ if options.tmux
   system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review \'#{ARGV[0]}\'; export SKIP_TMUX_RENAME=1; bash -l -i')\" \\; split-window -h -c \"#{repo_path}\" bash -i -l -c \"export SKIP_TMUX_RENAME=1 && #{maybe_ctags} #{maybe_dev_up} #{maybe_server} bash -l -i\"")
 else
   system("dev up") if options.dev_up
-  vim_command = "nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\" -c \":e!\" $(git diff --name-only #{review_diff})"
+  # There might be no diffs if e.g. this is just reviewing a repo
+  diffs = `git diff --name-only #{review_diff}`.strip
+  vim_command = "nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\""
+  vim_command += " -c \":e!\" #{diffs}" unless diffs.empty?
   system(vim_command) if options.open
 end
 
