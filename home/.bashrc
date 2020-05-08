@@ -62,3 +62,6 @@ fi
 export KUBECONFIG=/Users/$(whoami)/.kube/config:/Users/$(whoami)/.kube/config.shopify.cloudplatform
 for file in /Users/simoneskildsen/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
 kubectl-short-aliases
+
+export ZK_PATH="$HOME/Documents/Zettelkasten"
+export PATH="$PATH:$HOME/src/zk/bin"
