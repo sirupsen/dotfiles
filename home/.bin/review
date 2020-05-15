@@ -203,8 +203,8 @@ OptionParser.new { |opts|
 }.parse!
 
 if options.up
-  if !`command -v dev`.empty? && File.exists?("dev.yml")
-    system("bash -c -l 'source ~/.bash_profile && command -v dev && dev up'")
+  if !`bash -i -c -l 'command -v dev'`.empty? && File.exists?("dev.yml")
+    system("bash -i -c -l 'command -v dev && dev up'")
   elsif File.exists?("Gemfile.lock")
     system("bundle install")
   elsif File.exists?("Cargo.toml")
@@ -272,7 +272,7 @@ if options.tmux
     system("clone -n #{org}/#{repo}")
     repo_path = `clone --path #{org}/#{repo}`.strip
   end
-  system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review \'#{ARGV[0]}\'; export SKIP_TMUX_RENAME=1; bash -l -i')\" \\; split-window -h -c \"#{repo_path}\" bash -i -l -c \"export SKIP_TMUX_RENAME=1 && #{maybe_ctags} #{maybe_dev_up} #{maybe_server} bash -l -i\"")
+  system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review \'#{remote}\'; export SKIP_TMUX_RENAME=1; bash -l -i')\" \\; split-window -h -c \"#{repo_path}\" bash -i -l -c \"export SKIP_TMUX_RENAME=1 && #{maybe_ctags} #{maybe_dev_up} #{maybe_server} bash -l -i\"")
 else
   system("dev up") if options.dev_up
   # There might be no diffs if e.g. this is just reviewing a repo

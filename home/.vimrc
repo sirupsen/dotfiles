@@ -192,6 +192,7 @@ nmap [h <Plug>(GitGutterPrevHunk)
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap !h :GitGutterQuickFix<CR>
 nmap \h :GitGutterFold<CR>
+nmap ,hd :Gdiff origin/master<CR>
 nmap 'h :let g:gitgutter_diff_base = 'origin/master'<CR>
 set updatetime=100
 " }}}
