@@ -22,7 +22,7 @@ options = OpenStruct.new(
 GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)(\/pull\/(\d+))?/
 GITHUB_COMPARE_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/compare\/([\w_-]+)/
 
-REMOTE_BRANCH_SPLIT = /:/
+REMOTE_BRANCH_SPLIT = /\//
 
 # TODO: In order to change directory of the parent-shell, we need to make
 # .bin/review a shell script that calls .bin/review-rb. For the most part, it
@@ -43,7 +43,6 @@ def ensure_remote(remote)
     `git remote add #{remote.inspect} #{repo_git}`
   end
 end
-
 
 # TODO: Support separate origins.
 def remote_branch(string)

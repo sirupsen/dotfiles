@@ -114,7 +114,7 @@ refreshsystem() {
     mysql youtube-dl curl cmake docker gdb wget universal-ctags \
     lua luajit markdown gh hub htop reattach-to-user-namespace \
     jq sqlite kubernetes-cli wrk hugo htop toxiproxy grep graphviz \
-    entr fio aspell llvm
+    entr fio aspell llvm cmark
 
   rustup update
 }
@@ -213,4 +213,40 @@ scratch() {
   ln -fs "$HOME/Documents/Zettelkasten/scratch.md" ~/scratch.md
   tmux rename-window scratch
   nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/scratch.md"
+}
+
+mdr() {
+  ts=$(gdate +%s%N)
+  echo "<section><article>" > md.html
+  echo "<b><h3>$@</h3></b>" >> md.html
+  cmark --smart --unsafe "$@" >> md.html
+  echo "</section></article>" >> md.html
+
+  echo '<link rel="stylesheet" href="https://yegor256.github.io/tacit/tacit.min.css"/>' \
+    >> md.html
+  echo '<style>img { max-width: 600px; margin-left: auto; display: block; }</style>' \
+    >> md.html
+
+  tt=$((($(gdate +%s%N) - $ts)/1000000))
+  echo "Re-rendered (${tt}ms)"
+
+  # Brings the application to the foreground :(
+  # cat <<'EOF' | osascript
+# tell application "Firefox"
+  # activate
+  # tell application "System Events" to keystroke "r" using command down
+# end tell
+# EOF
+}
+
+alias firefox='/Applications/Firefox.app/Contents/MacOS/firefox'
+
+mdrr() {
+  mdr "$@"
+  firefox --new-tab "file://$PWD/md.html"
+  echo "$@" | entr bash -l -c "mdr '$@'"
+}
+
+pdfrename() {
+  rg --files -t pdf --max-depth 1 . | xargs -P16 -I% -L1 bash -c 'pdftitle -p "%" -c || true'
 }

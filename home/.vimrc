@@ -12,7 +12,7 @@ set iskeyword+=-
 
 set statusline=
 set statusline+=%f:%l:%c\ %m
-set statusline+=%{tagbar#currenttag('\ [%s]\ ','','')}
+" set statusline+=%{tagbar#currenttag('\ [%s]\ ','','')}
 set statusline+=%=
 set statusline+=%{FugitiveStatusline()}
 
@@ -21,6 +21,8 @@ augroup QuickfixStatus
 	au! BufWinEnter quickfix setlocal 
 		\ statusline+=%t\ [%{g:asyncrun_status}]\ %{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%-15(%l,%c%V%)\ %P
 augroup END
+
+let g:browser_new_tab = "/Applications/Firefox.app/Contents/MacOS/firefox --new-tab "
 
 call plug#begin('~/.config/nvim/plugged')
 
@@ -52,10 +54,10 @@ Plug 'junegunn/fzf.vim'
 " {{{
 if exists('$TMUX')
   let g:fzf_layout = { 'tmux': '-p90%,60%' }
+let g:fzf_preview_window = 'right:50%'
 else
   let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 endif
-let g:fzf_preview_window = 'right:50%'
 let g:fzf_tags_command = 'bash -c "build-ctags"'
 
 function! FzfSpellSink(word)
@@ -172,7 +174,7 @@ map <C-e> :call RepeatLastTmuxCommand()<CR>
 
 function! RunSomethingInTmux()
   if &filetype ==# 'markdown'
-    call VimuxRunCommand(expand('%'))
+    call VimuxRunCommand("mdrr '" . expand('%') . "'")
   end
 endfunction
 map <A-e> :call RunSomethingInTmux()<CR>
@@ -272,6 +274,7 @@ let g:vim_markdown_no_extensions_in_markdown = 0
 let g:vim_markdown_follow_anchor = 1
 let g:vim_markdown_strikethrough = 1
 let g:vim_markdown_autowrite = 1
+set conceallevel=0
 
 " https://agilesysadmin.net/how-to-manage-long-lines-in-vim/
 autocmd FileType markdown setlocal spell
@@ -496,7 +499,7 @@ function! ZettelkastenSetup()
   endfunction
 
   inoremap <expr> <plug>(fzf-complete-tags) fzf#vim#complete(fzf#wrap({
-        \ 'source': 'bash -lc "zk-tags-raw"',
+        \ 'source': 'zkt-raw',
         \ 'options': '--multi --ansi --nth 2 --print-query --exact --header "Enter without a selection creates new tag"',
         \ 'reducer': function('<sid>CompleteTagsReducer')
         \ }))
@@ -520,12 +523,10 @@ autocmd BufNew,BufNewFile,BufRead ~/Documents/Zettelkasten/*.md call Zettelkaste
 map \d :put =strftime(\"%Y-%m-%d\")<CR>
 
 function! LookupDocsLanguage()
-  let browser = "/Applications/Firefox.app/Contents/MacOS/firefox --new-tab "
-
   if &filetype ==# 'c' || &filetype ==# 'cpp'
-    call system(browser "'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
+    call system(g:browser_new_tab "'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
   elseif &filetype ==# 'markdown'
-    call system(browser . "'https://google.com/search?q=define%20" . expand('<cword>') . "'")
+    call system(g:browser_new_tab . "'https://google.com/search?q=define%20" . expand('<cword>') . "'")
   elseif &filetype ==# 'rust'
     " let crate_link = "file:///" . getcwd() . "/target/doc/settings.html?search=" . expand('<cword>')
     let stdlib_link = 'https://doc.rust-lang.org/std/?search=' . expand('<cword>')
@@ -547,14 +548,14 @@ function! LookupDocsLanguage()
       " end
     " else
       " call VimuxRunCommand("cargo doc &")
-    call system(browser . stdlib_link)
+    call system(g:browser_new_tab . stdlib_link)
   elseif &filetype ==# 'ruby'
     " could prob make this use ri(1)
-    call system(browser . "https://ruby-doc.com/search.html?q=" . expand('<cword>'))
+    call system(g:browser_new_tab . "https://ruby-doc.com/search.html?q=" . expand('<cword>'))
   elseif &filetype =~ "typescript" || &filetype =~ "javascript"
-    call system(browser . "https://devdocs.io/#q=js%20" . expand('<cword>'))
+    call system(g:browser_new_tab . "https://devdocs.io/#q=js%20" . expand('<cword>'))
   else
-    call system(browser . "https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
+    call system(g:browser_new_tab . "https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
   endif
 endfunction
 
