@@ -503,7 +503,13 @@ key_bindings:
   - { key: Key8,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "8"] } }
   - { key: Key9,     mods: Command, command: { program: "/usr/local/bin/tmux", args: ["select-window", "-t", "9"] } }
 
-  - { key: A,         mods: Alt,       chars: "\x1ba"                       }
+
+
+
+
+
+
+  # - { key: A,         mods: Alt,       chars: "\x1ba"                       }
   - { key: B,         mods: Alt,       chars: "\x1bb"                       }
   - { key: C,         mods: Alt,       chars: "\x1bc"                       }
   - { key: D,         mods: Alt,       chars: "\x1bd"                       }
@@ -517,7 +523,7 @@ key_bindings:
   - { key: L,         mods: Alt,       chars: "\x1bl"                       }
   - { key: M,         mods: Alt,       chars: "\x1bm"                       }
   - { key: N,         mods: Alt,       chars: "\x1bn"                       }
-  - { key: O,         mods: Alt,       chars: "\x1bo"                       }
+  # - { key: O,         mods: Alt,       chars: "\x1bo"                       }
   - { key: P,         mods: Alt,       chars: "\x1bp"                       }
   - { key: Q,         mods: Alt,       chars: "\x1bq"                       }
   - { key: R,         mods: Alt,       chars: "\x1br"                       }
@@ -529,7 +535,7 @@ key_bindings:
   - { key: X,         mods: Alt,       chars: "\x1bx"                       }
   - { key: Y,         mods: Alt,       chars: "\x1by"                       }
   - { key: Z,         mods: Alt,       chars: "\x1bz"                       }
-  - { key: A,         mods: Alt|Shift, chars: "\x1bA"                       }
+  # - { key: A,         mods: Alt|Shift, chars: "\x1bA"                       }
   - { key: B,         mods: Alt|Shift, chars: "\x1bB"                       }
   - { key: C,         mods: Alt|Shift, chars: "\x1bC"                       }
   - { key: D,         mods: Alt|Shift, chars: "\x1bD"                       }
@@ -543,7 +549,7 @@ key_bindings:
   - { key: L,         mods: Alt|Shift, chars: "\x1bL"                       }
   - { key: M,         mods: Alt|Shift, chars: "\x1bM"                       }
   - { key: N,         mods: Alt|Shift, chars: "\x1bN"                       }
-  - { key: O,         mods: Alt|Shift, chars: "\x1bO"                       }
+  # - { key: O,         mods: Alt|Shift, chars: "\x1bO"                       }
   - { key: P,         mods: Alt|Shift, chars: "\x1bP"                       }
   - { key: Q,         mods: Alt|Shift, chars: "\x1bQ"                       }
   - { key: R,         mods: Alt|Shift, chars: "\x1bR"                       }

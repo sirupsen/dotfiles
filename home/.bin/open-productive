@@ -21,8 +21,9 @@ loop do
 end
 
 def open_url(url)
-  firefox_path = "/Applications/Firefox.app/Contents/MacOS/firefox"
-  system("#{firefox_path} --new-tab #{url}")
+  # firefox_path = "/Applications/Firefox.app/Contents/MacOS/firefox"
+  # system("#{firefox_path} --new-tab #{url}")
+  system("open #{url}")
 end
 
 if instapaper_only

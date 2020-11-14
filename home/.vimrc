@@ -264,17 +264,18 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-obsession'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'chriskempson/base16-vim'
-Plug 'bouk/vim-markdown', { 'branch': 'wikilinks' }
-" {{
-let g:vim_markdown_folding_disabled = 1
-let g:vim_markdown_new_list_item_indent = 0
-let g:vim_markdown_auto_insert_bullets = 1
-let g:vim_markdown_frontmatter = 1
-let g:vim_markdown_no_extensions_in_markdown = 0
-let g:vim_markdown_follow_anchor = 1
-let g:vim_markdown_strikethrough = 1
-let g:vim_markdown_autowrite = 1
-set conceallevel=0
+" Plug 'bouk/vim-markdown', { 'branch': 'wikilinks' }
+" Plug 'plasticboy/vim-markdown'
+" " {{
+" let g:vim_markdown_folding_disabled = 1
+" let g:vim_markdown_new_list_item_indent = 0
+" let g:vim_markdown_auto_insert_bullets = 1
+" let g:vim_markdown_frontmatter = 1
+" let g:vim_markdown_no_extensions_in_markdown = 0
+" let g:vim_markdown_follow_anchor = 1
+" let g:vim_markdown_strikethrough = 1
+" let g:vim_markdown_autowrite = 1
+" set conceallevel=0
 
 " https://agilesysadmin.net/how-to-manage-long-lines-in-vim/
 autocmd FileType markdown setlocal spell
@@ -518,7 +519,7 @@ command! ZKR call fzf#run(fzf#wrap({
         \ 'sink':    function("InsertSecondColumn")
       \}))
 
-autocmd BufNew,BufNewFile,BufRead ~/Documents/Zettelkasten/*.md call ZettelkastenSetup()
+" autocmd BufNew,BufNewFile,BufRead ~/Documents/Zettelkasten/*.md call ZettelkastenSetup()
 
 map \d :put =strftime(\"%Y-%m-%d\")<CR>
 

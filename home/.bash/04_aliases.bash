@@ -206,7 +206,7 @@ manf() {
 }
 
 zk-uniq() {
-  rg --files -t md | rg -o "\A\d+" | sort | uniq -c | sort
+  rg --files | rg -oP "\A\d+" | sort | uniq -c | sort
 }
 
 scratch() {
@@ -243,10 +243,14 @@ alias firefox='/Applications/Firefox.app/Contents/MacOS/firefox'
 
 mdrr() {
   mdr "$@"
-  firefox --new-tab "file://$PWD/md.html"
+  open "file://$PWD/md.html"
   echo "$@" | entr bash -l -c "mdr '$@'"
 }
 
 pdfrename() {
   rg --files -t pdf --max-depth 1 . | xargs -P16 -I% -L1 bash -c 'pdftitle -p "%" -c || true'
+}
+
+zk-media-from-clipboard() {
+  pbpaste > $ZK_PATH/media/$1
 }

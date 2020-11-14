@@ -65,3 +65,6 @@ kubectl-short-aliases
 
 export ZK_PATH="$HOME/Documents/Zettelkasten"
 export PATH="$PATH:$HOME/src/zk/bin"
+
+export CLASSPATH="build/core/lucene-core-8.5.1-SNAPSHOT.jar:build/analysis/common/lucene-analyzers-common-8.5.1-SNAPSHOT.jar:build/queryparser/lucene-queryparser-8.5.1-SNAPSHOT.jar:src/java"
+export CLASSPATH="$CLASSPATH:build/demo/lucene-demo-8.5.1-SNAPSHOT.jar"
