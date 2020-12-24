@@ -22,7 +22,7 @@ augroup QuickfixStatus
 		\ statusline+=%t\ [%{g:asyncrun_status}]\ %{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%-15(%l,%c%V%)\ %P
 augroup END
 
-let g:browser_new_tab = "/Applications/Firefox.app/Contents/MacOS/firefox --new-tab "
+let g:browser_new_tab = "chrome-cli open "
 
 call plug#begin('~/.config/nvim/plugged')
 
@@ -49,12 +49,13 @@ function! s:check_back_space() abort "{{{
   return !col || getline('.')[col - 1]  =~ '\s'
 endfunction"}}}
 " }}}
-Plug 'junegunn/fzf', { 'do': 'yes \| ./install --all' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 " {{{
+
 if exists('$TMUX')
   let g:fzf_layout = { 'tmux': '-p90%,60%' }
-let g:fzf_preview_window = 'right:50%'
+  let g:fzf_preview_window = 'right:50%'
 else
   let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 endif
