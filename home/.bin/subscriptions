@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+function notify() {
+  osascript -e "display notification \"$1\" with title \"Subscriptions\""
+}
+
+function mycurl() {
+  curl -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36" \
+    --retry 10 --silent $@ 2> /dev/null
+}
+
+PATH=/usr/local/bin:$PATH
+
+# mycurl 'https://www.staples.ca/products/2978106-en-hp-colour-laserjet-pro-m255dw-printer'
+
+# mycurl 'https://provinceofcanada.com/products/weekend-hoodie-washed-olive-unisex.json?variant=32653375373389' \
+#   | jq --exit-status ".product.variants | .[] | select(.title == \"S\").inventory_quantity > 0" > /dev/null && \
+#   notify "Province of Canada Sweater for Jenn"
+
+# mycurl 'https://finerfitness.ca/collections/weight-plates-dumbbells/products/york-rubber-training-bumper-plate?variant=33148913647660' \
+#   | pup 'option[value="33148913647660"]' | grep -q "Sold out" || notify "York 15LB at Finer Fitness"
+
+# mycurl 'https://www.roguecanada.ca/rogue-lb-change-plates' | \
+#    rg -q 'bin-button-24534' || \
+#    notify "Rogue Change Plates"
+
+# mycurl 'https://www.roguecanada.ca/rogue-color-echo-bumper-plate' | \
+#    rg -q 'bin-button-65856' || \
+#    notify "Rogue Echo Bumper Plates"
+
+# mycurl 'https://www.roguecanada.ca/rogue-hg-2-0-bumper-plates' | \
+#    rg -q 'bin-button-22903' || \
+#    notify "Rogue HG Bumper Plates"
+
+# mycurl 'https://www.roguecanada.ca/rogue-echo-bumper-plates-with-white-text' | \
+#    rg -q 'bin-button-65858' || \
+#    notify "Rogue Echo Bumper Plates"
+
+# mycurl 'https://www.roguefitness.com/rogue-color-lb-training-2-0-plates' | \
+#    rg -q 'bin-button-23934' || \
+#    notify "Rogue Training Plates 25LB"
+
+# mycurl 'https://fitnessavenue.ca/15lb-bumper-weight-plates-2-inch' | \
+#    rg -q 'Backordered' || \
+#    notify "Amstaff Plates"
+
+# if [[ $(mycurl -s https://gorilafitness.ca/en/york-barbell-solid-rubber-bumper-plates | pup '.unavailable' -n) -lt 2 ]]; then 
+#   notify "York Barbells Back in stock at Gorilla"
+# fi
+
+# curl --retry 10 -s https://www.roguecanada.ca/black-concept-2-model-d-rower-pm5 | \
+#   grep -q 'bin-out-of-stock-cart' || \
+#   notify "Rogue Concept-D in Stock"
+
+# curl --retry 10 -s https://fitnessnutrition.ca/products/concept2-modele-d | \
+#   grep -q "pt-label-out-stock" || \
+#   notify "Fitness Nutrition Concept-D in Stock"
+
+# curl --retry 10 -s https://gorilafitness.ca/en/endurance/concept-2-rower-1510 | \
+#   grep -q "stock unavailable" || \
+#   notify "Gorilla Fitness Concept-D in Stock"
+
+# curl --retry 10 -s https://www.flamanfitness.com/concept-2-model-d-rower.html | \
+#   grep -q "Contact For Price" || \
+#   notify "Flaman Fitness Concept-D in Stock"
+
+# curl --retry 10 -s https://www.flamanfitness.com/concept-2-rower-model-e.html | \
+#   grep -q "Contact For Price" || \
+#   notify "Flaman Fitness Concept-E in Stock"
+
+# curl --retry 10 -s https://iheartsynergee.ca/collections/rowers/products/concept2-model-d | \
+#   grep -q "sold_out" || \
+#   notify "I Heart Synergee Concept-D in Stock"
+
+# curl --retry 10 -s https://iheartsynergee.ca/collections/rowers/products/concept2-model-e |
+#   grep -q "sold_out" || \
+#   notify "I Heart Synergee Concept-D in Stock"
