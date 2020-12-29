@@ -275,7 +275,7 @@ if options.tmux
 else
   system("dev up") if options.dev_up
   # There might be no diffs if e.g. this is just reviewing a repo
-  diffs = `git diff --name-only #{review_diff}`.strip
+  diffs = `git diff --name-only #{review_diff}`.strip.split("\n").join(" ")
   vim_command = "nvim -c \"let g:gitgutter_diff_base = '#{base_remote}/#{base_branch}'\""
   vim_command += " -c \":e!\" #{diffs}" unless diffs.empty?
   system(vim_command) if options.open

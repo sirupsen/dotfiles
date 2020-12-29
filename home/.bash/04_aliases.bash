@@ -215,6 +215,14 @@ scratch() {
   nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/scratch.md"
 }
 
+KIBANA_VERSION="docker.elastic.co/kibana/kibana:7.6.0"
+kibana() {
+  local server=$(basename "$(pwd)")
+  open "http://localhost:5601/app/kibana#/dev_tools/console" &
+  docker run --name kibana --rm -p 5601:5601 --env ELASTICSEARCH_HOSTS="http://$server.railgun:9200" "$KIBANA_VERSION"
+}
+
+
 mdr() {
   ts=$(gdate +%s%N)
   echo "<section><article>" > md.html
@@ -230,6 +238,8 @@ mdr() {
   tt=$((($(gdate +%s%N) - $ts)/1000000))
   echo "Re-rendered (${tt}ms)"
 
+  open "file://$PWD/md.html"
+  echo "$@" | entr bash -l -c "mdr '$@'"
   # Brings the application to the foreground :(
   # cat <<'EOF' | osascript
 # tell application "Firefox"
@@ -237,14 +247,6 @@ mdr() {
   # tell application "System Events" to keystroke "r" using command down
 # end tell
 # EOF
-}
-
-alias firefox='/Applications/Firefox.app/Contents/MacOS/firefox'
-
-mdrr() {
-  mdr "$@"
-  open "file://$PWD/md.html"
-  echo "$@" | entr bash -l -c "mdr '$@'"
 }
 
 pdfrename() {

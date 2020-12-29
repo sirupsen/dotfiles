@@ -123,7 +123,7 @@ command! -nargs=* FZFGem call FzfGem(<f-args>)
 function! Gem(name)
   let path = system("bundle info ".a:name." | rg -oP '(?<=Path: )(.+)$'")
   let path = substitute(path, '\n', '', '')
-  silent execute ":!tmux new-window -n 'gem:" . a:name . "' bash -l -c 'cd " . path . " && vim -c \':FZF\''"
+  silent execute ":!tmux new-window -n 'gem:" . a:name . "' bash -l -c 'cd " . path . " && /usr/local/bin/nvim -c \':FZF\''"
 endfunction
 command! -nargs=* Gem call Gem(<f-args>)
 
@@ -211,7 +211,7 @@ let g:ale_sign_warning = "⚠"
 let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
 let g:ale_fixers = {
       \'rust': ['rustfmt'],
-      \'ruby': ['bundle exec rubocop -a'],
+      \'ruby': ['rubocop'],
       \'go': ['gofmt'],
       \'typescript': ['remove_trailing_lines', 'trim_whitespace', 'eslint'],
       \'javascript': ['remove_trailing_lines', 'trim_whitespace', 'eslint']
@@ -219,6 +219,7 @@ let g:ale_fixers = {
 " Note that many of these have to be installed first!
 let g:ale_linters = {
       \'javascript': [''],
+      \'ruby': ['rubocop'],
       \'typescript': ['tsserver', 'eslint'],
       \'go': ['gopls'],
       \'rust': ['rls'],
@@ -324,6 +325,7 @@ let g:rust_recommended_style = 1
 Plug 'cespare/vim-toml', { 'for': 'toml' }
 Plug 'uarun/vim-protobuf'
 Plug 'leafgarland/typescript-vim'
+Plug 'udalov/kotlin-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'jparise/vim-graphql'
 Plug 'racer-rust/vim-racer'
