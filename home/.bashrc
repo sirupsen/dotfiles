@@ -60,7 +60,7 @@ fi
 
 # cloudplatform: add Shopify clusters to your local kubernetes config
 export KUBECONFIG=/Users/$(whoami)/.kube/config:/Users/$(whoami)/.kube/config.shopify.cloudplatform
-for file in /Users/simoneskildsen/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
+for file in /Users/work/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
 kubectl-short-aliases
 
 export ZK_PATH="$HOME/Documents/Zettelkasten"
@@ -68,3 +68,8 @@ export PATH="$PATH:$HOME/src/zk/bin"
 
 export CLASSPATH="build/core/lucene-core-8.5.1-SNAPSHOT.jar:build/analysis/common/lucene-analyzers-common-8.5.1-SNAPSHOT.jar:build/queryparser/lucene-queryparser-8.5.1-SNAPSHOT.jar:src/java"
 export CLASSPATH="$CLASSPATH:build/demo/lucene-demo-8.5.1-SNAPSHOT.jar"
+
+# load dev, but only if present and the shell is interactive
+if [[ -f /opt/dev/dev.sh ]] && [[ $- == *i* ]]; then
+  source /opt/dev/dev.sh
+fi
