@@ -73,6 +73,7 @@ garch() {
 }
 
 alias bx='bundle exec'
+alias bxr='bundle exec ruby'
 alias rt='bx ruby -I.:test'
 alias knife='chruby 2.3 && BUNDLE_GEMFILE=~/.chef/Gemfile bundle exec knife'
 alias vim=nvim
@@ -111,10 +112,10 @@ refreshsystem() {
   brew update
   brew upgrade fzf neovim bash ripgrep git universal-ctags \
     fd go curl redis ruby-install telnet tree jemalloc ruby-install \
-    mysql youtube-dl curl cmake docker gdb wget universal-ctags \
+    mysql youtube-dl curl cmake docker gdb wget coreutils \
     lua luajit markdown gh hub htop reattach-to-user-namespace \
     jq sqlite hugo htop toxiproxy grep graphviz entr fio aspell \
-    llvm cmark chrome-cli ejson gcc
+    llvm cmark chrome-cli ejson gcc bat gopls typescript
 
   rustup update
 }
@@ -148,27 +149,6 @@ pbcopyfile() {
     -e 'end run' "/$1"
 }
 
-
-# Get the latest drawing from the Zettelkasten notebook into latest ZK note.
-zk-remarkable() {
-  if [[ ! $1 ]]; then
-    echo 'need an argument with the note id'
-  else
-    rmapi geta 'Zettelkasten'
-    pdftk Zettelkasten-annotations.pdf cat end output zk.pdf
-    convert -density 400 -trim +repage zk.pdf -quality 100 -flatten -define profile:skip=ICC zk.png
-    mv zk.png "$HOME/Documents/Zettelkasten/media/$1.png"
-    echo "![](media/$1.png)"
-    open "media/$1.png"
-    rm Zettelkasten-annotations.pdf zk.pdf
-  fi
-}
-
-remarkable() {
-  rmapi geta 'Quick sheets'
-  pdftk Quick\ sheets-annotations.pdf cat end output quick.pdf
-  convert -density 400 -trim +repage quick.pdf -quality 100 -flatten -define profile:skip=ICC quick.png
-}
 
 # if it's a big project you'll want to build this yourself.
 file-list-tags() {
@@ -210,9 +190,8 @@ zk-uniq() {
 }
 
 scratch() {
-  ln -fs "$HOME/Documents/Zettelkasten/scratch.md" ~/scratch.md
   tmux rename-window scratch
-  nvim -c ":set autochdir" "$HOME/Documents/Zettelkasten/scratch.md"
+  nvim -c ":set autochdir" "${HOME}/Library/Mobile Documents/com~apple~CloudDocs/Documents/Zettelkasten/scratch.md"
 }
 
 KIBANA_VERSION="docker.elastic.co/kibana/kibana:7.6.0"
@@ -225,28 +204,28 @@ kibana() {
 
 mdr() {
   ts=$(gdate +%s%N)
-  echo "<section><article>" > md.html
-  echo "<b><h3>$@</h3></b>" >> md.html
-  cmark --smart --unsafe "$@" >> md.html
-  echo "</section></article>" >> md.html
-
+  echo '<html><head>' > md.html
   echo '<link rel="stylesheet" href="https://yegor256.github.io/tacit/tacit.min.css"/>' \
     >> md.html
-  echo '<style>img { max-width: 600px; margin-left: auto; display: block; }</style>' \
+  echo '<style>body { background-color: #f7f7f7; } h1:first-of-type { margin-top: 16px; } img { max-width: 600px; margin-left: auto; display: block; }</style>' \
     >> md.html
+  echo "<title>$@ -- Markdown</title>" >> md.html
+
+  echo "<body><section><article>" >> md.html
+  cmark --smart --unsafe "$@" >> md.html
+  echo "</section></article></body>" >> md.html
 
   tt=$((($(gdate +%s%N) - $ts)/1000000))
-  echo "Re-rendered (${tt}ms)"
 
+  chrome-cli list tabs | rg '\- Markdown' | rg -oP "(?<=\[)(\d+)" | \
+    xargs -L1 chrome-cli reload -t
+
+  echo "Re-rendered '${@}' (${tt}ms)"
+}
+
+md() {
   open "file://$PWD/md.html"
-  echo "$@" | entr bash -l -c "mdr '$@'"
-  # Brings the application to the foreground :(
-  # cat <<'EOF' | osascript
-# tell application "Firefox"
-  # activate
-  # tell application "System Events" to keystroke "r" using command down
-# end tell
-# EOF
+  echo "$@" | entr bash -l -c "mdr \"${@}\""
 }
 
 pdfrename() {

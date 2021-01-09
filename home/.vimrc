@@ -209,6 +209,7 @@ Plug 'w0rp/ale'
 let g:ale_sign_error = "✗"
 let g:ale_sign_warning = "⚠"
 let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
+let g:ale_kotlin_languageserver_executable = '/Users/work/src/kotlin-language-server/server/build/install/server/bin/kotlin-language-server'
 let g:ale_fixers = {
       \'rust': ['rustfmt'],
       \'ruby': ['rubocop'],
@@ -223,12 +224,13 @@ let g:ale_linters = {
       \'typescript': ['tsserver', 'eslint'],
       \'go': ['gopls'],
       \'rust': ['rls'],
+      \'kotlin': ['languageserver']
       \}
 let g:ale_lint_delay = 1000
 let g:ale_ruby_rubocop_executable = 'bundle'
 let g:ale_rust_cargo_check_tests = 1
 let g:ale_rust_cargo_check_examples = 1
-let g:ale_set_balloons = 1
+let g:ale_set_balloons = 1 " Show symbol information on mouseover
 let g:ale_typescript_tsserver_use_global = 1 " has hack for more memory
 
 " Let's require everything to be explicit, because this is always a nightmare in
@@ -247,10 +249,6 @@ let g:ale_set_highlights = 0 " signs are enough
 let g:ale_cursor_detail = 0
 let g:ale_close_preview_on_insert = 1
 
-map <leader>f :ALEFix<CR>
-map !f :call VimuxRunCommand("dev style")<CR>
-map [a :ALEPrevious<CR>
-map ]a :ALENext<CR>
 " }}}
 Plug 'milkypostman/vim-togglelist'
 Plug 'tpope/vim-endwise', { 'for': 'ruby' }
@@ -340,6 +338,7 @@ call deoplete#custom#option({
 \ 'prev_completion_mode': "prev_completion_mode",
 \ 'sources': {
 \   '_': ['tabnine'],
+\   'kotlin': ['ale', 'tabnine'],
 \   'markdown': ['markdown_links', 'markdown_tags']
 \ }
 \ })
@@ -568,6 +567,11 @@ function! LookupDocsLibrary()
   call system(browser . "https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
 endfunction
 
+" Docs/lint binds
 nmap K :call LookupDocsLanguage()<cr>
-nmap \k :ALEHover<cr>
+nmap <C-[> :ALEGoToDefinition<cr>
 nmap <A-k> :call LookupDocsLibrary<CR>
+map <leader>f :ALEFix<CR>
+map !f :call VimuxRunCommand("dev style")<CR>
+map [a :ALEPrevious<CR>
+map ]a :ALENext<CR>

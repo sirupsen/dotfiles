@@ -24,18 +24,18 @@
 	algorithm = patience
 [core]
 	commitGraph = true
-	excludesfile = /Users/personal/.global_gitignore
+	excludesfile = ~/.global_gitignore
 [gc]
 	writeCommitGraph = true
 [web]
-    browser = /Applications/Firefox.app/Contents/MacOS/firefox --new-tab
+  browser = open
 [url "https://github.com/Shopify/"]
 	insteadOf = git@github.com:Shopify/
 	insteadOf = git@github.com:shopify/
 	insteadOf = ssh://git@github.com/Shopify/
 	insteadOf = ssh://git@github.com/shopify/
+[protocol]
+	version = 2
 [credential]
 	helper = 
 	helper = store --file /opt/dev/var/private/git_credential_store
-[protocol]
-	version = 2
