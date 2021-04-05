@@ -10,6 +10,7 @@ set mmp=5000 " Some files need more memory for syntax highlight
 " <cword> then includes - as part of the word
 set iskeyword+=-
 
+set termguicolors
 set statusline=
 set statusline+=%f:%l:%c\ %m
 " set statusline+=%{tagbar#currenttag('\ [%s]\ ','','')}
@@ -51,6 +52,7 @@ endfunction"}}}
 " }}}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'chengzeyi/fzf-preview.vim' " For tag previews
 " {{{
 
 if exists('$TMUX')
@@ -69,7 +71,6 @@ function! FzfSpell()
   let suggestions = spellsuggest(expand("<cword>"))
   return fzf#run(fzf#wrap({'source': suggestions, 'sink': function("FzfSpellSink"), 'window': { 'width': 0.6, 'height': 0.3 }}))
 endfunction
-
 nnoremap z= :call FzfSpell()<CR>
 
 let g:fzf_history_dir = '~/.fzf-history'
@@ -85,25 +86,17 @@ function! RipgrepFzf(query, fullscreen)
 endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
-" Completely use RG, don't use fzf's fuzzy-matching
-map <C-g> :RG<CR>
+map <C-g> :RG<CR> " Completely use RG, don't use fzf's fuzzy-matching
 map <Space>/ :execute 'Rg ' . expand('<cword>')<CR>
+map <C-/> :BLines
 map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
-
-" map <C-g> :Rg<CR>
-" map <leader>/ :execute 'RG ' . input('Rg/')<CR>
-" map <Space>/ :execute 'RG ' . input('Rg/', expand('<cword>'))<CR>
-
-command! -bang -nargs=? -complete=dir Files
-    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--tiebreak=begin']}), <bang>0)
 map <C-t> :Files<CR>
-
 map <C-j> :Buffers<CR>
 map <A-c> :Commands<CR>
-map <C-l> :Tags<CR>
-map <Space>l :call fzf#vim#tags(expand('<cword>'))<CR>
-map <A-l> :BTags<CR>
-map <Space><A-l> :call fzf#vim#buffer_tags(expand('<cword>'))<CR>
+map <C-l> :FZFTags<CR>
+map <A-l> :FZFBTags<CR>
+map <Space>l :execute 'FZFTags ' . expand('<cword>')<CR>
+map <Space><A-l> :execute 'FZFBTags ' . expand('<cword>')<CR>
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -265,17 +258,17 @@ Plug 'tpope/vim-obsession'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'chriskempson/base16-vim'
 " Plug 'bouk/vim-markdown', { 'branch': 'wikilinks' }
-" Plug 'plasticboy/vim-markdown'
-" " {{
-" let g:vim_markdown_folding_disabled = 1
-" let g:vim_markdown_new_list_item_indent = 0
-" let g:vim_markdown_auto_insert_bullets = 1
-" let g:vim_markdown_frontmatter = 1
-" let g:vim_markdown_no_extensions_in_markdown = 0
-" let g:vim_markdown_follow_anchor = 1
-" let g:vim_markdown_strikethrough = 1
-" let g:vim_markdown_autowrite = 1
-" set conceallevel=0
+Plug 'plasticboy/vim-markdown'
+" {{
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_auto_insert_bullets = 1
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_no_extensions_in_markdown = 0
+let g:vim_markdown_follow_anchor = 1
+let g:vim_markdown_strikethrough = 1
+let g:vim_markdown_autowrite = 1
+set conceallevel=0
 
 " https://agilesysadmin.net/how-to-manage-long-lines-in-vim/
 autocmd FileType markdown setlocal spell
@@ -338,7 +331,7 @@ call deoplete#custom#option({
 \ 'prev_completion_mode': "prev_completion_mode",
 \ 'sources': {
 \   '_': ['tabnine'],
-\   'kotlin': ['ale', 'tabnine'],
+\   'kotlin': ['tabnine'],
 \   'markdown': ['markdown_links', 'markdown_tags']
 \ }
 \ })
@@ -350,7 +343,7 @@ call deoplete#custom#source('_',
             \ 'disabled_syntaxes', ['Comment', 'String'])
 
 call deoplete#custom#var('tabnine', {
-\ 'line_limit': 500,
+\ 'line_limit': 2000,
 \ 'max_num_results': 20,
 \ })
 
@@ -470,7 +463,7 @@ nnoremap <silent> <expr> ^ ScreenMovement("^")
 nnoremap <silent> <expr> $ ScreenMovement("$")
 
 " set autochdir
-set tags=./tags,tags;
+set tags=.tags,./tags,tags;
 
 function! SNote(...)
   let path = strftime("%Y%m%d%H%M")." ".trim(join(a:000)).".md"
@@ -521,7 +514,7 @@ command! ZKR call fzf#run(fzf#wrap({
         \ 'sink':    function("InsertSecondColumn")
       \}))
 
-" autocmd BufNew,BufNewFile,BufRead ~/Documents/Zettelkasten/*.md call ZettelkastenSetup()
+autocmd BufNew,BufNewFile,BufRead ~/Library/Mobile\ Documents/com~apple~CloudDocs/Documents/Zettelkasten/*.md call ZettelkastenSetup()
 
 map \d :put =strftime(\"%Y-%m-%d\")<CR>
 

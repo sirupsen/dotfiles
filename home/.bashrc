@@ -29,8 +29,8 @@ export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin \
     tmux send-keys -t \{left\} Enter \
   ]\""
 # We depend on this in .vimrc too for file listing.
-export FZF_DEFAULT_COMMAND="rg --files --follow --hidden --glob '!.git/*' --glob \
-  '!sorbet/**' --glob '!tags' --glob '!yarn.lock' --glob '!package.json'"
+export FZF_DEFAULT_COMMAND="rg --files --follow --hidden --glob '!.git/*' \
+  --glob '!tags' --glob '!yarn.lock' --glob '!package.json' --glob '!*.rbi'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export GOPATH=$HOME
 
@@ -65,7 +65,7 @@ if [[ -d ~/src/github.com/Shopify/cloudplatform ]]; then
   kubectl-short-aliases
 fi
 
-export ZK_PATH="$HOME/Documents/Zettelkasten"
+export ZK_PATH="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/Zettelkasten"
 export PATH="$PATH:$HOME/src/zk/bin"
 export BIGTABLE_EMULATOR_HOST=localhost:8086
 

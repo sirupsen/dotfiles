@@ -2,7 +2,8 @@
 
 # Crate a hash with all tags, their counts, and tags they relate to
 all_tags = {}
-Dir["*.md"].each do |file|
+all_md_files = Dir["*.md"]
+all_md_files.each do |file|
   content = File.read(file)
   file_tags = content.scan(/#[\w-]+/)
   file_tags.each do |file_tag|
@@ -57,6 +58,11 @@ else
     if tag_or_file.end_with?(".md")
       content = File.read(tag_or_file)
       content.scan(/#[\w-]+/)
+    elsif tag_or_file =~ /\A(\d{12})/
+      id = $1
+      file = all_md_files.find { |file| file[0..11] == id }
+      content = File.read(file)
+      content.scan(/#[\w-]+/)
     else
       tag_or_file.start_with?("#") ? tag_or_file : "##{tag_or_file}"
     end
@@ -90,11 +96,13 @@ else
   end
 
   tags.each do |tag|
-    all_tags[tag].each do |(k, v)|
-      if composite[k]
-        composite[k] += v
-      else
-        composite[k] = v
+    if all_tags[tag]
+      all_tags[tag].each do |(k, v)|
+        if composite[k]
+          composite[k] += v
+        else
+          composite[k] = v
+        end
       end
     end
   end

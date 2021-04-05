@@ -80,6 +80,7 @@ alias vim=nvim
 alias vi=vim
 alias g='gcloud'
 alias rgi="rg -i"
+alias r='review'
 
 alias ttc='tmux save-buffer -|pbcopy'
 alias tfc='tmux set-buffer "$(pbpaste)"'
@@ -101,14 +102,6 @@ reset-camera () {
 }
 
 refresh() {
-  dev clone $1
-  gfogro
-  dev up
-}
-
-refreshsystem() {
-  vim +PlugUpdate +qall
-
   brew update
   brew upgrade fzf neovim bash ripgrep git universal-ctags \
     fd go curl redis ruby-install telnet tree jemalloc ruby-install \
@@ -118,27 +111,12 @@ refreshsystem() {
     llvm cmark chrome-cli ejson gcc bat gopls typescript
 
   rustup update
-}
-
-refreshall () {
-  refresh shopify
-  refresh activefailover
-  refresh spy
-  refresh cloudplatform
-  refresh cusco
-  refresh nginx-routing-modules
-  refresh storefront-renderer
-  refresh dog
-  refresh magellan
-
-  cd ~/.chef
-  gpl
-  bundle
+  vim +PlugUpdate +qall
   gcloud components update
 
-  sudo killall xhyve
+  z cloudplatform
+  dev up
 }
-
 
 # ZETTELKASTEN ALIASES MOVED TO https://github.com/sirupsen/zk
 
@@ -153,6 +131,7 @@ pbcopyfile() {
 # if it's a big project you'll want to build this yourself.
 file-list-tags() {
   rg --sort path --files --glob '!target' --glob '!vendor' > .file_list_tags
+  rg --sort path --files --glob '!www' --no-ignore tags.d/ >> .file_list_tags
 }
 
 cscope-build() {
@@ -168,7 +147,7 @@ ctags-build() {
     ripper-tags -R -L .file_list_tags -f tags --extra=q
   else
     file-list-tags
-    ctags -f tags -L .file_list_tags --extras=q --sort=yes
+    ctags -f tags -L .file_list_tags --extras=q --sort=yes --excmd=number
   fi
 }
 
