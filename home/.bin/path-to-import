@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+require 'pathname'
+
+raw_path = ARGV[0]
+# src/main/kotlin/com/shopify/utils/Counter.kt
+# -> com/shopify/utils/Counter.kt
+start_index = raw_path.index(/(com|org)\//)
+
+# src/main/kotlin/com/shopify/utils/Counter.kt
+# -> .kt
+extension = Pathname.new(raw_path).extname
+end_index = raw_path.rindex(extension)
+
+module_path = raw_path[start_index...end_index]
+module_path = module_path.gsub("/", ".")
+
+puts "import #{module_path}"

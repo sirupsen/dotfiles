@@ -92,6 +92,8 @@ map <C-/> :BLines
 map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
 map <C-t> :Files<CR>
 map <C-j> :Buffers<CR>
+" Git Status
+map <A-j> :GFiles?<CR>
 map <A-c> :Commands<CR>
 map <C-l> :FZFTags<CR>
 map <A-l> :FZFBTags<CR>
@@ -136,12 +138,17 @@ function! FzfCrate(name)
 endfunction
 command! -nargs=* FZFCrate call FzfCrate(<f-args>)
 
+func! s:import_path(lines)
+  exec ':r !path-to-import ' . a:lines[0]
+endfunc
+
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
   \ 'ctrl-o': ':r !basename',
-  \ 'alt-o':  ':r !echo',
+  \ 'ctrl-s': ':silent !git add %',
+  \ 'ctrl-r':  function('s:import_path'),
   \ 'ctrl-v': 'vsplit' }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
 " }}}
@@ -203,12 +210,14 @@ let g:ale_sign_error = "✗"
 let g:ale_sign_warning = "⚠"
 let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
 let g:ale_kotlin_languageserver_executable = '/Users/work/src/kotlin-language-server/server/build/install/server/bin/kotlin-language-server'
+let g:ale_kotlin_ktlint_executable = 'ktlint --disabled_rules="indent"'
 let g:ale_fixers = {
       \'rust': ['rustfmt'],
       \'ruby': ['rubocop'],
       \'go': ['gofmt'],
       \'typescript': ['remove_trailing_lines', 'trim_whitespace', 'eslint'],
-      \'javascript': ['remove_trailing_lines', 'trim_whitespace', 'eslint']
+      \'javascript': ['remove_trailing_lines', 'trim_whitespace', 'eslint'],
+      \'kotlin': ['ktlint']
     \}
 " Note that many of these have to be installed first!
 let g:ale_linters = {
@@ -217,7 +226,7 @@ let g:ale_linters = {
       \'typescript': ['tsserver', 'eslint'],
       \'go': ['gopls'],
       \'rust': ['rls'],
-      \'kotlin': ['languageserver']
+      \'kotlin': ['ktlint', 'kotlinc']
       \}
 let g:ale_lint_delay = 1000
 let g:ale_ruby_rubocop_executable = 'bundle'
@@ -331,11 +340,13 @@ call deoplete#custom#option({
 \ 'prev_completion_mode': "prev_completion_mode",
 \ 'sources': {
 \   '_': ['tabnine'],
+\   'json': [],
 \   'kotlin': ['tabnine'],
 \   'markdown': ['markdown_links', 'markdown_tags']
 \ }
 \ })
 
+autocmd FileType json call deoplete#custom#buffer_option('auto_complete', v:false)
 autocmd FileType markdown call deoplete#custom#buffer_option('ignore_sources', ['around', 'buffer', 'tabnine'])
 
 " Don't completee in strings and comments
@@ -379,6 +390,7 @@ set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
 " set listchars=tab:>-,trail:.,extends:>,precedes:<
 " set listchars=trail:.,extends:>,precedes:<
 autocmd FileType go,gitcommit,qf,gitset,gas,asm setlocal nolist
+autocmd FileType json setlocal textwidth=0
 
 set nohlsearch " Don't highlight search results
 set diffopt=filler,vertical
@@ -419,7 +431,7 @@ function! RenameFile()
 endfunction
 nnoremap <leader>r :call RenameFile()<cr>
 
-au BufNewFile,BufRead *.ejson set filetype=json
+au BufNewFile,BufRead *.ejson,*.jsonl set filetype=json
 au BufNewFile,BufRead *.s set filetype=gas
 " au BufNewFile,BufRead *.tsx set filetype=typescript
 set nospell
@@ -442,6 +454,7 @@ function! MRIIndent()
 endfunction
 
 autocmd BufNewFile,BufRead ~/src/github.com/ruby/ruby/**/*.c call MRIIndent()
+autocmd Filetype kotlin setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
 
 " https://stackoverflow.com/questions/4946421/vim-moving-with-hjkl-in-long-lines-screen-lines
 function! ScreenMovement(movement)

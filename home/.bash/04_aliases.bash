@@ -108,7 +108,7 @@ refresh() {
     mysql youtube-dl curl cmake docker gdb wget coreutils \
     lua luajit markdown gh hub htop reattach-to-user-namespace \
     jq sqlite hugo htop toxiproxy grep graphviz entr fio aspell \
-    llvm cmark chrome-cli ejson gcc bat gopls typescript
+    llvm cmark chrome-cli ejson gcc bat gopls typescript git-delta
 
   rustup update
   vim +PlugUpdate +qall
@@ -130,8 +130,15 @@ pbcopyfile() {
 
 # if it's a big project you'll want to build this yourself.
 file-list-tags() {
-  rg --sort path --files --glob '!target' --glob '!vendor' > .file_list_tags
-  rg --sort path --files --glob '!www' --no-ignore tags.d/ >> .file_list_tags
+  rg --sort path --files \
+      --glob '!target' \
+      --glob '!vendor' \
+      --type-not html \
+      --type-not markdown \
+      --type-not jsonl \
+      --type-not yaml \
+      --type-not json \
+    > .file_list_tags
 }
 
 cscope-build() {

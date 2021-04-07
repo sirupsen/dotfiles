@@ -11,6 +11,7 @@
   tool = vimdiff
 [interactive]
   singlekey = true
+  diffFilter = delta --color-only
 [push]
   default = current
 [pull]
@@ -24,6 +25,7 @@
 	algorithm = patience
 [core]
 	commitGraph = true
+  pager = delta
 	excludesfile = ~/.global_gitignore
 [gc]
 	writeCommitGraph = true
@@ -39,3 +41,9 @@
 [credential]
 	helper = 
 	helper = store --file /opt/dev/var/private/git_credential_store
+# https://github.com/dandavison/delta#installation
+[delta]
+  plus-style = "syntax #012800"
+  minus-style = "syntax #340001"
+  syntax-theme = "base16-256"
+  navigate = true

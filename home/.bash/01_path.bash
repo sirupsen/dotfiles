@@ -1,5 +1,5 @@
 # Homebrew
-export PATH="/usr/local/opt/openjdk/bin:$PATH"
+# export PATH="/usr/local/opt/openjdk/bin:$PATH"
 if [ -d /usr/local/bin ]; then
   export PATH=/usr/local/bin:$PATH
   export PATH=$PATH:/usr/local/sbin
