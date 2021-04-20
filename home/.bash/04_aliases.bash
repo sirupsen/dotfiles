@@ -22,6 +22,7 @@ git-find-merge() {
     | tail -1
 }
 
+alias cbt="BIGTABLE_EMULATOR_HOST= cbt"
 alias gcb="git rev-parse --abbrev-ref HEAD"
 alias gp='git push `git_origin_or_fork` `gcb`'
 alias gpl='git pull `git_origin_or_fork` `gcb`'
@@ -89,6 +90,8 @@ alias walrus="ruby -e 'loop { 0.upto(50) { |i| print \"\r\" + (\" \" * i) + \":\
 alias rlias=". ~/.bash/*alias*"
 alias elias="vim ~/.bash/04_aliases.bash; rlias"
 alias vimrc="vim ~/.vimrc"
+alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+alias churl="chrome --headless --disable-gpu --dump-dom"
 
 alias whatsmyip='curl -s https://am.i.mullvad.net/json | jq'
 
@@ -134,10 +137,24 @@ file-list-tags() {
       --glob '!target' \
       --glob '!vendor' \
       --type-not html \
+      --type-not xml \
       --type-not markdown \
       --type-not jsonl \
       --type-not yaml \
       --type-not json \
+      --type-not diff \
+      --type-not asciidoc \
+      --type-not avro \
+      --type-not haml \
+      --type-not license \
+      --type-not log \
+      --type-not mk \
+      --type-not pdf \
+      --type-not protobuf \
+      --type-not readme \
+      --type-not tex \
+      --type-not thrift \
+      --type-not toml \
     > .file_list_tags
 }
 
@@ -154,7 +171,8 @@ ctags-build() {
     ripper-tags -R -L .file_list_tags -f tags --extra=q
   else
     file-list-tags
-    ctags -f tags -L .file_list_tags --extras=q --sort=yes --excmd=number
+    # ctags -f tags -L .file_list_tags --extras=q --sort=yes --excmd=number
+    ctags -f tags -L .file_list_tags --sort=yes --excmd=number
   fi
 }
 

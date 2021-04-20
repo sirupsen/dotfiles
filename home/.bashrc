@@ -10,7 +10,7 @@ unset DISPLAY
 
 # I always have vim in left-most one... makes things easier. We could probably
 # do something here to find the vim pid..?
-export FZF_DEFAULT_OPTS="--height=40% --multi --tiebreak=begin \
+export FZF_DEFAULT_OPTS="--height=40% --keep-right --multi --tiebreak=begin \
   --bind 'ctrl-y:execute-silent(echo {} | pbcopy)' \
   --bind 'alt-down:preview-down,alt-up:preview-up' \
   --bind \"ctrl-v:execute-silent[ \
@@ -73,3 +73,5 @@ export BIGTABLE_EMULATOR_HOST=localhost:8086
 if [[ -f /opt/dev/dev.sh ]] && [[ $- == *i* ]]; then
   source /opt/dev/dev.sh
 fi
+
+export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/application_default_credentials.json"

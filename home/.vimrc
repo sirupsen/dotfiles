@@ -78,7 +78,7 @@ function! RipgrepFzf(query, fullscreen)
   let command_fmt = 'rg --column --hidden --line-number --no-heading --color=always --smart-case %s || true'
   let initial_command = printf(command_fmt, shellescape(a:query))
   let reload_command = printf(command_fmt, '{q}')
-  let options = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  let options = {'options': ['--phony', '--keep-right', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
   if a:fullscreen
     let options = fzf#vim#with_preview(options)
   endif
@@ -88,9 +88,14 @@ endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 map <C-g> :RG<CR> " Completely use RG, don't use fzf's fuzzy-matching
 map <Space>/ :execute 'Rg ' . expand('<cword>')<CR>
-map <C-/> :BLines
+map <A-/> :BLines<CR>
 map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
+
+" Redefine so for long paths in e.g. Java we still get the filename.
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': '--keep-right'}), <bang>0)
 map <C-t> :Files<CR>
+
 map <C-j> :Buffers<CR>
 " Git Status
 map <A-j> :GFiles?<CR>
@@ -142,13 +147,22 @@ func! s:import_path(lines)
   exec ':r !path-to-import ' . a:lines[0]
 endfunc
 
+function! s:copy_results(lines)
+  let joined_lines = join(a:lines, "\n")
+  if len(a:lines) > 1
+    let joined_lines .= "\n"
+  endif
+  let @+ = joined_lines
+endfunction
+
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
-  \ 'ctrl-o': ':r !basename',
+  \ 'ctrl-o': ':r !echo',
   \ 'ctrl-s': ':silent !git add %',
   \ 'ctrl-r':  function('s:import_path'),
+  \ 'ctrl-y':  function('s:copy_results'),
   \ 'ctrl-v': 'vsplit' }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
 " }}}
@@ -210,7 +224,7 @@ let g:ale_sign_error = "✗"
 let g:ale_sign_warning = "⚠"
 let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
 let g:ale_kotlin_languageserver_executable = '/Users/work/src/kotlin-language-server/server/build/install/server/bin/kotlin-language-server'
-let g:ale_kotlin_ktlint_executable = 'ktlint --disabled_rules="indent"'
+" let g:ale_kotlin_ktlint_executable = '/usr/local/bin/ktlint --disabled_rules=indent'
 let g:ale_fixers = {
       \'rust': ['rustfmt'],
       \'ruby': ['rubocop'],
@@ -226,9 +240,10 @@ let g:ale_linters = {
       \'typescript': ['tsserver', 'eslint'],
       \'go': ['gopls'],
       \'rust': ['rls'],
-      \'kotlin': ['ktlint', 'kotlinc']
+      \'kotlin': ['languageserver', 'ktlint']
       \}
 let g:ale_lint_delay = 1000
+let g:ale_command_wrapper = '~/.bin/ale-command-wrapper'
 let g:ale_ruby_rubocop_executable = 'bundle'
 let g:ale_rust_cargo_check_tests = 1
 let g:ale_rust_cargo_check_examples = 1
@@ -341,7 +356,7 @@ call deoplete#custom#option({
 \ 'sources': {
 \   '_': ['tabnine'],
 \   'json': [],
-\   'kotlin': ['tabnine'],
+\   'kotlin': ['ale', 'tabnine'],
 \   'markdown': ['markdown_links', 'markdown_tags']
 \ }
 \ })
@@ -431,7 +446,7 @@ function! RenameFile()
 endfunction
 nnoremap <leader>r :call RenameFile()<cr>
 
-au BufNewFile,BufRead *.ejson,*.jsonl set filetype=json
+au BufNewFile,BufRead *.ejson,*.jsonl,*.avsc set filetype=json
 au BufNewFile,BufRead *.s set filetype=gas
 " au BufNewFile,BufRead *.tsx set filetype=typescript
 set nospell
@@ -454,7 +469,7 @@ function! MRIIndent()
 endfunction
 
 autocmd BufNewFile,BufRead ~/src/github.com/ruby/ruby/**/*.c call MRIIndent()
-autocmd Filetype kotlin setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
+" autocmd Filetype kotlin setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
 
 " https://stackoverflow.com/questions/4946421/vim-moving-with-hjkl-in-long-lines-screen-lines
 function! ScreenMovement(movement)

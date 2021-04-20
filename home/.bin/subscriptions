@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 function notify() {
-  echo $1
   osascript -e "display notification \"$1\" with title \"Subscriptions\""
+
+  curl -s -F "token=$PUSHOVER_APP_TOKEN" \
+    -F "user=$PUSHOVER_USER_TOKEN" \
+    -F "title=${1}" \
+    -F "message=${1}" https://api.pushover.net/1/messages.json >/dev/null 2>&1
 }
 
 function mycurl() {
@@ -9,10 +13,53 @@ function mycurl() {
     echo "$@" >&2
   fi
 
-  curl -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36" --max-time 5 --retry 10 --silent $@ 2> /dev/null
+  curl --fail -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36" --max-time 5 --retry 10 --silent $@ 2> /dev/null
 }
 
 PATH=/usr/local/bin:$PATH
+
+new="/tmp/firearm-new.html"
+old="/tmp/firearm-old.html"
+mycurl "https://www.racentre.com/adult-clubs-programs/firearms-safety-education/" -o $new
+if [[ -f /tmp/firearm-old.html ]]; then
+  if ! cmp --silent $new $old; then
+    notify "RA Centre page changed"
+  fi
+else
+  mv $new $old
+fi
+
+n_results=$(mycurl 'https://www.patagonia.ca/search/?q=nano%20air%20hoody&prefn1=family&prefv1=nano-air&prefn2=features&prefv2=hooded&prefn3=refinementColor&prefv3=Black&prefn4=size&prefv4=M' | \
+  pup ".content-search-results--header-text" | \
+  rg -o -P "(?<=&#34;)(\d+)")
+
+if [[ $n_results > 1 ]]; then # Women's is currently in stock
+  notify "Patagonia Nano Air Hoody Back in stock"
+fi
+
+n_results=$(mycurl 'https://www.patagonia.ca/search/?q=nano%20air%20pants&prefn1=size&prefv1=M' | \
+  pup ".content-search-results--header-text" | \
+  rg -o -P "(?<=&#34;)(\d+)")
+
+if [[ $n_results > 0 ]]; then
+  notify "Patagonia Nano Air Pants Back in stock"
+fi
+
+n_canoes=$(mycurl 'https://www.trailheadpaddleshack.ca/paddling/canoes/' | pup ".sale-new" | grep -c -i 'out of stock')
+if [[ $n_canoes < 19 ]]; then
+  notify "Trailhead Canoe in stock"
+fi
+
+mycurl 'https://www.canadianoutdoorequipment.com/gransfors-bruks-outdoor-axe.html' | \
+  pup '.out-of-stock text{}' | rg -q "^Sold out!" || notify "Axe in stock"
+
+mycurl 'https://www.costco.ca/classic-adirondack-collection.product.100036005.html' && \
+  notify "Aidorondack from Costco in Stock"
+
+n_count=$(mycurl 'https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-16-fiberglass.html' | rg --count "Out of Stock")
+if [[ $n_count < 5 ]]; then
+  notify "Trailhead Canoe in Stock"
+fi
 
 mycurl 'https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-16-fiberglass.html?id=33830503#' \
   | pup '.out-of-stock' > /dev/null || notify "Canoe Available"
@@ -21,29 +68,71 @@ mycurl 'https://www.altitude-sports.com/products/patagonia-nano-air-pants-mens-l
   | jq --exit-status ".product.variants | .[] | select(.option2 == \"M\").inventory_quantity > 0" > /dev/null && \
   notify "Nano Air Pants Men in Stock @ Altitude"
 
+n_count=$(mycurl 'https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-16-fiberglass.html?id=33830523' | rg --count "Out of Stock")
+if [[ $n_count < 5 ]]; then
+  notify "Trailhead Canoe in Stock"
+fi
+
 mycurl 'https://www.altitude-sports.com/products/patagonia-nano-air-jacket-mens-llll-pat-84252.json' \
   | jq --exit-status ".product.variants | .[] | select(.option2 == \"M\").inventory_quantity > 0" > /dev/null && \
   notify "Nano Air Jacket Men in Stock @ Altitude"
-
-mycurl 'https://www.patagonia.ca/product/mens-nano-air-pants/85100.html' \
-  | pup 'a[data-size=M]' | grep -q 'disabled' || \
-  notify "Nano Air Pants in Stock @ Patagonia (get hoodie too)"
 
 mycurl 'https://www.altitude-sports.com/products/arcteryx-mens-gamma-ar-pant-llll-arc-17225.json' \
   | jq --exit-status ".product.variants | .[] | select(.option2 == \"M\").inventory_quantity > 0" > /dev/null && \
   notify "Nano Air Pants Men in Stock @ Altitude"
 
-mycurl 'https://www.roguecanada.ca/rogue-dumbbell-bumpers' | \
-  pup '.product-purchase-wrapper-50085 .bin-out-of-stock' | \
-  grep -q "Notify Me" || notify "Rogue Dumbbell in Stock"
+n_count=$(mycurl 'https://www.trailheadpaddleshack.ca/sunrise-amizan-10-kayak.html' | rg --count "Out of Stock")
+if [[ $n_count < 3 ]]; then
+  notify "Trailhead Kayaks in Stock"
+fi
 
-mycurl 'https://www.roguecanada.ca/rogue-color-echo-bumper-plate' | \
-  pup '.product-purchase-wrapper-45192 .bin-out-of-stock' | \
-  grep -q "Notify Me" || notify "Rogue Echo"
+mycurl 'https://www.patagonia.ca/product/mens-nano-air-pants/85100.html' \
+  | pup 'a[data-size=M]' | grep -q 'disabled' || \
+  notify "Nano Air Pants in Stock @ Patagonia (get hoodie too)"
 
-mycurl 'https://www.roguecanada.ca/rogue-hg-2-0-bumper-plates' | \
-  pup '.product-purchase-wrapper-22902 .bin-out-of-stock' | \
-  grep -q "Notify Me" || notify "Rogue HG 2"
+# mycurl 'https://www.roguecanada.ca/rogue-dumbbell-bumpers' | \
+#   pup '.product-purchase-wrapper-50085 .bin-out-of-stock' | \
+#   grep -q "Notify Me" || notify "Rogue 10lbs Dumbbell in Stock"
+
+# sleep 1
+
+# mycurl 'https://www.roguecanada.ca/rogue-dumbbell-bumpers' | \
+#   pup '.product-purchase-wrapper-50133 .bin-out-of-stock' | \
+#   grep -q "Notify Me" || notify "Rogue 15lbs Dumbbell in Stock"
+
+# mycurl 'https://www.roguecanada.ca/rogue-color-echo-bumper-plate' | \
+#   pup '.product-purchase-wrapper-45192 .bin-out-of-stock' | \
+#   grep -q "Notify Me" || notify "Rogue Echo"
+
+# mycurl 'https://www.roguecanada.ca/rogue-hg-2-0-bumper-plates' | \
+#   pup '.product-purchase-wrapper-22902 .bin-out-of-stock' | \
+#   grep -q "Notify Me" || notify "Rogue HG 2"
+# sleep 1
+
+# mycurl 'https://www.roguecanada.ca/rogue-hg-2-0-bumper-plates' | \
+#   pup '.product-purchase-wrapper-22903 .bin-out-of-stock' | \
+#   grep -q "Notify Me" || notify "Rogue HG 2"
+# sleep 1
+
+# mycurl 'https://www.roguecanada.ca/rogue-hg-2-0-bumper-plates' | \
+#   pup '.product-purchase-wrapper-22904 .bin-out-of-stock' | \
+#   grep -q "Notify Me" || notify "Rogue HG 2"
+# sleep 1
+
+# mycurl 'https://www.roguecanada.ca/sml-2-rogue-90-monster-lite-squat-stand' | \
+#   pup '.product-purchase-wrapper-1757 .bin-out-of-stock' | \
+#   grep -q "Notify Me" || notify "Rogue Wheels"
+# sleep 1
+
+# mycurl 'https://www.roguecanada.ca/rogue-lb-change-plates' | \
+#   pup '.product-purchase-wrapper-24534 .bin-out-of-stock' | \
+#   grep -q "Notify Me" || notify "Rogue Change Plates"
+
+# sleep 1
+
+# mycurl 'https://www.roguecanada.ca/rogue-lb-change-plates' | \
+#   pup '.product-purchase-wrapper-24533 .bin-out-of-stock' | \
+#   grep -q "Notify Me" || notify "Rogue Change Plates"
 
 # Get the hoodie too: https://www.patagonia.ca/product/mens-nano-air-hoody/84366.html?dwvar_84366_color=HTE
 
