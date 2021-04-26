@@ -29,11 +29,13 @@ GITHUB_COMPARE_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/compare\/([\
 REMOTE_BRANCH_SPLIT = /\//
 
 def safe_system(command)
+  puts "\x1b[34m#{command}\x1b[0m"
   system(command)
   raise "Command: #{command} failed" unless $?.success?
 end
 
 def safe_backticks(command)
+  puts "\x1b[34m#{command}\x1b[0m"
   output = `#{command}`
   raise "Command: #{command} failed:\n#{output}" unless $?.success?
   output
@@ -99,6 +101,8 @@ def checkout(branch, remote)
 
   if safe_backticks("git branch --list #{local_branch_name}").strip.empty?
     safe_system("git checkout -b #{local_branch_name.inspect} --track #{remote}/#{branch}")
+  else
+    safe_system("git checkout #{local_branch_name.inspect}")
   end
 end
 
@@ -251,11 +255,14 @@ OptionParser.new { |opts|
   end
 }.parse!
 
-def run_up(options)
+def build_ctags(options)
   if options.ctags
     safe_system("bash -i -c '(command -v ctags-build >/dev/null 2>&1 && ctags-build & )'")
   end
+end
 
+def run_up(options)
+  build_ctags(options)
   if !`bash -i -c -l 'command -v dev'`.empty? && File.exists?("dev.yml")
     safe_system("bash -i -c -l 'command -v dev && dev up'")
   elsif File.exists?("Gemfile.lock")
@@ -346,6 +353,7 @@ if options.tmux
   safe_system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review \'#{remote}\'; export SKIP_TMUX_RENAME=1; bash -l -i')\" \\; split-window -h -c \"#{repo_path}\" bash -i -l -c \"export SKIP_TMUX_RENAME=1 && #{maybe_up} #{maybe_server} bash -l -i\"")
 else
   run_up(options) if options.up
+  build_ctags(options)
   diffs = safe_backticks("git diff --name-only #{review_diff}").strip.split("\n").join(" ")
   diffs.prepend("#{pr_file} ") if pr_file
 
