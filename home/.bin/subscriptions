@@ -13,10 +13,18 @@ function mycurl() {
     echo "$@" >&2
   fi
 
-  curl --fail -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36" --max-time 5 --retry 10 --silent $@ 2> /dev/null
+  curl --fail --compressed \
+    -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9" \
+    -H "Accept-Language: en-US,en;q=0.9,da;q=0.8,sv;q=0.7" \
+    -H "Cache-Control: max-age=0 " \
+    -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36" \
+    --max-time 5 --retry 10 --silent $@ 2> /dev/null
 }
 
 PATH=/usr/local/bin:$PATH
+
+mycurl 'https://www.canadianoutdoorequipment.com/gransfors-bruks-outdoor-axe.html' | \
+   pup '.out-of-stock text{}' | rg -q "^Sold out!" || notify "Axe in stock"
 
 new="/tmp/firearm-new.html"
 old="/tmp/firearm-old.html"
@@ -29,66 +37,68 @@ else
   mv $new $old
 fi
 
-n_results=$(mycurl 'https://www.patagonia.ca/search/?q=nano%20air%20hoody&prefn1=family&prefv1=nano-air&prefn2=features&prefv2=hooded&prefn3=refinementColor&prefv3=Black&prefn4=size&prefv4=M' | \
-  pup ".content-search-results--header-text" | \
-  rg -o -P "(?<=&#34;)(\d+)")
-
-if [[ $n_results > 1 ]]; then # Women's is currently in stock
-  notify "Patagonia Nano Air Hoody Back in stock"
+# 1. Green
+# 2. Olive
+# 3. Mango/Yellow
+# 4. Red
+n_count=$(mycurl 'https://www.trailheadpaddleshack.ca/trailhead-canoes-bob-special-fiberglass.html' | rg --count "Out of Stock")
+if [[ $n_count < 5 ]]; then
+  notify "Trailhead 15 feet Canoe in Stock"
 fi
-
-n_results=$(mycurl 'https://www.patagonia.ca/search/?q=nano%20air%20pants&prefn1=size&prefv1=M' | \
-  pup ".content-search-results--header-text" | \
-  rg -o -P "(?<=&#34;)(\d+)")
-
-if [[ $n_results > 0 ]]; then
-  notify "Patagonia Nano Air Pants Back in stock"
-fi
-
-n_canoes=$(mycurl 'https://www.trailheadpaddleshack.ca/paddling/canoes/' | pup ".sale-new" | grep -c -i 'out of stock')
-if [[ $n_canoes < 19 ]]; then
-  notify "Trailhead Canoe in stock"
-fi
-
-mycurl 'https://www.canadianoutdoorequipment.com/gransfors-bruks-outdoor-axe.html' | \
-  pup '.out-of-stock text{}' | rg -q "^Sold out!" || notify "Axe in stock"
-
-mycurl 'https://www.costco.ca/classic-adirondack-collection.product.100036005.html' && \
-  notify "Aidorondack from Costco in Stock"
 
 n_count=$(mycurl 'https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-16-fiberglass.html' | rg --count "Out of Stock")
 if [[ $n_count < 5 ]]; then
-  notify "Trailhead Canoe in Stock"
+  notify "Trailhead 16 feet Canoe in Stock"
 fi
 
-mycurl 'https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-16-fiberglass.html?id=33830503#' \
-  | pup '.out-of-stock' > /dev/null || notify "Canoe Available"
-
-mycurl 'https://www.altitude-sports.com/products/patagonia-nano-air-pants-mens-llll-pat-85100.json' \
-  | jq --exit-status ".product.variants | .[] | select(.option2 == \"M\").inventory_quantity > 0" > /dev/null && \
-  notify "Nano Air Pants Men in Stock @ Altitude"
-
-n_count=$(mycurl 'https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-16-fiberglass.html?id=33830523' | rg --count "Out of Stock")
+n_count=$(mycurl 'https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-17-fiberglass-vinyl-tr.html' | rg --count "Out of Stock")
 if [[ $n_count < 5 ]]; then
-  notify "Trailhead Canoe in Stock"
+  notify "Trailhead 17 feet Canoe in Stock"
 fi
 
-mycurl 'https://www.altitude-sports.com/products/patagonia-nano-air-jacket-mens-llll-pat-84252.json' \
-  | jq --exit-status ".product.variants | .[] | select(.option2 == \"M\").inventory_quantity > 0" > /dev/null && \
-  notify "Nano Air Jacket Men in Stock @ Altitude"
+# n_count=$(mycurl 'https://www.trailheadpaddleshack.ca/sunrise-amizan-10-kayak.html' | rg --count "Out of Stock")
+# if [[ $n_count < 3 ]]; then
+#   notify "Trailhead Kayaks in Stock"
+# fi
 
-mycurl 'https://www.altitude-sports.com/products/arcteryx-mens-gamma-ar-pant-llll-arc-17225.json' \
-  | jq --exit-status ".product.variants | .[] | select(.option2 == \"M\").inventory_quantity > 0" > /dev/null && \
-  notify "Nano Air Pants Men in Stock @ Altitude"
+# mycurl 'https://www.costco.ca/classic-adirondack-collection.product.100036005.html' && \
+#   notify "Aidorondack from Costco in Stock"
+# mycurl 'https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-16-fiberglass.html?id=33830503#' \
+#   | pup '.out-of-stock' > /dev/null || notify "Canoe Available"
 
-n_count=$(mycurl 'https://www.trailheadpaddleshack.ca/sunrise-amizan-10-kayak.html' | rg --count "Out of Stock")
-if [[ $n_count < 3 ]]; then
-  notify "Trailhead Kayaks in Stock"
-fi
+# mycurl 'https://www.altitude-sports.com/products/patagonia-nano-air-pants-mens-llll-pat-85100.json' \
+#   | jq --exit-status ".product.variants | .[] | select(.option2 == \"M\").inventory_quantity > 0" > /dev/null && \
+#   notify "Nano Air Pants Men in Stock @ Altitude"
 
-mycurl 'https://www.patagonia.ca/product/mens-nano-air-pants/85100.html' \
-  | pup 'a[data-size=M]' | grep -q 'disabled' || \
-  notify "Nano Air Pants in Stock @ Patagonia (get hoodie too)"
+
+# mycurl 'https://www.altitude-sports.com/products/patagonia-nano-air-jacket-mens-llll-pat-84252.json' \
+#   | jq --exit-status ".product.variants | .[] | select(.option2 == \"M\").inventory_quantity > 0" > /dev/null && \
+#   notify "Nano Air Jacket Men in Stock @ Altitude"
+
+# mycurl 'https://www.altitude-sports.com/products/arcteryx-mens-gamma-ar-pant-llll-arc-17225.json' \
+#   | jq --exit-status ".product.variants | .[] | select(.option2 == \"M\").inventory_quantity > 0" > /dev/null && \
+#   notify "Nano Air Pants Men in Stock @ Altitude"
+
+# mycurl 'https://www.patagonia.ca/product/mens-nano-air-pants/85100.html' \
+#   | pup 'a[data-size=M]' | grep -q 'disabled' || \
+#   notify "Nano Air Pants in Stock @ Patagonia (get hoodie too)"
+
+# n_results=$(mycurl 'https://www.patagonia.ca/search/?q=nano%20air%20hoody&prefn1=family&prefv1=nano-air&prefn2=features&prefv2=hooded&prefn3=refinementColor&prefv3=Black&prefn4=size&prefv4=M' | \
+#   pup ".content-search-results--header-text" | \
+#   rg -o -P "(?<=&#34;)(\d+)")
+
+# if [[ $n_results > 1 ]]; then # Women's is currently in stock
+#   notify "Patagonia Nano Air Hoody Back in stock"
+# fi
+
+# n_results=$(mycurl 'https://www.patagonia.ca/search/?q=nano%20air%20pants&prefn1=size&prefv1=M' | \
+#   pup ".content-search-results--header-text" | \
+#   rg -o -P "(?<=&#34;)(\d+)")
+
+# if [[ $n_results > 0 ]]; then
+#   notify "Patagonia Nano Air Pants Back in stock"
+# fi
+
 
 # mycurl 'https://www.roguecanada.ca/rogue-dumbbell-bumpers' | \
 #   pup '.product-purchase-wrapper-50085 .bin-out-of-stock' | \

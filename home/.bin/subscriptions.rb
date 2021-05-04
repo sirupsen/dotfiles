@@ -171,16 +171,16 @@ def changed!(url, new, notification: nil)
     elsif old == new
       puts "\t\x1b[32mNothing changed\x1b[0m" if verbose?
     else
+      old_diff = "/tmp/subscriptions-old-#{sanitized}.html"
+      File.open(old_diff, "w") { |f| f.write(old) }
+      new_diff = "/tmp/subscriptions-new-#{sanitized}.html"
+      File.open(new_diff, "w") { |f| f.write(new) }
+
       if verbose?
-        old_diff = "/tmp/subscriptions-old-#{sanitized}.html"
-        File.open(old_diff, "w") { |f| f.write(old) }
-
-        new_diff = "/tmp/subscriptions-new-#{sanitized}.html"
-        File.open(new_diff, "w") { |f| f.write(new) }
-
         puts "\t\x1b[31mThere were changes"
         puts "\tgit diff --no-index #{old_diff} #{new_diff}\x1b[0m"
       end
+
       notify(notification || "#{url} changed", url)
     end
   else
@@ -248,16 +248,6 @@ def http_js_changed(url, css, skip_on_no_css: false)
 end
 
 http_body_changed "https://www.racentre.com/adult-clubs-programs/firearms-safety-education/"
-
-trailhead_urls = [
-  "https://www.trailheadpaddleshack.ca/trailhead-canoes-bob-special-fiberglass.html",
-  "https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-16-fiberglass.html",
-  "https://www.trailheadpaddleshack.ca/trailhead-canoes-prospector-17-fiberglass-vinyl-tr.html",
-]
-
-trailhead_urls.each do |url|
-  http_css_changed(url, "#prodattr2")
-end
 
 http_css_changed(
   'https://www.canadianoutdoorequipment.com/gransfors-bruks-outdoor-axe.html',

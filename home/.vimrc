@@ -245,6 +245,7 @@ let g:ale_linters = {
 let g:ale_lint_delay = 1000
 let g:ale_command_wrapper = '~/.bin/ale-command-wrapper'
 let g:ale_ruby_rubocop_executable = 'bundle'
+let g:ale_ruby_rubocop_options = '--except Style/StringLiterals --exclude Layout/LineLength'
 let g:ale_rust_cargo_check_tests = 1
 let g:ale_rust_cargo_check_examples = 1
 let g:ale_set_balloons = 1 " Show symbol information on mouseover
@@ -596,3 +597,9 @@ map <leader>f :ALEFix<CR>
 map !f :call VimuxRunCommand("dev style")<CR>
 map [a :ALEPrevious<CR>
 map ]a :ALENext<CR>
+
+augroup remember_folds
+  autocmd!
+  autocmd BufWinLeave * mkview
+  autocmd BufWinEnter * silent! loadview
+augroup END

@@ -29,7 +29,7 @@ alias gpl='git pull `git_origin_or_fork` `gcb`'
 alias gc='git commit --verbose'
 alias gs='git status --short --branch'
 alias gsp='git stash pop'
-alias gbr='git branch --no-merged origin/master --sort=-committerdate | head -n 10'
+alias gbr='git branch --no-merged origin/master --sort=-committerdate --verbose'
 alias grc='git rebase --continue'
 alias gl='git log --oneline'
 alias gco='git checkout'
@@ -73,6 +73,7 @@ garch() {
   git checkout ${commit}
 }
 
+alias peek=clone
 alias bx='bundle exec'
 alias bxr='bundle exec ruby'
 alias rt='bx ruby -I.:test'
