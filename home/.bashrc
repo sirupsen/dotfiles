@@ -73,5 +73,3 @@ export BIGTABLE_EMULATOR_HOST=localhost:8086
 if [[ -f /opt/dev/dev.sh ]] && [[ $- == *i* ]]; then
   source /opt/dev/dev.sh
 fi
-
-export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcloud/application_default_credentials.json"

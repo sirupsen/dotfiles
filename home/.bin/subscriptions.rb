@@ -259,6 +259,16 @@ http_css_changed(
   ".product-info-description"
 )
 
+http_css_changed(
+  'https://www.costco.ca/classic-adirondack-footstool.product.100036007.html',
+  ".product-info-description"
+)
+
+http_css_changed(
+  'https://www.costco.ca/classic-adirondack-side-table.product.100115310.html',
+  ".product-info-description"
+)
+
 http_js_changed(
   "https://www.roguecanada.ca/deals",
   ".category"
@@ -269,11 +279,11 @@ http_css_changed(
   ".availabilityMessageProduct_ZCIQp"
 )
 
-http_js_changed(
-  "https://www.realcanadiansuperstore.ca/mp/playstation-5-console/1167-711719541042",
-  ".product-details-page-details-invalid-price",
-  skip_on_no_css: true
-)
+# http_js_changed(
+#   "https://www.realcanadiansuperstore.ca/mp/playstation-5-console/1167-711719541042",
+#   ".product-details-page-details-invalid-price",
+#   skip_on_no_css: true
+# )
 
 http_css_changed(
   "https://www.ebgames.ca/PS5/Games/877523",
@@ -297,4 +307,29 @@ http_css_changed(
 http_css_changed(
   "https://www.newegg.ca/p/N82E16868110294",
   ".product-inventory"
+)
+
+http_css_changed(
+  "https://www.chillymoose.ca/collections/coolers/products/ice-box-cutting-board-divider?variant=29162332094561",
+  ".variant-wrapper"
+)
+
+http_css_changed(
+  "https://www.fitnessavenue.ca/2-5lbs-rubber-grip-olympic-plates-2-inch",
+  ".product_details_std"
+)
+
+http_css_changed(
+  "https://www.fitnessavenue.ca/product/TO/op14/2.5lbs-Virgin-Rubber-Grip-Olympic-Plates-2-Inch",
+  ".product_details_std"
+)
+
+http_css_changed(
+  "https://www.fitnessavenue.ca/5lbs-rubber-grip-olympic-plates-2-inch",
+  ".product_details_std"
+)
+
+http_css_changed(
+  "https://www.fitnessavenue.ca/product/TO/op15/5lbs-Virgin-Rubber-Grip-Olympic-Plates-2-Inch",
+  ".product_details_std"
 )
