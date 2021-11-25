@@ -1,4 +1,20 @@
-set statusline=%{expand('%:p:h:t')}/%t
+" BASIC
+set nocompatible " No vi compatility, this first because it resets some options
+let mapleader="," " Mapleader
+filetype off
+set encoding=utf-8
+set history=1000  " Keep more history, default is 20
+set mouse=v " Allow copy-pasting
+set mmp=5000 " Some files need more memory for syntax highlight
+
+" <cword> then includes - as part of the word
+set iskeyword+=-
+
+set termguicolors
+set statusline=
+set statusline+=%f:%l:%c\ %m
+" set statusline+=%{tagbar#currenttag('\ [%s]\ ','','')}
+set statusline+=%=
 set statusline+=%{FugitiveStatusline()}
 let g:asyncrun_status = "stopped"
 augroup QuickfixStatus
