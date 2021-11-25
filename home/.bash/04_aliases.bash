@@ -111,15 +111,13 @@ refresh() {
     fd go curl redis ruby-install telnet tree jemalloc ruby-install \
     mysql youtube-dl curl cmake docker gdb wget coreutils \
     lua luajit markdown gh hub htop reattach-to-user-namespace \
-    jq sqlite hugo htop toxiproxy grep graphviz entr fio aspell \
-    llvm cmark chrome-cli ejson gcc bat gopls typescript git-delta
+    jq sqlite hugo htop grep graphviz entr fio aspell \
+    llvm cmark chrome-cli gcc bat gopls typescript git-delta \
+    imagemagick
 
-  rustup update
-  vim +PlugUpdate +qall
-  gcloud components update
-
-  z cloudplatform
-  dev up
+  # rustup update
+  # vim +PlugUpdate +qall
+  # gcloud components update
 }
 
 # ZETTELKASTEN ALIASES MOVED TO https://github.com/sirupsen/zk
@@ -173,7 +171,9 @@ ctags-build() {
   else
     file-list-tags
     # ctags -f tags -L .file_list_tags --extras=q --sort=yes --excmd=number
-    ctags -f tags -L .file_list_tags --sort=yes --excmd=number
+    ctags -f tags -L .file_list_tags --sort=yes --excmd=number \
+      --langmap=TypeScript:.ts.tsx \
+      --langmap=JavaScript:.jsx
   fi
 }
 
@@ -197,6 +197,12 @@ zk-uniq() {
 scratch() {
   tmux rename-window scratch
   nvim -c ":set autochdir" "${HOME}/Library/Mobile Documents/com~apple~CloudDocs/Documents/Zettelkasten/scratch.md"
+}
+
+now() {
+  local sirupsencom=$(z -e sirupsen.com)
+  tmux rename-window now
+  nvim -c ":cd ${sirupsencom}" "${sirupsencom}/posts/now.md"
 }
 
 KIBANA_VERSION="docker.elastic.co/kibana/kibana:7.6.0"
@@ -231,6 +237,16 @@ mdr() {
 md() {
   open "file://$PWD/md.html"
   echo "$@" | entr bash -l -c "mdr \"${@}\""
+}
+
+chrome-refresh-on-change() {
+  echo "$@" | entr chrome-cli reload
+}
+
+trim-pngs() {
+  for file in *.png; do
+    convert -trim "$file" "$file"
+  done
 }
 
 pdfrename() {

@@ -23,6 +23,15 @@ options = OpenStruct.new(
   ctags: true,
 )
 
+error = <<~EOS
+  You do not have a GITHUB_ACCESS_TOKEN defined. You can create one for local
+  use at https://github.com/settings/tokens. Then export it in your environment:
+
+    export GITHUB_ACCESS_TOKEN="abc"
+EOS
+
+raise error unless ENV['GITHUB_ACCESS_TOKEN']
+
 GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)(\/pull\/(\d+))?/
 GITHUB_COMPARE_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/compare\/([\w_-]+)/
 

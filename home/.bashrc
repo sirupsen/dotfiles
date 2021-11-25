@@ -1,8 +1,8 @@
+source /etc/bashrc_Apple_Terminal
+
 for file in ~/.bash/*.bash; do
   source "${file}"
 done
-
-source /etc/bashrc_Apple_Terminal
 
 unset DISPLAY
 
@@ -32,7 +32,7 @@ export FZF_DEFAULT_OPTS="--height=40% --keep-right --multi --tiebreak=begin \
 export FZF_DEFAULT_COMMAND="rg --files --follow --hidden --glob '!.git/*' \
   --glob '!tags' --glob '!yarn.lock' --glob '!package.json' --glob '!*.rbi'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export GOPATH=$HOME
+export GOPATH=$HOME/src
 
 # export RUST_LOG=info
 export RIPGREP_CONFIG_PATH="$HOME/.rgrc"
@@ -73,3 +73,9 @@ export BIGTABLE_EMULATOR_HOST=localhost:8086
 if [[ -f /opt/dev/dev.sh ]] && [[ $- == *i* ]]; then
   source /opt/dev/dev.sh
 fi
+
+source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
+chruby 3
+# conda init "$(basename "${SHELL}")" > /dev/null 2>&1
+# conda init bash
+source /Users/simon/src/github.com/vitessio/vitess/examples/local/env.sh

@@ -72,19 +72,19 @@ font:
   normal:
     family: Inconsolata
     # The `style` can be specified to pick a specific face.
-    #style: Regular
+    style: Regular
 
   # Bold font face
   bold:
     family: Inconsolata
     # The `style` can be specified to pick a specific face.
-    #style: Bold
+    style: Bold
 
   # Italic font face
   italic:
     family: Inconsolata
     # The `style` can be specified to pick a specific face.
-    #style: Italic
+    style: Italic
 
   # Point size
   size: 20.0
@@ -242,12 +242,12 @@ mouse:
   # If this is `true`, the cursor is temporarily hidden when typing.
   hide_when_typing: false
 
-  url:
+  # url:
     # URL launcher
     #
     # This program is executed when clicking on a text which is recognized as a URL.
     # The URL is always added to the command as the last parameter.
-    launcher: open
+    # launcher: open
 
     # URL modifiers
     #
@@ -286,7 +286,7 @@ live_config_reload: true
 #    - --login
 
 shell:
-  program: /usr/local/bin/bash
+  program: /opt/homebrew/bin/bash
   args:
     - --login
     - -c

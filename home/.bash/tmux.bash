@@ -3,7 +3,7 @@ rename_tmux_window_to_current_dir() {
     if [[ -z "$SKIP_TMUX_RENAME" ]]; then
       if [[ "$PWD" != "$LPWD" ]]; then
         LPWD="$PWD"
-        tmux rename-window ${PWD//*\//}
+        tmux rename-window "${PWD//*\//}"
       fi
     fi
   fi
@@ -27,4 +27,6 @@ ssh() {
     tmux rename-window "$old_name"
 }
 
-export PROMPT_COMMAND="rename_tmux_window_to_current_dir;${PROMPT_COMMAND:-:}"
+if [[ ":$PROMPT_COMMAND:" != *":rename_tmux_window_to_current_dir:"* ]]; then
+  export PROMPT_COMMAND="rename_tmux_window_to_current_dir;$PROMPT_COMMAND"
+fi
