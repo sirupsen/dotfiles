@@ -23,4 +23,4 @@
 
 --extras=+q
 
---map-TypeScript=+.tsx
+--langmap=typescript:.ts.tsx

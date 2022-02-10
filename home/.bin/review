@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'optparse'
 require 'ostruct'
-require "net/http"
+require 'net/http'
 require 'json'
 begin
   require 'byebug'
@@ -9,7 +9,7 @@ rescue LoadError
 end
 
 options = OpenStruct.new(
-  base: "master",
+  base: 'master',
   dev_up: false,
   chrome: false,
   refresh: true,
@@ -20,7 +20,7 @@ options = OpenStruct.new(
   server: false,
   clipboard: false,
   up: false,
-  ctags: true,
+  ctags: true
 )
 
 error = <<~EOS
@@ -32,10 +32,10 @@ EOS
 
 raise error unless ENV['GITHUB_ACCESS_TOKEN']
 
-GITHUB_PR_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)(\/pull\/(\d+))?/
-GITHUB_COMPARE_REGEX = /https:\/\/github.com\/([\w_-]+)\/([\w_-]+)\/compare\/([\w_-]+)/
+GITHUB_PR_REGEX = %r{https://github.com/([\w_-]+)/([\w_-]+)(/pull/(\d+))?}
+GITHUB_COMPARE_REGEX = %r{https://github.com/([\w_-]+)/([\w_-]+)/compare/([\w_-]+)}
 
-REMOTE_BRANCH_SPLIT = /\//
+REMOTE_BRANCH_SPLIT = %r{/}
 
 def safe_system(command)
   puts "\x1b[34m#{command}\x1b[0m"
@@ -47,6 +47,7 @@ def safe_backticks(command)
   puts "\x1b[34m#{command}\x1b[0m"
   output = `#{command}`
   raise "Command: #{command} failed:\n#{output}" unless $?.success?
+
   output
 end
 
@@ -54,17 +55,17 @@ end
 # .bin/review a shell script that calls .bin/review-rb. For the most part, it
 # just proxies all calls to it, however, if it gets a 42 error code, it can call
 # review to attempt to get the right path and `cd` to it.
-def ensure_in_right_directory(org, repo)
-  unless safe_backticks("pwd").include?(repo)
+def ensure_in_right_directory(_org, repo)
+  unless safe_backticks('pwd').include?(repo)
     # possible_path = "~/src/github.com/#{org}/#{repo}"
     # system("exec cd #{possible_path}")
-    $stderr.puts "#{repo} is not in the path, please change directory to it!"
+    warn "#{repo} is not in the path, please change directory to it!"
     exit 42
   end
 end
 
 def ensure_remote(remote)
-  unless safe_backticks("git remote")[remote]
+  unless safe_backticks('git remote')[remote]
     repo_git = "git@github.com:#{remote}/#{repo}"
     safe_backticks("git remote add #{remote.inspect} #{repo_git}")
   end
@@ -76,18 +77,19 @@ def remote_branch(string)
   # you really want origin--but you also want to support forks. The more elegant
   # solution to this is probably we can in the API see if a repo is the "root",
   # which is what we're effectively doing here.
-  origin_remote = safe_backticks("git remote -v | grep origin")
-  if origin_remote =~ /github\.com(:|\/)#{string.split("/").first}/i || string.start_with?("origin/")
-    return ['origin', string.split("/")[1..-1].join("/")]
+  origin_remote = safe_backticks('git remote -v | grep origin')
+  if origin_remote =~ %r{github\.com(:|/)#{string.split("/").first}}i || string.start_with?('origin/')
+    return ['origin', string.split('/')[1..-1].join('/')]
   end
 
   return ['origin', string] unless string =~ REMOTE_BRANCH_SPLIT
+
   remote_suggested_name, remote_branch = string.split(REMOTE_BRANCH_SPLIT)
   [remote_suggested_name, remote_branch]
 end
 
 def repo
-  safe_backticks("basename $(git rev-parse --show-toplevel)").strip
+  safe_backticks('basename $(git rev-parse --show-toplevel)').strip
 end
 
 def repo_path(repo_name)
@@ -120,8 +122,8 @@ def rebase(branch, remote)
 end
 
 def current_branch_tracking_remote
-  rev_parse = safe_backticks("git rev-parse HEAD --symbolic-full-name @{u}")
-  rev_parse.match(/refs\/remotes\/(.+)$/)[1]
+  rev_parse = safe_backticks('git rev-parse HEAD --symbolic-full-name @{u}')
+  rev_parse.match(%r{refs/remotes/(.+)$})[1]
 end
 
 def org_repo_branch_from_url(url)
@@ -129,18 +131,21 @@ def org_repo_branch_from_url(url)
   return [org, repo, branch_name] if branch_name
 
   _, org, repo, _, pr_id = url.match(GITHUB_PR_REGEX).to_a
-  return [org, repo, "master"] unless pr_id # support just cloning an empty repo
+  return [org, repo, 'master'] unless pr_id # support just cloning an empty repo
 
-  http = Net::HTTP.new("api.github.com", 443)
+  http = Net::HTTP.new('api.github.com', 443)
   http.use_ssl = true
 
-  request = Net::HTTP::Post.new("/graphql")
-  request["Authorization"] = "bearer #{ENV['GITHUB_ACCESS_TOKEN']}"
+  request = Net::HTTP::Post.new('/graphql')
+  request['Authorization'] = "bearer #{ENV['GITHUB_ACCESS_TOKEN']}"
   query = <<~EOF
     {
       "query": "\
         query { \
           repository(owner:\\"#{org}\\", name:\\"#{repo}\\") { \
+            defaultBranchRef { \
+              name \
+            } \
             pullRequest(number: #{pr_id}) { \
               title \
               body \
@@ -172,27 +177,29 @@ def org_repo_branch_from_url(url)
 
   response = http.request(request)
   json = JSON.parse(response.body)
-  pr = json["data"]["repository"]["pullRequest"]
-  pr["headRefName"] unless pr["isCrossRepository"]
+  p json
+  pr = json['data']['repository']['pullRequest']
+  pr['headRefName'] unless pr['isCrossRepository']
 
   pr_file = "/tmp/pr_#{pr_id}.md"
-  File.open(pr_file, "w+") do |f|
-    f.write("# #{pr["title"]}\n\n")
-    f.write(pr["body"].gsub("\r\n", "\n"))
+  File.open(pr_file, 'w+') do |f|
+    f.write("# #{pr['title']}\n\n")
+    f.write(pr['body'].gsub("\r\n", "\n"))
   end
 
-  merge_event = pr["timeline"]["edges"].find { |edge| edge["node"]["commit"] }
+  merge_event = pr['timeline']['edges'].find { |edge| edge['node']['commit'] }
 
   [
     org,
     repo,
-    "#{pr["headRepository"]["owner"]["login"]}/#{pr["headRefName"]}",
+    "#{pr['headRepository']['owner']['login']}/#{pr['headRefName']}",
     pr_file,
-    merge_event && merge_event["node"]["commit"]["oid"],
+    merge_event && merge_event['node']['commit']['oid'],
+    json['data']['repository']['defaultBranchRef']['name']
   ]
 end
 
-OptionParser.new { |opts|
+OptionParser.new do |opts|
   opts.banner = <<~EOF
     Usage: review [OPTIONS] [BRANCH]
 
@@ -209,75 +216,73 @@ OptionParser.new { |opts|
     Flags:
   EOF
 
-  opts.on("-b", "--base BRANCH", "Base to compare (default: origin/master)") do |value|
+  opts.on('-b', '--base BRANCH', 'Base to compare (default: origin/master)') do |value|
     options.base = value
   end
 
-  opts.on("-u", "--up", "Install dependencies (default: no)") do |val|
+  opts.on('-u', '--up', 'Install dependencies (default: no)') do |_val|
     options.up = true
   end
 
-  opts.on("-s", "--server", "Run server, implies -u (default: no)") do |val|
+  opts.on('-s', '--server', 'Run server, implies -u (default: no)') do |_val|
     options.server = true
   end
 
-  opts.on("", "--no-ctags", "Don't try to build ctags as part of up (default: no)") do |val|
+  opts.on('', '--no-ctags', "Don't try to build ctags as part of up (default: no)") do |_val|
     options.ctags = true
   end
 
-  opts.on("-p", "--path", "Output just the path where the repo lives (default: no)") do |val|
+  opts.on('-p', '--path', 'Output just the path where the repo lives (default: no)') do |_val|
     options.path = true
   end
 
-  opts.on("-t", "--tmux", "Create new tmux window for review (default: no)") do |val|
+  opts.on('-t', '--tmux', 'Create new tmux window for review (default: no)') do |_val|
     options.tmux = true
   end
 
-  opts.on("-p", "--tmux-pane", "Create new tmux pane and run setup (default: no, implies --up)") do |val|
+  opts.on('-p', '--tmux-pane', 'Create new tmux pane and run setup (default: no, implies --up)') do |_val|
     options.tmux = true
   end
 
-  opts.on("", "--clipboard", "Grab PR from clipboard if not passed (default: no)") do |val|
+  opts.on('', '--clipboard', 'Grab PR from clipboard if not passed (default: no)') do |_val|
     options.clipboard = true
   end
 
-  opts.on("-c", "--chrome", "Get content to review from Chrome's current tab (default: no)") do |val|
+  opts.on('-c', '--chrome', "Get content to review from Chrome's current tab (default: no)") do |_val|
     options.chrome = true
   end
 
-  opts.on("", "--noop", "Don't do anything, just show what you would do") do |val|
+  opts.on('', '--noop', "Don't do anything, just show what you would do") do |_val|
     options.noop = true
   end
 
-  opts.on("-r", "--no-refresh", "Don't fetch latest upstream changes (default: yes)") do
+  opts.on('-r', '--no-refresh', "Don't fetch latest upstream changes (default: yes)") do
     options.refresh = false
   end
 
-  opts.on("-o", "--no-open", "Don't open editor with changes (default: yes)") do
+  opts.on('-o', '--no-open', "Don't open editor with changes (default: yes)") do
     options.open = false
   end
 
-  opts.on("-c", "--changed-files", "List changed files (implies -ro)") do
+  opts.on('-c', '--changed-files', 'List changed files (implies -ro)') do
     options.changed_files = true
     options.refresh = false
     options.open = false
   end
-}.parse!
+end.parse!
 
 def build_ctags(options)
-  if options.ctags
-    safe_system("bash -i -c '(command -v ctags-build >/dev/null 2>&1 && ctags-build & )'")
-  end
+  safe_system("bash -i -c '(command -v ctags-build >/dev/null 2>&1 && ctags-build & )'") if options.ctags
 end
 
 def run_up(options)
   build_ctags(options)
-  if !`bash -i -c -l 'command -v dev'`.empty? && File.exists?("dev.yml")
+  if !`bash -i -c -l 'command -v dev'`.empty? && File.exist?('dev.yml')
     safe_system("bash -i -c -l 'command -v dev && dev up'")
-  elsif File.exists?("Gemfile.lock")
-    safe_system("bundle install")
-  elsif File.exists?("Cargo.toml")
-    safe_system("cargo build")
+  elsif File.exist?('Gemfile.lock')
+    safe_system('bundle install')
+  elsif File.exist?('Cargo.toml')
+    safe_system('cargo build')
   end
 end
 
@@ -288,17 +293,15 @@ end
 
 remote = ARGV[0]
 if options.chrome
-  remote = safe_backticks("chrome-cli info")[GITHUB_PR_REGEX]
-  raise "Unable to find a Github pull request in current Chrome tab"
+  remote = safe_backticks('chrome-cli info')[GITHUB_PR_REGEX]
+  raise 'Unable to find a Github pull request in current Chrome tab'
 end
 
-if options.clipboard
-  if !remote || remote.empty?
-    remote = safe_backticks("pbpaste").strip
-  end
-end
+remote = safe_backticks('pbpaste').strip if options.clipboard && (!remote || remote.empty?)
 
-org, repo, remote, pr_file, merge_commit = org_repo_branch_from_url(remote) if remote && remote.start_with?("https://")
+if remote && remote.start_with?('https://')
+  org, repo, remote, pr_file, merge_commit, base_branch = org_repo_branch_from_url(remote)
+end
 remote ||= current_branch_tracking_remote
 if options.path
   puts repo
@@ -311,27 +314,33 @@ if !remote || remote.empty?
   exit 1
 end
 
-if !options.tmux
-  base_remote, base_branch = remote_branch(options.base)
+base_remote = nil
+# NOTE: This is called in the _new_ window in Tmux.
+unless options.tmux
+  remote_remote, remote_branch = remote_branch(options.base)
+  base_remote ||= remote_remote
+  base_branch ||= remote_branch
+
   target_remote, target_branch = remote_branch(remote)
   # commit_for_diff = `git merge-base #{base_remote}/#{base_branch} #{target_remote}/#{target_branch}`.strip
   review_diff = "#{base_remote}/#{base_branch}...#{target_remote}/#{target_branch}"
   # review_diff = commit_for_diff
 
   if merge_commit
-    $stderr.puts "\x1b[33mReviewing PR which has already been merged\x1b[0m"
+    warn "\x1b[33mReviewing PR which has already been merged\x1b[0m"
     # Branch is probably gone etc... so we invoke a different procedure.
-    review_diff = "HEAD~1"
+    review_diff = 'HEAD~1'
   end
 
   unless options.changed_files
-    $stderr.puts "\x1b[33mReviewing #{review_diff}\x1b[0m"
+    warn "\x1b[33mReviewing #{review_diff}\x1b[0m"
     exit 0 if options.noop
   end
 
   ensure_in_right_directory(org, repo) if org
 end
 
+# NOTE: This is called in the _new_ window in Tmux.
 if options.refresh && !options.tmux
   ensure_remote(base_remote)
   ensure_remote(target_remote)
@@ -341,6 +350,7 @@ if options.refresh && !options.tmux
     wait_for_pulls = 1
     system("git checkout #{merge_commit}")
     raise unless $?.success?
+
     sleep(0.01) until $pulls.size == 1
   else
     pull(target_branch, target_remote)
@@ -351,23 +361,24 @@ if options.refresh && !options.tmux
 end
 
 if options.tmux
-  maybe_up = options.up || options.server ? "review --up ;" : ""
-  maybe_server = options.server ? "dev server ;" : ""
+  maybe_up = options.up || options.server ? 'review --up ;' : ''
+  maybe_server = options.server ? 'dev server ;' : ''
 
   repo_path = repo_path(repo)
   if repo_path.empty?
     safe_system("clone -n #{org}/#{repo}")
     repo_path = `clone --path #{org}/#{repo}`.strip
   end
-  safe_system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review \'#{remote}\'; export SKIP_TMUX_RENAME=1; bash -l -i')\" \\; split-window -h -c \"#{repo_path}\" bash -i -l -c \"export SKIP_TMUX_RENAME=1 && #{maybe_up} #{maybe_server} bash -l -i\"")
+  safe_system("tmux new-window -n \"review-#{remote}\" -c \"#{repo_path}\" \"bash --rcfile --login <(echo '. ~/.bashrc && review \'#{ARGV[0]}\'; export SKIP_TMUX_RENAME=1; bash -l -i')\" \\; split-window -h -c \"#{repo_path}\" bash -i -l -c \"export SKIP_TMUX_RENAME=1 && #{maybe_up} #{maybe_server} bash -l -i\"")
 else
   run_up(options) if options.up
   build_ctags(options)
-  diffs = safe_backticks("git diff --name-only #{review_diff}").strip.split("\n").join(" ")
+  diffs = safe_backticks("git diff --name-only #{review_diff}").strip.split("\n").join(' ')
   diffs.prepend("#{pr_file} ") if pr_file
 
   gitgutter_diff_base = "#{base_remote}/#{base_branch}"
-  gitgutter_diff_base = "HEAD~1" if merge_commit
+  gitgutter_diff_base = 'HEAD~1' if merge_commit
+  # https://github.com/lewis6991/gitsigns.nvim/blob/7aad5257fa043b9acf3d40ae064a1685003254da/doc/gitsigns.txt#L239
   vim_command = "nvim -c \"let g:gitgutter_diff_base = '#{gitgutter_diff_base}'\""
   vim_command += " -c \":e!\" #{diffs}" unless diffs.empty?
   safe_system(vim_command) if options.open

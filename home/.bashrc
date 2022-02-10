@@ -30,7 +30,7 @@ export FZF_DEFAULT_OPTS="--height=40% --keep-right --multi --tiebreak=begin \
   ]\""
 # We depend on this in .vimrc too for file listing.
 export FZF_DEFAULT_COMMAND="rg --files --follow --hidden --glob '!.git/*' \
-  --glob '!tags' --glob '!yarn.lock' --glob '!package.json' --glob '!*.rbi'"
+  --glob '!tags' --glob '!*.rbi'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export GOPATH=$HOME/src
 
@@ -40,8 +40,8 @@ export RIPGREP_CONFIG_PATH="$HOME/.rgrc"
 # Big node projects will be bogged down otherwise.
 export NODE_OPTIONS='--max_old_space_size=4096'
 
-(ssh-add -l | grep -q "Error connecting to agent") && ssh-agent bash
-(ssh-add -l | grep -q "no identities") && ssh-add -K
+(ssh-add -l 2>&1 | grep -q "Error connecting to agent") && ssh-agent bash
+(ssh-add -l 2>&1 | grep -q "no identities") && ssh-add --apple-use-keychain --apple-load-keychain
 
 if [[ -f ~/.env ]]; then
   source ~/.env
@@ -79,3 +79,8 @@ chruby 3
 # conda init "$(basename "${SHELL}")" > /dev/null 2>&1
 # conda init bash
 source /Users/simon/src/github.com/vitessio/vitess/examples/local/env.sh
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling

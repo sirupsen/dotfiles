@@ -22,6 +22,7 @@ git-find-merge() {
     | tail -1
 }
 
+alias default_branch="git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
 alias cbt="BIGTABLE_EMULATOR_HOST= cbt"
 alias gcb="git rev-parse --abbrev-ref HEAD"
 alias gp='git push `git_origin_or_fork` `gcb`'
@@ -39,8 +40,8 @@ alias gd='git diff'
 alias gg='git grep'
 alias ggi='git grep -i'
 alias ga='git add'
-alias gfo='git fetch origin master'
-alias gro='git rebase origin/master'
+alias gfo='git fetch origin $(default_branch)'
+alias gro='git rebase origin/$(default_branch)'
 alias gfogro='gfo && gro'
 alias gupd='gfogro && gpf'
 alias blush="git commit --amend --reuse-message HEAD"
@@ -136,6 +137,7 @@ file-list-tags() {
       --glob '!target' \
       --glob '!vendor' \
       --type-not html \
+      --type-not css \
       --type-not xml \
       --type-not markdown \
       --type-not jsonl \
@@ -154,6 +156,7 @@ file-list-tags() {
       --type-not tex \
       --type-not thrift \
       --type-not toml \
+      --type-not js \
     > .file_list_tags
 }
 
@@ -171,9 +174,9 @@ ctags-build() {
   else
     file-list-tags
     # ctags -f tags -L .file_list_tags --extras=q --sort=yes --excmd=number
-    ctags -f tags -L .file_list_tags --sort=yes --excmd=number \
+    ctags -f tags -L .file_list_tags --sort=yes \
       --langmap=TypeScript:.ts.tsx \
-      --langmap=JavaScript:.jsx
+      --langmap=JavaScript:.js.jsx --quiet=yes 
   fi
 }
 
@@ -256,3 +259,5 @@ pdfrename() {
 zk-media-from-clipboard() {
   pbpaste > $ZK_PATH/media/$1
 }
+
+alias loc=scc

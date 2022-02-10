@@ -6,9 +6,14 @@ set encoding=utf-8
 set history=1000  " Keep more history, default is 20
 set mouse=v " Allow copy-pasting
 set mmp=5000 " Some files need more memory for syntax highlight
+" set autochdir
+set tags=.tags,./tags,tags;
 
 " <cword> then includes - as part of the word
 set iskeyword+=-
+
+" nvim-cmp asks for this
+" set completeopt=menu,menuone,noselect
 
 set termguicolors
 set statusline=
@@ -24,58 +29,270 @@ augroup END
 
 let g:browser_new_tab = "chrome-cli open "
 
-call plug#begin('~/.config/nvim/plugged')
+lua vim.cmd [[packadd packer.nvim]]
+lua << EOF
+vim.cmd [[
+  augroup Packer
+    autocmd!
+    autocmd BufWritePost .vimrc PackerCompile
+  augroup end
+]]
+-- REMEMBER TO RUN PackerSync, especially for opt = true!
+-- TODO: Move all configuration in here
+-- TODO: Lazy-load as much as possible
+-- TODO: Convert configuration to Lua
+return require('packer').startup(function()
+  use 'wbthomason/packer.nvim'
 
-Plug 'majutsushi/tagbar'
-" {{{
-nmap \l :TagbarToggle<CR>
-map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-let g:tagbar_compact = 1
-let g:tagbar_indent = 1
-" }}}
-" Plug 'github/copilot.vim'
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" Plug 'bouk/deoplete-markdown-links'
-" Plug 'tbodt/deoplete-tabnine', { 'do': './install.sh' }
-" Plug 'deoplete-plugins/deoplete-lsp'
-Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-vsnip'
-Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'rafamadriz/friendly-snippets'
-Plug 'onsails/lspkind-nvim'
+  -- Completion -- 
+  use 'ms-jpq/coq_nvim'
+  use 'ms-jpq/coq.artifacts'
+  use 'ms-jpq/coq.thirdparty'
+  -- Maybe try https://github.com/ms-jpq/coq_nvim
+  -- use 'hrsh7th/nvim-cmp'
+  -- use {'tzachar/cmp-tabnine', run='./install.sh', requires = 'hrsh7th/nvim-cmp'}
+  -- use 'hrsh7th/cmp-nvim-lsp'
+  -- use 'hrsh7th/cmp-buffer'
+  -- use 'hrsh7th/cmp-path'
+  -- use 'hrsh7th/cmp-cmdline'
+  use {
+    'jameshiew/nvim-magic',
+    config = function()
+      require('nvim-magic').setup()
+      vim.cmd [[
+        command! MDoc -range <Plug>nvim-magic-suggest-docstring	
+      ]]
+    end,
+    requires = {
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim'
+    }
+  }
+  -- Friendly Snippets --
+  -- use 'hrsh7th/cmp-vsnip'
+  -- use 'hrsh7th/vim-vsnip'
+  -- use 'rafamadriz/friendly-snippets'
 
-Plug 'nvim-lua/plenary.nvim'
-Plug 'neovim/nvim-lspconfig'
-Plug 'jose-elias-alvarez/null-ls.nvim'
-Plug 'folke/lsp-colors.nvim'
-Plug 'williamboman/nvim-lsp-installer'
-" Plug 'glepnir/lspsaga.nvim'
-Plug 'kyazdani42/nvim-web-devicons'
-Plug 'folke/trouble.nvim'
-" {{{
-" let g:deoplete#enable_at_startup = 1
-" inoremap <silent><expr> <TAB>
-"   \ pumvisible() ? "\<C-n>" :
-"   \ <SID>check_back_space() ? "\<TAB>" :
-"   \ deoplete#manual_complete()
+  -- TreeSitter --
+  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+  use 'windwp/nvim-ts-autotag'
+  use 'nvim-treesitter/nvim-treesitter-textobjects' -- if / af for selection body
+  use 'michaeljsmith/vim-indent-object'
+  use 'JoosepAlviste/nvim-ts-context-commentstring'
+  use 'romgrk/nvim-treesitter-context' -- Show context for code you're navigating in
+  use 'tpope/vim-commentary'
+  -- use {"lukas-reineke/indent-blankline.nvim", config = function() require("indent_blankline").setup() end}
 
-function! s:check_back_space() abort "{{{
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
-endfunction"}}}
-" }}}
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'chengzeyi/fzf-preview.vim' " For tag previews
-Plug 'ibhagwan/fzf-lua'
-Plug 'vijaymarupudi/nvim-fzf'
-Plug 'kyazdani42/nvim-web-devicons'
-" {{{
+  -- We rely on TreeSitter by default, but for some languages we may want more.
+  --
+  -- * List indentation
+  -- * Make quote syntax nice and greyed out (like a comment)
+  use {'preservim/vim-markdown', ft = {'markdown'}, config = function()
+    vim.cmd [[
+      let g:vim_markdown_new_list_item_indent = 2
+      let g:vim_markdown_folding_disabled = 1
+    ]]
+  end }
+
+  -- Lua --
+  use 'nvim-lua/plenary.nvim' -- Utility functions
+
+  -- Git --
+  use {
+    'lewis6991/gitsigns.nvim',
+    requires = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      if vim.g.gitgutter_diff_base then
+        require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
+      end
+    end
+  }
+  use 'tpope/vim-rhubarb' -- Gbrowse
+  use 'tpope/vim-fugitive'
+
+  ----------------------
+  -- Code Navigbation --
+  ----------------------
+  -- Lsp --
+  use 'neovim/nvim-lspconfig'
+  use 'williamboman/nvim-lsp-installer' -- LspInstallInfo
+  use 'jose-elias-alvarez/null-ls.nvim' -- Create LS from shell tools
+  use 'folke/lsp-colors.nvim'
+  use { 'kyazdani42/nvim-web-devicons',
+    config = function() require('nvim-web-devicons').setup { default = true; } end,
+    event = 'VimEnter'
+  }
+
+  -- Fzf -- 
+  use { 'junegunn/fzf', run = './install --bin', }
+  use 'junegunn/fzf.vim'
+  use 'chengzeyi/fzf-preview.vim' -- Tag previews
+  use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+  use {
+    'nvim-telescope/telescope.nvim',
+    requires = { {'nvim-lua/plenary.nvim'} },
+    config = function()
+      require('telescope').load_extension('fzf')
+      require('telescope').setup()
+    end
+  }
+  use {
+    'ibhagwan/fzf-lua', -- Nifty LSP commands, doesn't support tmux
+    config = function()
+      actions = require "fzf-lua.actions"
+      fzf = require('fzf-lua')
+      fzf.setup {
+        winopts = {
+          height = 0.9,
+          width = 0.9,
+          preview = {
+            flip_columns      = 200,        -- how many columns to allow vertical split
+            winopts = {                       -- builtin previewer window options
+              number            = false,
+              relativenumber    = false,
+            },
+          }
+        },
+        -- fzf_args = "--keep-right --select-1",
+        -- fzf_args = "--keep-right",
+        fzf_opts = {
+          -- options are sent as `<left>=<right>`
+          -- set to `false` to remove a flag
+          -- set to '' for a non-value flag
+          -- for raw args use `fzf_args` instead
+          ['--ansi']        = '',
+          ['--prompt']      = '> ',
+          ['--info']        = 'inline',
+          ['--height']      = '100%',
+          ['--layout']      = 'reverse',
+        },
+        tags = {
+          fzf_opts = { ['--nth'] = '2' },
+        },
+      files = {
+          previewer      = "bat",
+        },
+        actions = {
+            buffers = {
+                    ["default"]     = actions.buf_edit,
+                    ["ctrl-x"]      = actions.buf_split,
+                    ["ctrl-v"]      = actions.buf_vsplit,
+                    ["ctrl-t"]      = actions.buf_tabedit,
+            },
+            files = {
+                ["default"]     = actions.file_edit_or_qf,
+                ["ctrl-x"]      = actions.file_split,
+                ["ctrl-v"]      = actions.file_vsplit,
+                ["ctrl-t"]      = actions.file_tabedit,
+                ["alt-q"]       = actions.file_sel_to_qf,
+            }
+        }
+      }
+
+      vim.cmd [[
+        map z= :lua require("fzf-lua").spell_suggest()<CR>
+        map <A-j> :lua require("fzf-lua").git_status()<CR>
+      ]]
+    end
+  }
+  use 'vijaymarupudi/nvim-fzf' -- Lua api
+  use {
+    'majutsushi/tagbar',
+    cmd = "TagbarToggle",
+    keys = "\\l",
+    config = function()
+      vim.cmd [[
+        nmap \l :TagbarToggle<CR>
+        map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+        let g:tagbar_compact = 1
+        let g:tagbar_indent = 1
+      ]]
+    end
+  }
+
+  -- Standard Vim ergonomics
+  use 'norcalli/nvim-colorizer.lua'
+  use 'milkypostman/vim-togglelist'
+  use { 'scrooloose/nerdtree', keys = "\\t", config = function() vim.cmd [[ map \t :NERDTreeToggle<CR> ]] end }
+  use { "tpope/vim-surround",
+    keys = {"c", "d", "y"},
+    config = function ()
+      vim.cmd("nmap ds       <Plug>Dsurround")
+      vim.cmd("nmap cs       <Plug>Csurround")
+      vim.cmd("nmap cS       <Plug>CSurround")
+      vim.cmd("nmap ys       <Plug>Ysurround")
+      vim.cmd("nmap yS       <Plug>YSurround")
+      vim.cmd("nmap yss      <Plug>Yssurround")
+      vim.cmd("nmap ySs      <Plug>YSsurround")
+      vim.cmd("nmap ySS      <Plug>YSsurround")
+      vim.cmd("xmap gs       <Plug>VSurround")
+      vim.cmd("xmap gS       <Plug>VgSurround")
+      vim.cmd [[ let g:surround_111 = "**\r**" ]]
+      vim.g.surround_111 = "**\\r**"
+    end
+  }
+  use 'tpope/vim-eunuch' -- Unix commands
+  use 'AndrewRadev/splitjoin.vim'
+  use 'tpope/vim-unimpaired'
+  use {
+    'ggandor/lightspeed.nvim',
+    config = function()
+    require('lightspeed').setup({})
+    end
+  }
+  use 'tpope/vim-repeat'
+  -- use 'chriskempson/base16-vim' -- Colors
+  use 'RRethy/nvim-base16'
+  -- use 'tjdevries/train.nvim'
+  use { 'takac/vim-hardtime', config = function()
+    vim.cmd [[
+      let g:hardtime_timeout = 1000
+      let g:hardtime_showmsg = 1
+      let g:hardtime_ignore_buffer_patterns = [ "NERD.*" ]
+      let g:hardtime_ignore_quickfix = 1
+      let g:hardtime_maxcount = 4
+      let g:hardtime_default_on = 1
+    ]]
+  end}
+
+  use 'janko-m/vim-test'
+  use { "rcarriga/vim-ultest", requires = {"vim-test/vim-test"}, run = ":UpdateRemotePlugins" }
+  use 'mfussenegger/nvim-dap'
+  use 'benmills/vimux'
+  use { 'skywind3000/asyncrun.vim', keys = "!l",
+        config = function() vim.cmd [[ map !l :AsyncRun bash -lc 'ctags-build'<CR> ]] end }
+
+  -- Languages -- 
+  use { 'tpope/vim-endwise', ft = 'ruby' }
+  use { 'junegunn/vim-emoji', config = function() 
+      vim.cmd [[ command! -range Emoji <line1>,<line2>s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g ]]
+    end }
+
+  -- TODO: Periodically remove these until Treesitter indent support is good enough.
+  use { 'vim-ruby/vim-ruby', ft = 'ruby' } -- Need it for the indent..
+
+  -- use { 'vim-scripts/VimClojure', ft = 'clojure' }
+  -- use { 'yuezk/vim-js', ft = 'javascript' }
+  -- use { 'maxmellon/vim-jsx-pretty', ft = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' } }
+  -- -- use { 'peitalin/vim-jsx-typescript', ft = { 'javascriptreact', 'typescriptreact' } }
+  -- use { 'derekwyatt/vim-scala', ft = 'scala' }
+  -- use { 'fatih/vim-go', ft = 'go' }
+  -- use { 'elixir-editors/vim-elixir', ft = 'elixir' }
+  -- use { 'rust-lang/rust.vim', ft = 'rust' }
+  -- use { 'racer-rust/vim-racer', ft = 'rust' }
+  -- use { 'cespare/vim-toml', ft = 'toml' }
+  -- use { 'uarun/vim-protobuf', ft = 'protobuf' }
+  -- use { 'udalov/kotlin-vim', ft = 'kotlin' }
+  -- use { 'vim-python/python-syntax', ft = 'python' }
+  -- use { 'jparise/vim-graphql', ft = 'graphql' }
+  -- use { 'mmarchini/bpftrace.vim', ft = 'bpftrace' }
+
+  -- maybe:
+  -- https://github.com/mg979/vim-visual-multi
+  -- use 'dpelle/vim-LanguageTool'
+  -- use 'plasticboy/vim-markdown'
+end)
+EOF
 
 if exists('$TMUX')
   let g:fzf_layout = { 'tmux': '-p90%,60%' }
@@ -85,47 +302,58 @@ else
 endif
 let g:fzf_tags_command = 'bash -c "build-ctags"'
 
-function! FzfSpellSink(word)
-  exe 'normal! "_ciw'.a:word
-endfunction
-
-function! FzfSpell()
-  let suggestions = spellsuggest(expand("<cword>"))
-  return fzf#run(fzf#wrap({'source': suggestions, 'sink': function("FzfSpellSink"), 'window': { 'width': 0.6, 'height': 0.3 }}))
-endfunction
-nnoremap z= :call FzfSpell()<CR>
+" function! FzfSpellSink(word)
+"   exe 'normal! "_ciw'.a:word
+" endfunction
+" function! FzfSpell()
+"   let suggestions = spellsuggest(expand("<cword>"))
+"   return fzf#run(fzf#wrap({'source': suggestions, 'sink': function("FzfSpellSink"), 'window': { 'width': 0.6, 'height': 0.3 }}))
+" endfunction
+" nnoremap z= :call FzfSpell()<CR>
 
 let g:fzf_history_dir = '~/.fzf-history'
-function! RipgrepFzf(query, fullscreen)
-  let command_fmt = 'rg --column --hidden --line-number --no-heading --color=always --smart-case %s || true'
-  let initial_command = printf(command_fmt, shellescape(a:query))
-  let reload_command = printf(command_fmt, '{q}')
-  let options = {'options': ['--phony', '--keep-right', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-  if a:fullscreen
-    let options = fzf#vim#with_preview(options)
-  endif
-  call fzf#vim#grep(initial_command, 1, options, a:fullscreen)
-endfunction
+" function! RipgrepFzf(query, fullscreen)
+"   let command_fmt = 'rg --column --hidden --line-number --no-heading --color=always --smart-case %s || true'
+"   let initial_command = printf(command_fmt, shellescape(a:query))
+"   let reload_command = printf(command_fmt, '{q}')
+"   let options = {'options': ['--phony', '--keep-right', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+"   if a:fullscreen
+"     let options = fzf#vim#with_preview(options)
+"   endif
+"   call fzf#vim#grep(initial_command, 1, options, a:fullscreen)
+" endfunction
 
-command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
-map <C-g> :RG<CR> " Completely use RG, don't use fzf's fuzzy-matching
-map <Space>/ :execute 'Rg ' . expand('<cword>')<CR>
-map <A-/> :BLines<CR>
-map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
+" command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+" map <C-g> :RG<CR> " Completely use RG, don't use fzf's fuzzy-matching
+map <C-g> :lua require('fzf-lua').live_grep()<CR>
+" map <Space>/ :execute 'Rg ' . expand('<cword>')<CR>
+" map <A-/> :BLines<CR>
+map <A-/> :lua require('fzf-lua').lines()<CR>
+map <Space>/ :lua require('fzf-lua').grep_cword()<CR>
+map <Leader>/ :lua require('fzf-lua').grep()<CR>
+" map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
 
 " Redefine so for long paths in e.g. Java we still get the filename.
-command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': '--keep-right'}), <bang>0)
-map <C-t> :Files<CR>
+" command! -bang -nargs=? -complete=dir Files
+"   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': '--keep-right'}), <bang>0)
+" map <C-t> :Files<CR>
+map <C-t> :lua require('fzf-lua').files()<CR>
 
-map <C-j> :Buffers<CR>
+" map <C-j> :Buffers<CR>
+map <C-j> :lua require('fzf-lua').buffers()<CR>
 " Git Status
-map <A-j> :GFiles?<CR>
-map <A-c> :Commands<CR>
-map <C-l> :FZFTags<CR>
-map <A-l> :FZFBTags<CR>
-map <Space>l :execute 'FZFTags ' . expand('<cword>')<CR>
-map <Space><A-l> :execute 'FZFBTags ' . expand('<cword>')<CR>
+" map <A-j> :GFiles?<CR>
+" map <A-c> :Commands<CR>
+" map <C-l> :FZFTags<CR>
+map <C-l> :lua require('fzf-lua').tags()<CR>
+" map <A-l> :FZFBTags<CR>
+map <A-l> :lua require('fzf-lua').btags()<CR>
+" map <Space>l :execute 'FZFTags ' . expand('<cword>')<CR>
+map <Space>l :lua require('fzf-lua').tags({ fzf_opts = { ["--query"] = vim.fn.expand("<cword>") }})<CR>
+map <Space><A-l> :lua require('fzf-lua').btags({ fzf_opts = { ["--query"] = vim.fn.expand("<cword>") }})<CR>
+" map <Space><A-l> :execute 'FZFBTags ' . expand('<cword>')<CR>
+
+set signcolumn=yes " always show the gutter... to avoid flickering from LSP, etc.
 
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -189,15 +417,13 @@ let g:fzf_action = {
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
 " }}}
 
-Plug 'janko-m/vim-test'
 " {{{
 let test#strategy = "vimux"
-map <leader>t :TestNearest<CR>
-map <leader>T :TestFile<CR>
-map <Space>t :TestLast<CR>
+map <leader>t :UltestNearest<CR>
+map <leader>T :Ultest<CR>
+map <Space>t :UltestLast<CR>
 " }}}
 
-Plug 'benmills/vimux'
 " {{{
 let g:VimuxTmuxCommand = "/opt/homebrew/bin/tmux"
 let g:VimuxOrientation = "h"
@@ -219,120 +445,17 @@ map <A-e> :call RunSomethingInTmux()<CR>
 " this is useful for debuggers etc
 map <Space>b :call VimuxRunCommand(bufname("%") . ":" . line("."), 0)<CR>
 map !b :call VimuxRunCommand(bufname("%") . ":" . line("."), 1)<CR>
-" }}}
-Plug 'skywind3000/asyncrun.vim'
-" {{{
-let g:asyncrun_open = 0 " Never open the quickfix for me
-map !l :AsyncRun bash -lc 'ctags-build'<CR>
-" }}}
-Plug 'airblade/vim-gitgutter'
-" {{{
-nmap [h <Plug>(GitGutterPrevHunk)
-let g:gitgutter_sign_priority=0
-nmap ]h <Plug>(GitGutterNextHunk)
-nmap !h :GitGutterQuickFix<CR>
-nmap \h :GitGutterFold<CR>
-nmap ,hd :Gdiff origin/master<CR>
-nmap 'h :let g:gitgutter_diff_base = 'origin/master'<CR>
-set updatetime=100
-" }}}
 
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-" {{{
-map \t :NERDTreeToggle<CR>
-" }}}
-" Plug 'w0rp/ale'
-" {{{
-"let g:ale_sign_error = "✗"
-"let g:ale_sign_warning = "⚠"
-"let g:ale_kotlin_languageserver_executable = '/Users/work/src/kotlin-language-server/server/build/install/server/bin/kotlin-language-server'
-"" let g:ale_kotlin_ktlint_executable = '/usr/local/bin/ktlint --disabled_rules=indent'
-"let g:ale_fixers = {
-"      \'rust': ['rustfmt'],
-"      \'ruby': ['rubocop'],
-"      \'go': ['gofmt'],
-"      \'typescript': ['remove_trailing_lines', 'trim_whitespace', 'eslint'],
-"      \'typescriptreact': ['eslint'],
-"      \'javascript': ['remove_trailing_lines', 'trim_whitespace', 'eslint'],
-"      \'javascriptreact': ['remove_trailing_lines', 'trim_whitespace', 'eslint'],
-"      \'kotlin': ['ktlint'],
-"      \'python': ['black', 'autoimport']
-"    \}
-"      "\'python': ['black', 'autoimport', 'yapf']
-"" Note that many of these have to be installed first!
-"      " \'rust': ['analyzer'],
-"let g:ale_linters = {
-"      \'javascript': [''],
-"      \'ruby': ['rubocop'],
-"      \'typescript': ['tsserver', 'eslint'],
-"      \'typescriptreact': ['tsserver', 'eslint'],
-"      \'go': ['gopls'],
-"      \'rust': ['cargo'],
-"      \'kotlin': ['languageserver', 'ktlint'],
-"      \'python': ['black', 'pyls', 'pyright']
-"      \}
-"let g:ale_lint_delay = 1000
-"" let g:ale_command_wrapper = '~/.bin/ale-command-wrapper'
-"let g:ale_ruby_rubocop_executable = 'bundle'
-"let g:ale_ruby_rubocop_options = '--except Style/StringLiterals --exclude Layout/LineLength'
-"let g:ale_rust_cargo_check_tests = 1
-"let g:ale_rust_cargo_check_examples = 1
-"let g:ale_set_balloons = 1 " Show symbol information on mouseover
-"" let g:ale_typescript_tsserver_use_global = 1 " has hack for more memory
+" let g:vim_markdown_folding_disabled = 1
+" let g:vim_markdown_new_list_item_indent = 0
+" let g:vim_markdown_auto_insert_bullets = 1
+" let g:vim_markdown_frontmatter = 1
+" let g:vim_markdown_no_extensions_in_markdown = 0
+" let g:vim_markdown_follow_anchor = 1
+" let g:vim_markdown_strikethrough = 1
+" let g:vim_markdown_autowrite = 1
+" set conceallevel=0
 
-"" Let's require everything to be explicit, because this is always a nightmare in
-"" new files.
-"let g:ale_linters_explicit = 1
-
-"let g:ale_rust_rls_toolchain = 'nightly'
-"" rustup component add rust-src
-"let g:ale_rust_rls_executable = 'rust-analyzer'
-"" let g:ale_rust_rls_config = {
-"" 	\ 'rust': {
-"" 		\ 'clippy_preference': 'on'
-"" 	\ }
-"" 	\ }
-
-"let g:ale_set_highlights = 0 " signs are enough
-"let g:ale_cursor_detail = 0
-"let g:ale_close_preview_on_insert = 1
-
-" }}}
-Plug 'milkypostman/vim-togglelist'
-Plug 'tpope/vim-endwise', { 'for': 'ruby' }
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-rhubarb'
-Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-fugitive'
-" {{{
-map <leader>gs :Gstatus<CR>
-map <leader>gc :Gcommit<CR>
-" }}}
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-commentary'
-" {{{
-" }}}
-Plug 'tpope/vim-obsession'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'chriskempson/base16-vim'
-" Plug 'bouk/vim-markdown', { 'branch': 'wikilinks' }
-Plug 'dpelle/vim-LanguageTool'
-Plug 'plasticboy/vim-markdown'
-" {{
-let g:vim_markdown_folding_disabled = 1
-let g:vim_markdown_new_list_item_indent = 0
-let g:vim_markdown_auto_insert_bullets = 1
-let g:vim_markdown_frontmatter = 1
-let g:vim_markdown_no_extensions_in_markdown = 0
-let g:vim_markdown_follow_anchor = 1
-let g:vim_markdown_strikethrough = 1
-let g:vim_markdown_autowrite = 1
-set conceallevel=0
-
-" https://agilesysadmin.net/how-to-manage-long-lines-in-vim/
-autocmd FileType markdown setlocal spell
-autocmd FileType markdown setlocal linebreak " wrap on words, not characters
 
 augroup my_spelling_colors
   " Underline, don't do intrusive red things.
@@ -344,161 +467,120 @@ augroup my_spelling_colors
   autocmd ColorScheme * hi SpellRare cterm=underline ctermfg=NONE ctermbg=NONE term=Reverse
 augroup END
 set spell spelllang=en_ca
-" }}}
-Plug 'tpope/vim-rails', { 'for': 'ruby' }
-Plug 'junegunn/vim-emoji'
-" {{
-command! -range Emoji <line1>,<line2>s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g
-" }}
-Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
-" {{
-let ruby_operators = 1
-let ruby_space_errors = 1
-let ruby_spellcheck_strings = 0
-" }}
-Plug 'vim-scripts/VimClojure', { 'for': 'clojure' }
-Plug 'kchmck/vim-coffee-script'
-Plug 'yuezk/vim-js'
-Plug 'HerringtonDarkholme/yats.vim' " Typescript
-Plug 'maxmellon/vim-jsx-pretty'
-Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
-Plug 'fatih/vim-go', { 'for': 'go' }
-" {{
-let g:go_def_mapping_enabled = 0
-let g:go_fmt_fail_silently = 1
-let g:go_gopls_enabled = 0 " using ale
-" }}
-Plug 'elixir-editors/vim-elixir', { 'for': 'elixir' }
-Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-" {{{
-let g:rustfmt_autosave = 0
-let g:rust_recommended_style = 1
-" }}}
-Plug 'cespare/vim-toml', { 'for': 'toml' }
-Plug 'uarun/vim-protobuf'
-Plug 'udalov/kotlin-vim'
-Plug 'vim-python/python-syntax'
-" {
-let g:python_highlight_all = 1
-" }
-Plug 'peitalin/vim-jsx-typescript'
-Plug 'jparise/vim-graphql'
-Plug 'racer-rust/vim-racer'
-Plug 'mmarchini/bpftrace.vim'
-Plug 'Shirk/vim-gas'
 
-call plug#end()
+" let ruby_operators = 1
+" let ruby_space_errors = 1
+" let ruby_spellcheck_strings = 0
+" " }}
+" " {{
+" let g:go_def_mapping_enabled = 0
+" let g:go_fmt_fail_silently = 1
+" let g:go_gopls_enabled = 0 " using ale
+" " }}
+" " {{{
+" let g:rustfmt_autosave = 0
+" let g:rust_recommended_style = 1
+" }}}
+" {
+" let g:python_highlight_all = 1
+" }
 
 lua << EOF
--- FZF lua has its own preview window... so can't use with fzf-tmux :(
---local actions = require "fzf-lua.actions"
---local fzf = require('fzf-lua')
---fzf.setup {
---  fzf_bin = "fzf-tmux",
---  fzf_args = "-p90%,60%"},
---  fzf_opts = {
---    -- options are sent as `<left>=<right>`
---    -- set to `false` to remove a flag
---    -- set to '' for a non-value flag
---    -- for raw args use `fzf_args` instead
---    ['--ansi']        = '',
---    ['--prompt']      = '> ',
---    --['--info']        = 'inline',
---    --['--height']      = '100%',
---    --['--layout']      = 'reverse',
---  },
---}
+require('gitsigns').setup {
+  keymaps = {
+    noremap = true,
+    ['n ]h'] = { expr = true, "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'"},
+    ['n [h'] = { expr = true, "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'"},
+    ['n <leader>hs'] = '<cmd>Gitsigns stage_hunk<CR>',
+    ['v <leader>hs'] = ':Gitsigns stage_hunk<CR>',
+    ['n <leader>hu'] = '<cmd>Gitsigns undo_stage_hunk<CR>',
+    ['n <leader>hr'] = '<cmd>Gitsigns reset_hunk<CR>',
+    ['v <leader>hr'] = ':Gitsigns reset_hunk<CR>',
+    ['n <leader>hR'] = '<cmd>Gitsigns reset_buffer<CR>',
+    ['n <leader>hp'] = '<cmd>Gitsigns preview_hunk<CR>',
+    ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line{full=true}<CR>',
+    ['n <leader>hS'] = '<cmd>Gitsigns stage_buffer<CR>',
+    ['n <leader>hU'] = '<cmd>Gitsigns reset_buffer_index<CR>',
+    ['n <leader>hC'] = '<cmd>lua require"gitsigns".change_base(vim.g.gitgutter_diff_base or \'master\', true)<CR>',
+    ['n <leader>hc'] = '<cmd>lua vim.ui.input({prompt = \'Change Git Base To: \', default = vim.g.gitgutter_diff_base}, function(input) require("gitsigns").change_base(input); end, true)<CR>'
+  }
+}
 
+-- print("CHANGING! " .. vim.g.gitgutter_diff_base)
+-- require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
+require'nvim-treesitter.configs'.setup {
+  autotag = {
+    enable = true,
+  },
+  -- indent = {
+  --   enable = true
+  -- },
+  context_commentstring = {
+    enable = true,
+    config = {
+      markdown = '> %s'
+    }
+  },
+  textobjects = {
+    select = {
+      enable = true,
+
+      -- Automatically jump forward to textobj, similar to targets.vim
+      lookahead = true,
+
+      keymaps = {
+        -- You can use the capture groups defined in textobjects.scm
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@conditional.outer",
+        ["ic"] = "@conditional.inner",
+        ["aC"] = "@class.outer",
+        ["iC"] = "@class.inner",
+        ["i/"] = "@comment.outer",
+        ["iP"] = "@parameter.inner",
+        ["aP"] = "@parameter.outer",
+      },
+    },
+  },
+}
+
+require'nvim-treesitter.configs'.setup {
+  context_commentstring = {
+    enable = true
+  }
+}
+
+-- require('dash').setup({
+  -- your config here
+-- })
+-- FZF lua has its own preview window... so can't use with fzf-tmux :(
   -- local saga = require 'lspsaga'
   -- saga.init_lsp_saga()
-  local cmp = require'cmp'
+  -- local cmp = require'cmp'
   local lspconfig = require("lspconfig")
-
-  local tabnine = require('cmp_tabnine.config')
-  tabnine:setup({
-    max_lines = 5000;
-    max_num_results = 10;
-    sort = true;
-    run_on_every_keystroke = true;
-    snippet_placeholder = '..';
-  })
-
-  --local format_config = require("lspkind").cmp_format({
-  --    with_text = true,
-  --    menu = ({
-  --      buffer = "[Buffer]",
-  --      nvim_lsp = "[LSP]",
-  --      tabnine = "[TN]",
-  --      luasnip = "[LuaSnip]",
-  --      nvim_lua = "[Lua]",
-  --      latex_symbols = "[Latex]",
-  --    })
-  --  })
-
-  cmp.setup({
-    --formatting = { format = format_config },
-    snippet = {
-      -- REQUIRED - you must specify a snippet engine
-      expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-        -- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
-      end,
-    },
-    mapping = {
-      ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-      ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-      ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 's' }),
-      ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-      ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-      ['<C-e>'] = cmp.mapping({
-        i = cmp.mapping.abort(),
-        c = cmp.mapping.close(),
-      }),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }),
-    },
-    sources = cmp.config.sources({
-      { name = 'vsnip' },
-      { name = 'cmp_tabnine' },
-      { name = 'nvim_lsp' },
-    }, {
-      { name = 'buffer' },
-    })
-  })
-
-  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline('/', {
-    sources = {
-      { name = 'buffer' }
+  vim.g.coq_settings = {
+    -- auto_start = 'shut-up',
+    ['display.icons.mode'] = 'none',
+    clients = {
+      tabnine = { enabled = true },
+      tmux = { enabled = true }
     }
-  })
+  }
+  local coq = require("coq")
+  require("coq_3p") {
+    { src = "copilot", short_name = "COP", accept_key = "<c-f>" },
+    { src = "bc", short_name = "MATH", precision = 4 }
+  }
+  -- lua.coq_settings.clients.tabnine.enabled=true
 
-  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline(':', {
-    sources = cmp.config.sources({
-      { name = 'path' }
-    }, {
-      { name = 'cmdline' }
-    })
-  })
-
--- Setup lspconfig.
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-
-require("trouble").setup {
-    fold_open = "v", -- icon used for open folds
-    fold_closed = ">", -- icon used for closed folds
-    indent_lines = false, -- add an indent guide below the fold icons
-    signs = {
-        -- icons / text used for a diagnostic
-        error = "error",
-        warning = "warn",
-        hint = "hint",
-        information = "info"
-    },
-    use_lsp_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
-}
+  -- local tabnine = require('cmp_tabnine.config')
+  -- tabnine:setup({
+  --   max_lines = 5000;
+  --   max_num_results = 10;
+  --   sort = true;
+  --   run_on_every_keystroke = true;
+  --   snippet_placeholder = '..';
+  -- })
 
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -508,31 +590,36 @@ local on_attach = function(client, bufnr)
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
-  buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', ',ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  --buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', '<C-[>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true, async = true })<CR>', opts)
   buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', '<C-K>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '[e', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']e', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
+  buf_set_keymap('v', ',ca', ":<c-u>lua vim.lsp.buf.range_code_action()<CR>", opts)
+  buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_references()<CR>", opts)
+  buf_set_keymap('n', '[e', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']e', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', ',E', "<cmd>lua require('fzf-lua').lsp_document_diagnostics()<CR>", opts)
+  buf_set_keymap('n', ',e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', 'gl', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
-  buf_set_keymap('n', 'gL', '<cmd>lua vim.lsp.buf.workspace_symbol("")<CR>', opts)
+  buf_set_keymap('n', 'g<A-l>', "<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>", opts)
+  buf_set_keymap('n', 'gl', "<cmd>lua require('fzf-lua').lsp_live_workspace_symbols()<CR>", opts)
 
   buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', ',e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
   buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
   buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
 
   -- Set some keybinds conditional on server capabilities
-  if client.resolved_capabilities.document_formatting then
-    buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.formatting_seq_sync()<CR>", opts)
-  elseif client.resolved_capabilities.document_range_formatting then
+  -- if client.resolved_capabilities.document_formatting then
+  buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.formatting_seq_sync({}, 10000)<CR>", opts)
+  buf_set_keymap("n", ",F", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  -- end
+
+  if client.resolved_capabilities.document_range_formatting then
     buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
   end
 
@@ -548,6 +635,9 @@ local on_attach = function(client, bufnr)
   end
 end
 
+local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+local opts = { noremap=true, silent=true }
+
 vim.diagnostic.config({virtual_text = false})
 
 local lsp_installer = require("nvim-lsp-installer")
@@ -559,6 +649,21 @@ lsp_installer.on_server_ready(function(server)
       capabilities = capabilities
     }
 
+    if server.name == "elm" then
+        opts.settings = {
+            rootMarkers = {".git/"},
+            languages = {
+                python = {
+                    {
+                            lintCommand = "flake8 --stdin-display-name ${INPUT} -",
+                            formatStdin = true,
+                            lintFormats = { '%f:%l:%c: %m' }
+                    }
+                }
+            }
+        }
+    end
+
     -- (optional) Customize the options passed to the server
     if server.name == "pyright" then
         opts.settings = {
@@ -568,17 +673,17 @@ lsp_installer.on_server_ready(function(server)
         }
     end
 
-    if server.name == "eslint" then
-      opts.on_attach = function (client, bufnr)
-          -- neovim's LSP client does not currently support dynamic capabilities registration, so we need to set
-          -- the resolved capabilities of the eslint server ourselves!
-          client.resolved_capabilities.document_formatting = true
-          on_attach(client, bufnr)
-      end
-      opts.settings = {
-          format = { enable = true }, -- this will enable formatting
-      }
-    end
+    -- if server.name == "eslint" then
+    --   opts.on_attach = function (client, bufnr)
+    --       -- neovim's LSP client does not currently support dynamic capabilities registration, so we need to set
+    --       -- the resolved capabilities of the eslint server ourselves!
+    --       client.resolved_capabilities.document_formatting = true
+    --       on_attach(client, bufnr)
+    --   end
+    --   opts.settings = {
+    --       format = { enable = true }, -- this will enable formatting
+    --   }
+    -- end
 
     if server.name == "solargraph" then
       opts = {
@@ -608,34 +713,39 @@ lsp_installer.on_server_ready(function(server)
 
     -- This setup() function is exactly the same as lspconfig's setup function.
     -- Refer to https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-    server:setup(opts)
+    server:setup(coq.lsp_ensure_capabilities(opts))
 end)
 
-local null_ls = require("null-ls")
-null_ls.config({
+require("null-ls").setup({
+    debug = true,
     sources = {
-      null_ls.builtins.diagnostics.flake8,
-      null_ls.builtins.formatting.reorder_python_imports,
-      null_ls.builtins.formatting.autopep8
-    }
-})
-lspconfig["null-ls"].setup({
-    on_attach = on_attach
+        require("null-ls").builtins.diagnostics.flake8,
+        require("null-ls").builtins.diagnostics.eslint,
+        require("null-ls").builtins.diagnostics.hadolint,
+        require("null-ls").builtins.diagnostics.jsonlint,
+        require("null-ls").builtins.formatting.autopep8,
+        require("null-ls").builtins.formatting.isort,
+        require("null-ls").builtins.formatting.eslint_d,
+        require("null-ls").builtins.formatting.fixjson,
+        require("null-ls").builtins.formatting.stylua,
+        require("null-ls").builtins.code_actions.gitsigns,
+    },
 })
 
 -- https://github.com/neovim/nvim-lspconfig/wiki/UI-customization
 vim.o.updatetime = 250
-vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.lsp.diagnostic.show_line_diagnostics({focusable=false})]]
+vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float({focusable=false})]]
 
-vim.lsp.set_log_level("debug")
+vim.lsp.set_log_level("info")
 
-local signs = { Error = "✗", Warn = "⚠", Hint = "h", Info = "i" }
+--local signs = { Error = "✗", Warn = "⚠", Hint = "h", Info = "i" }
+--local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-end
-
+-- for type, icon in pairs(signs) do
+--   local hl = "DiagnosticSign" .. type
+--   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+-- end
+--
 local fzf = require("fzf")
 
 -- command! ZKRT call fzf#run(fzf#wrap({
@@ -728,34 +838,23 @@ GPT = function()
   })
 end
 
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
+  -- ignore_install = { "javascript" }, -- List of parsers to ignore installing
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    -- disable = { "c", "rust" },  -- list of language that will be disabled
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
 EOF
 
-" Have to be after deoplete for some reason
-" call deoplete#custom#option({
-" \ 'smart_case': v:true,
-" \ 'prev_completion_mode': "prev_completion_mode",
-" \ 'sources': {
-" \   '_': ['tabnine', 'lsp', 'buffer'],
-" \   'json': [],
-" \   'kotlin': ['lsp', 'tabnine'],
-" \   'rust': ['lsp', 'tabnine'],
-" \   'python': ['lsp', 'tabnine'],
-" \   'markdown': ['markdown_links', 'markdown_tags']
-" \ }
-" \ })
-
-" autocmd FileType json call deoplete#custom#buffer_option('auto_complete', v:false)
-" autocmd FileType markdown call deoplete#custom#buffer_option('ignore_sources', ['around', 'buffer', 'tabnine'])
-" Don't completee in strings and comments
-" call deoplete#custom#source('_',
-"             \ 'disabled_syntaxes', ['Comment', 'String'])
-
-" call deoplete#custom#var('tabnine', {
-" \ 'line_limit': 2000,
-" \ 'max_num_results': 20,
-" \ })
-
-filetype plugin indent on " Enable after Vundle loaded, #dunnolol
+filetype plugin indent on
 
 " Allow editing crontabs http://vim.wikia.com/wiki/Editing_crontab
 set backupskip=/tmp/*,/private/tmp/* "
@@ -787,8 +886,8 @@ set shiftwidth=2 " Even if there are tabs, preview as 2 spaces
 " set list " Highlight trailings, stolen from @teoljungberg
 " set listchars=tab:>-,trail:.,extends:>,precedes:<
 " set listchars=trail:.,extends:>,precedes:<
-autocmd FileType go,gitcommit,qf,gitset,gas,asm setlocal nolist
-autocmd FileType json setlocal textwidth=0
+" autocmd FileType go,gitcommit,qf,gitset,gas,asm setlocal nolist
+" autocmd FileType json setlocal textwidth=0
 
 set nohlsearch " Don't highlight search results
 set diffopt=filler,vertical
@@ -828,8 +927,6 @@ function! RenameFile()
 endfunction
 nnoremap <leader>r :call RenameFile()<cr>
 
-au BufNewFile,BufRead *.ejson,*.jsonl,*.avsc set filetype=json
-au BufNewFile,BufRead *.s set filetype=gas
 set nospell
 " allow spaces in file-names, which makes gf more useful
 set isfname+=32
@@ -870,8 +967,6 @@ nnoremap <silent> <expr> 0 ScreenMovement("0")
 nnoremap <silent> <expr> ^ ScreenMovement("^")
 nnoremap <silent> <expr> $ ScreenMovement("$")
 
-" set autochdir
-set tags=.tags,./tags,tags;
 
 function! SNote(...)
   let path = strftime("%Y%m%d%H%M")." ".trim(join(a:000)).".md"
@@ -911,122 +1006,60 @@ function! ZettelkastenSetup()
 endfunction
 
 " Don't know why I can't get FZF to return {2}
-function! InsertSecondColumn(line)
+" function! InsertSecondColumn(line)
   " execute 'read !echo ' .. split(a:e[0], '\t')[1]
-  exe 'normal! o' .. split(a:line, '\t')[1]
-endfunction
+  " exe 'normal! o' .. split(a:line, '\t')[1]
+" endfunction
 
 command! ZKRT :lua ZettelkastenRelatedTags()
 command! ZKT :lua ZettelkastenTags()
-" command! -range GPT :lua require("plenary/async").run(GPT, function() end)
 command! -range GPT :lua GPT()
 
-" command! ZKRT call fzf#run(fzf#wrap({
-"         \ 'source': 'zk-related-tags "' .. bufname("%") .. '"',
-"         \ 'options': '--ansi --exact --nth 2',
-"         \ 'sink':    function("InsertSecondColumn")
-"       \}))
+map \d :put =strftime(\"# %Y-%m-%d\")<CR>
 
-" command! ZKSIM call fzf#run(fzf#wrap({
-"         \ 'source': 'zksim "' .. bufname("%") .. '"',
-"         \ 'options': '--ansi --exact --nth 2',
-"         \ 'sink':    function("InsertSecondColumn")
-"       \}))
+au BufNewFile,BufRead *.py
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set textwidth=80 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set fileformat=unix
 
-" command! ZKT call fzf#run(fzf#wrap({
-"         \ 'source': 'zkt-raw "' .. bufname("%") .. '"',
-"         \ 'options': '--ansi --exact --nth 2',
-"         \ 'sink':    function("InsertSecondColumn")
-"       \}))
-
-autocmd BufNew,BufNewFile,BufRead /Users/simon/Documents/Zettelkasten/*.md call ZettelkastenSetup()
-
-map \d :put =strftime(\"%Y-%m-%d\")<CR>
-
-function! LookupDocsLanguage()
-  if &filetype ==# 'c' || &filetype ==# 'cpp'
-    call system(g:browser_new_tab "'https://www.google.com/search?q=" . expand('<cword>') . "&sitesearch=man7.org%2Flinux%2Fman-pages'")
-  elseif &filetype ==# 'markdown'
-    call system(g:browser_new_tab . "'https://google.com/search?q=define%20" . expand('<cword>') . "'")
-  elseif &filetype ==# 'rust'
-    " let crate_link = "file:///" . getcwd() . "/target/doc/settings.html?search=" . expand('<cword>')
-    let stdlib_link = 'https://doc.rust-lang.org/std/?search=' . expand('<cword>')
-
-    " let stdlib_tab = trim(system("chrome-cli list links | grep 'doc.rust-lang.org' | grep -oE '[0-9]+'"))
-    " let crate_tab = trim(system("chrome-cli list links | grep '" . getcwd() . "' | grep -oE '[0-9]+'"))
-    " let active_tab = trim(system("chrome-cli info | grep -Eo '\d+' | head -n1"))
-
-    " if stdlib_tab
-    "   call system("chrome-cli open " . stdlib_link . " -t " . stdlib_tab)
-    " else
-      " call system(browser . stdlib_link)
-    " end
-
-    " if crate_tab
-      " call system(browser . " " . crate_link . " -t " . crate_tab)
-      " if active_tab != stdlib_tab && active_tab != crate_tab
-      "   call system("chrome-cli activate -t " . crate_tab)
-      " end
-    " else
-      " call VimuxRunCommand("cargo doc &")
-    call system(g:browser_new_tab . stdlib_link)
-  elseif &filetype ==# 'ruby'
-    " could prob make this use ri(1)
-    call system(g:browser_new_tab . "https://ruby-doc.com/search.html?q=" . expand('<cword>'))
-  elseif &filetype =~ "typescript" || &filetype =~ "javascript"
-    call system(g:browser_new_tab . "https://devdocs.io/#q=js%20" . expand('<cword>'))
-  else
-    call system(g:browser_new_tab . "https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
-  endif
-endfunction
-
-function! LookupDocsLibrary()
-  let browser = "/Applications/Firefox.app/Contents/MacOS/firefox --new-tab "
-  call system(browser . "https://google.com/search?q=" . &filetype . "%20" . expand('<cword>'))
-endfunction
-
-" Docs/lint binds
-nmap <C-k> :call LookupDocsLanguage()<cr>
-" nmap <C-[> :ALEGoToDefinition<cr>
-nmap <A-k> :call LookupDocsLibrary<CR>
-" map <leader>f :ALEFix<CR>
-map !f :call VimuxRunCommand("dev style")<CR>
-" map [a :ALEPrevious<CR>
-" map ]a :ALENext<CR>
-
-" augroup remember_folds
-"   autocmd!
-"   autocmd BufWinLeave * mkview
-"   autocmd BufWinEnter * silent! loadview
-" augroup END
-
-autocmd BufRead,BufNewFile *.py,*.py set expandtab tabstop=4 shiftwidth=4 softtabstop=4
-autocmd FileType markdown setlocal commentstring=>\ %s
 let g:python3_host_prog="/opt/homebrew/bin/python3"
 
-autocmd FileType markdown lua require('cmp').setup.buffer { enabled = false }
+" imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+" smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
 
-imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+" " Expand or jump
+" imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+" smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 
-" Expand or jump
-imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-
-" Jump forward or backward
-imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+" " Jump forward or backward
+" imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+" smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+" imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+" smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 
 " Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
 " See https://github.com/hrsh7th/vim-vsnip/pull/50
-nmap        s   <Plug>(vsnip-select-text)
-xmap        s   <Plug>(vsnip-select-text)
-nmap        S   <Plug>(vsnip-cut-text)
-xmap        S   <Plug>(vsnip-cut-text)
+" nmap        s   <Plug>(vsnip-select-text)
+" xmap        s   <Plug>(vsnip-select-text)
+" nmap        S   <Plug>(vsnip-cut-text)
+" xmap        S   <Plug>(vsnip-cut-text)
 
 let g:vsnip_filetypes = {}
 let g:vsnip_filetypes.javascriptreact = ['javascript']
 let g:vsnip_filetypes.typescriptreact = ['typescript']
 
+au BufNewFile,BufRead *.tsx set filetype=typescriptreact
+au BufNewFile,BufRead *.jsx set filetype=javascriptreact
+au BufNewFile,BufRead *.ejson,*.jsonl,*.avsc set filetype=json
+au BufNewFile,BufRead *.s set filetype=gas
+" au FileType markdown lua require('cmp').setup.buffer { enabled = false }
+au FileType markdown setlocal commentstring=>\ %s
+au BufNew,BufNewFile,BufRead /Users/simon/Documents/Zettelkasten/*.md call ZettelkastenSetup()
+autocmd FileType markdown setlocal spell
+autocmd FileType markdown setlocal linebreak " wrap on words, not characters
+
+let g:surround_{char2nr('b')} = "**\r**"

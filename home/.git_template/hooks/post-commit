@@ -1,2 +1,2 @@
 #!/bin/sh
-bash -l -c "ctags-build"
+bash -l -c "ctags-build >/dev/null 2>/dev/null &"

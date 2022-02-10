@@ -18,7 +18,7 @@
   default = current
   rebase = true
 [hub]
-  protocol = ssh
+	protocol = https
 [init]
   templatedir = ~/.git_template
 [diff]
@@ -42,3 +42,5 @@
   minus-style = "syntax #340001"
   syntax-theme = "base16-256"
   navigate = true
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
