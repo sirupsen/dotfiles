@@ -1,4 +1,4 @@
-source /etc/bashrc_Apple_Terminal
+[ -f /etc/bashrc_Apple_Terminal ] && source /etc/bashrc_Apple_Terminal
 
 for file in ~/.bash/*.bash; do
   source "${file}"
@@ -40,15 +40,13 @@ export RIPGREP_CONFIG_PATH="$HOME/.rgrc"
 # Big node projects will be bogged down otherwise.
 export NODE_OPTIONS='--max_old_space_size=4096'
 
-(ssh-add -l 2>&1 | grep -q "Error connecting to agent") && ssh-agent bash
-(ssh-add -l 2>&1 | grep -q "no identities") && ssh-add --apple-use-keychain --apple-load-keychain
+if [ $(uname) == "Darwin" ]; then
+  (ssh-add -l 2>&1 | grep -q "Error connecting to agent") && ssh-agent bash
+  (ssh-add -l 2>&1 | grep -q "no identities") && ssh-add --apple-use-keychain --apple-load-keychain
+fi
 
 if [[ -f ~/.env ]]; then
   source ~/.env
-fi
-
-if [[ $(whoami) == 'personal' ]]; then
-  source /usr/local/share/chruby/chruby.sh
 fi
 
 # interactive
@@ -74,11 +72,15 @@ if [[ -f /opt/dev/dev.sh ]] && [[ $- == *i* ]]; then
   source /opt/dev/dev.sh
 fi
 
-source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
-chruby 3
+if [ $(uname) == "Darwin" ]; then
+  source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
+  chruby 3
+else
+  source /usr/local/share/chruby/chruby.sh
+end
 # conda init "$(basename "${SHELL}")" > /dev/null 2>&1
 # conda init bash
-source /Users/simon/src/github.com/vitessio/vitess/examples/local/env.sh
+# source /Users/simon/src/github.com/vitessio/vitess/examples/local/env.sh
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

@@ -19,7 +19,6 @@ else
     fi
 fi
 unset __conda_setup
-# <<< conda initialize <<<
 
 export PATH="/opt/homebrew/opt/mysql@5.7/bin:$PATH"
 export PATH="/opt/homebrew/opt/node@16/bin:$PATH"
@@ -28,4 +27,6 @@ export PATH="$HOME/.poetry/bin:$PATH"
 #source "/Users/simon/src/github.com/emscripten-core/emsdk/emsdk_env.sh"
 export GOENV_ROOT="$HOME/.goenv"
 export PATH="$GOENV_ROOT/bin:$PATH"
-eval "$(goenv init -)"
+if command -v goenv; then
+  eval "$(goenv init -)"
+fi
