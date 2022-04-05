@@ -5,6 +5,9 @@ homesick clone 'sirupsen/dotfiles'
 homesick link dotfiles
 homesick pull dotfiles
 
+git clone --depth 1 https://github.com/wbthomason/packer.nvim \
+  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+
 # function symlink {
 #   ln -nsf $1 $2
 # }

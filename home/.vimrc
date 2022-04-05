@@ -445,7 +445,7 @@ map <Space>t :UltestLast<CR>
 " }}}
 
 " {{{
-let g:VimuxTmuxCommand = "/opt/homebrew/bin/tmux"
+" let g:VimuxTmuxCommand = "/opt/homebrew/bin/tmux"
 let g:VimuxOrientation = "h"
 let g:VimuxHeight = "40"
 let g:VimuxUseNearest = 1
