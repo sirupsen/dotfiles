@@ -7,3 +7,4 @@ shopt -s histappend # append, never overwrite
 export PROMPT_COMMAND="history -a;history -r;$PROMPT_COMMAND"
 export HISTFILESIZE=100000000
 export GPG_TTY=$(tty)
+export LC_ALL="en_US.UTF-8"

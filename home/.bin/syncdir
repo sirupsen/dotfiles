@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Syncs a directory with rsync(1), entr(1) to a remote server.
+dir=$(basename $(git rev-parse --show-toplevel)) # gets top-level directory regardless
+
+rsync --filter=':- .gitignore' --exclude '.git' . "root@napkin:${dir}" --compress --archive
+
+if [[ ! "${1}" = "-0" ]]; then
+  echo -e "\x1b[32mWill sync on changes...\x1b[0m"
+  rsync --filter=':- .gitignore' --exclude '.git' --list-only . "root@napkin:${dir}" -ca \
+    | awk '{print $5}' | entr -p time syncdir
+fi

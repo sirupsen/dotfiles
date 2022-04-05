@@ -3,6 +3,7 @@ if command -v hub > /dev/null; then
   alias git=hub
 fi
 
+alias box="mosh napkin -- tmux new-session -A -s main"
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ls="ls -G"
@@ -14,6 +15,12 @@ git_origin_or_fork() {
     echo "origin"
   fi
 }
+
+alias k='kubectl'
+alias k-pod="k get pods | tail -n +2 | awk '{ print \$1 }' | fzf"
+alias k-node="k describe \"pod/\$(k-pod)\" | rg 'Node:' | rg -o 'gke-([\w-]+)'"
+
+alias npm-update="npm-check --skip-unused -u"
 
 git-find-merge() {
   git rev-list $1..master --ancestry-path \

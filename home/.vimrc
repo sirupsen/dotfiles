@@ -44,10 +44,21 @@ vim.cmd [[
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
+  use 'hrsh7th/cmp-nvim-lsp'
+  use 'hrsh7th/cmp-buffer'
+  use 'hrsh7th/cmp-path'
+  use 'hrsh7th/cmp-cmdline'
+  use 'hrsh7th/nvim-cmp'
+  use "kdheepak/cmp-latex-symbols"
+  use 'hrsh7th/cmp-emoji'
+
+  use 'hrsh7th/cmp-vsnip'
+  use 'hrsh7th/vim-vsnip'
+  -- use 'rafamadriz/friendly-snippets'
+
+  -- code_filetypes = { 'lua', 'rust', 'go', 'ruby', 'python', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vim' }
+  -- code_filetypes = { }
   -- Completion -- 
-  use 'ms-jpq/coq_nvim'
-  use 'ms-jpq/coq.artifacts'
-  use 'ms-jpq/coq.thirdparty'
   -- Maybe try https://github.com/ms-jpq/coq_nvim
   -- use 'hrsh7th/nvim-cmp'
   -- use {'tzachar/cmp-tabnine', run='./install.sh', requires = 'hrsh7th/nvim-cmp'}
@@ -71,7 +82,6 @@ return require('packer').startup(function()
   -- Friendly Snippets --
   -- use 'hrsh7th/cmp-vsnip'
   -- use 'hrsh7th/vim-vsnip'
-  -- use 'rafamadriz/friendly-snippets'
 
   -- TreeSitter --
   use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
@@ -142,10 +152,19 @@ return require('packer').startup(function()
       actions = require "fzf-lua.actions"
       fzf = require('fzf-lua')
       fzf.setup {
+        previewers = {
+          -- bat = {
+          --   cmd = "head --bytes 1000 | bat"
+          -- },
+            builtin = {
+              syntax          = true,         -- preview syntax highlight?
+            },
+        },
         winopts = {
           height = 0.9,
           width = 0.9,
           preview = {
+            -- default = 'bat',
             flip_columns      = 200,        -- how many columns to allow vertical split
             winopts = {                       -- builtin previewer window options
               number            = false,
@@ -170,7 +189,7 @@ return require('packer').startup(function()
           fzf_opts = { ['--nth'] = '2' },
         },
       files = {
-          previewer      = "bat",
+          -- previewer      = "bat",
         },
         actions = {
             buffers = {
@@ -270,6 +289,7 @@ return require('packer').startup(function()
 
   -- TODO: Periodically remove these until Treesitter indent support is good enough.
   use { 'vim-ruby/vim-ruby', ft = 'ruby' } -- Need it for the indent..
+  use { 'vim-crystal/vim-crystal' }
 
   -- use { 'vim-scripts/VimClojure', ft = 'clojure' }
   -- use { 'yuezk/vim-js', ft = 'javascript' }
@@ -486,6 +506,74 @@ set spell spelllang=en_ca
 " }
 
 lua << EOF
+
+local cmp = require'cmp'
+
+local has_words_before = function()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
+local feedkey = function(key, mode)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+end
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    mapping = {
+      ["<Tab>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_next_item()
+        elseif vim.fn["vsnip#available"](1) == 1 then
+          feedkey("<Plug>(vsnip-expand-or-jump)", "")
+        elseif has_words_before() then
+          cmp.complete()
+        else
+          fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+        end
+      end, { "i", "s" }),
+
+      ["<S-Tab>"] = cmp.mapping(function()
+        if cmp.visible() then
+          cmp.select_prev_item()
+        elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+          feedkey("<Plug>(vsnip-jump-prev)", "")
+        end
+      end, { "i", "s" }),
+
+      ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+      ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+      ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+      ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+      ['<C-e>'] = cmp.mapping({
+        i = cmp.mapping.abort(),
+        c = cmp.mapping.close(),
+      }),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    },
+    sources = cmp.config.sources({
+      { name = 'emoji' },
+      { name = "latex_symbols" },
+      { name = 'nvim_lsp' },
+      { name = 'vsnip' }, -- For vsnip users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+  cmp.setup.filetype('markdown', {
+    sources = cmp.config.sources({
+    }, {
+    })
+  })
+
 require('gitsigns').setup {
   keymaps = {
     noremap = true,
@@ -502,7 +590,7 @@ require('gitsigns').setup {
     ['n <leader>hS'] = '<cmd>Gitsigns stage_buffer<CR>',
     ['n <leader>hU'] = '<cmd>Gitsigns reset_buffer_index<CR>',
     ['n <leader>hC'] = '<cmd>lua require"gitsigns".change_base(vim.g.gitgutter_diff_base or \'master\', true)<CR>',
-    ['n <leader>hc'] = '<cmd>lua vim.ui.input({prompt = \'Change Git Base To: \', default = vim.g.gitgutter_diff_base}, function(input) require("gitsigns").change_base(input); end, true)<CR>'
+    ['n <leader>hc'] = '<cmd>lua vim.ui.input({prompt = \'Change Git Base To: \', default = vim.g.gitgutter_diff_base}, function(input) require("gitsigns").change_base(input, true); end, true)<CR>'
   }
 }
 
@@ -558,21 +646,6 @@ require'nvim-treesitter.configs'.setup {
   -- saga.init_lsp_saga()
   -- local cmp = require'cmp'
   local lspconfig = require("lspconfig")
-  vim.g.coq_settings = {
-    -- auto_start = 'shut-up',
-    ['display.icons.mode'] = 'none',
-    clients = {
-      tabnine = { enabled = true },
-      tmux = { enabled = true }
-    }
-  }
-  local coq = require("coq")
-  require("coq_3p") {
-    { src = "copilot", short_name = "COP", accept_key = "<c-f>" },
-    { src = "bc", short_name = "MATH", precision = 4 }
-  }
-  -- lua.coq_settings.clients.tabnine.enabled=true
-
   -- local tabnine = require('cmp_tabnine.config')
   -- tabnine:setup({
   --   max_lines = 5000;
@@ -597,8 +670,10 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
   buf_set_keymap('v', ',ca', ":<c-u>lua vim.lsp.buf.range_code_action()<CR>", opts)
   buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_references()<CR>", opts)
-  buf_set_keymap('n', '[e', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']e', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '[e', '<cmd>lua vim.diagnostic.goto_prev({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
+  buf_set_keymap('n', ']e', '<cmd>lua vim.diagnostic.goto_next({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
+  buf_set_keymap('n', '[E', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']E', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', ',E', "<cmd>lua require('fzf-lua').lsp_document_diagnostics()<CR>", opts)
   buf_set_keymap('n', ',e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
@@ -619,9 +694,9 @@ local on_attach = function(client, bufnr)
   buf_set_keymap("n", ",F", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   -- end
 
-  if client.resolved_capabilities.document_range_formatting then
-    buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
-  end
+  -- if client.resolved_capabilities.document_range_formatting then
+  --   buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+  -- end
 
   -- Set autocommands conditional on server_capabilities
   if client.resolved_capabilities.document_highlight then
@@ -648,6 +723,7 @@ lsp_installer.on_server_ready(function(server)
       on_attach = on_attach,
       capabilities = capabilities
     }
+    opts.capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
     if server.name == "elm" then
         opts.settings = {
@@ -671,6 +747,14 @@ lsp_installer.on_server_ready(function(server)
                 pythonPath = "/opt/homebrew/bin/python3"
             }
         }
+    end
+
+    if server.name == "clangd" then
+      if opts.capabilities then
+        opts.capabilities.offsetEncoding = { "utf-16" }
+      else
+        opts.capabilities = { offsetEncoding = "utf-16" }
+      end
     end
 
     -- if server.name == "eslint" then
@@ -713,23 +797,28 @@ lsp_installer.on_server_ready(function(server)
 
     -- This setup() function is exactly the same as lspconfig's setup function.
     -- Refer to https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-    server:setup(coq.lsp_ensure_capabilities(opts))
+    -- if vim.g.coq_enabled then
+    --   local coq = require("coq") 
+    server:setup(opts)
+    -- end
 end)
 
-require("null-ls").setup({
+local null_ls = require("null-ls")
+null_ls.setup({
     debug = true,
     sources = {
-        require("null-ls").builtins.diagnostics.flake8,
-        require("null-ls").builtins.diagnostics.eslint,
-        require("null-ls").builtins.diagnostics.hadolint,
-        require("null-ls").builtins.diagnostics.jsonlint,
-        require("null-ls").builtins.formatting.autopep8,
-        require("null-ls").builtins.formatting.isort,
-        require("null-ls").builtins.formatting.eslint_d,
-        require("null-ls").builtins.formatting.fixjson,
-        require("null-ls").builtins.formatting.stylua,
-        require("null-ls").builtins.code_actions.gitsigns,
-    },
+        null_ls.builtins.diagnostics.flake8,
+        null_ls.builtins.diagnostics.eslint,
+        null_ls.builtins.diagnostics.hadolint,
+        null_ls.builtins.diagnostics.jsonlint,
+        null_ls.builtins.formatting.autopep8,
+        null_ls.builtins.formatting.isort,
+        null_ls.builtins.formatting.eslint_d,
+        null_ls.builtins.formatting.fixjson,
+        null_ls.builtins.formatting.stylua,
+        null_ls.builtins.code_actions.gitsigns,
+        null_ls.builtins.formatting.goimports
+    }
 })
 
 -- https://github.com/neovim/nvim-lspconfig/wiki/UI-customization
