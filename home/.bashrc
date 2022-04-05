@@ -77,7 +77,8 @@ if [ $(uname) == "Darwin" ]; then
   chruby 3
 else
   source /usr/local/share/chruby/chruby.sh
-end
+fi
+
 # conda init "$(basename "${SHELL}")" > /dev/null 2>&1
 # conda init bash
 # source /Users/simon/src/github.com/vitessio/vitess/examples/local/env.sh
