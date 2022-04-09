@@ -4,3 +4,6 @@ home/.bundle/cache
 home/.bash/secrets.bash
 home/.bash/env.bash
 home/.bundle/config
+home/.config/htop/
+home/.config/nextjs-nodejs/
+home/.config/nvim/plugin/
