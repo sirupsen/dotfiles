@@ -3,7 +3,8 @@ if command -v hub > /dev/null; then
   alias git=hub
 fi
 
-alias box="mosh napkin -- tmux new-session -A -s main"
+alias box="mosh napkin -p 60001 -- tmux new-session -A -s main"
+alias box-ssh="ssh -t napkin tmux new-session -A -s main"
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ls="ls -G"

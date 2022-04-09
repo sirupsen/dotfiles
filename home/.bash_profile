@@ -27,6 +27,6 @@ export PATH="$HOME/.poetry/bin:$PATH"
 #source "/Users/simon/src/github.com/emscripten-core/emsdk/emsdk_env.sh"
 export GOENV_ROOT="$HOME/.goenv"
 export PATH="$GOENV_ROOT/bin:$PATH"
-if command -v goenv; then
+if command -v goenv > /dev/null; then
   eval "$(goenv init -)"
 fi
