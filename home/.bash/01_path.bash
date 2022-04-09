@@ -18,6 +18,7 @@ export GOPATH=$HOME
 if [[ -d $GOPATH ]]; then
   export PATH="$PATH:$GOPATH/bin"
 fi
+export PATH="${PATH}:/usr/local/go/bin"
 
 export HOMEBREW_PREFIX="/opt/homebrew";
 export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
@@ -26,7 +27,6 @@ export PATH="/opt/homebrew/bin:/opt/homebrew/sbin${PATH+:$PATH}";
 export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:";
 export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
 export PATH="/Users/simon/src/github.com/vitessio/vitess/bin:${PATH}"
-
 export PATH="$PATH:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/.yarn/bin"
 export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"

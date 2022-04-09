@@ -15,7 +15,7 @@ set iskeyword+=-
 " nvim-cmp asks for this
 " set completeopt=menu,menuone,noselect
 
-set termguicolors
+" set termguicolors
 set statusline=
 set statusline+=%f:%l:%c\ %m
 " set statusline+=%{tagbar#currenttag('\ [%s]\ ','','')}
@@ -85,7 +85,9 @@ return require('packer').startup(function()
 
   -- TreeSitter --
   use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+  use 'andymass/vim-matchup'
   use 'windwp/nvim-ts-autotag'
+  use 'RRethy/nvim-treesitter-endwise'
   use 'nvim-treesitter/nvim-treesitter-textobjects' -- if / af for selection body
   use 'michaeljsmith/vim-indent-object'
   use 'JoosepAlviste/nvim-ts-context-commentstring'
@@ -263,16 +265,16 @@ return require('packer').startup(function()
   -- use 'chriskempson/base16-vim' -- Colors
   use 'RRethy/nvim-base16'
   -- use 'tjdevries/train.nvim'
-  use { 'takac/vim-hardtime', config = function()
-    vim.cmd [[
-      let g:hardtime_timeout = 1000
-      let g:hardtime_showmsg = 1
-      let g:hardtime_ignore_buffer_patterns = [ "NERD.*" ]
-      let g:hardtime_ignore_quickfix = 1
-      let g:hardtime_maxcount = 4
-      let g:hardtime_default_on = 1
-    ]]
-  end}
+  -- use { 'takac/vim-hardtime', config = function()
+  --   vim.cmd [[
+  --     let g:hardtime_timeout = 1000
+  --     let g:hardtime_showmsg = 1
+  --     let g:hardtime_ignore_buffer_patterns = [ "NERD.*" ]
+  --     let g:hardtime_ignore_quickfix = 1
+  --     let g:hardtime_maxcount = 4
+  --     let g:hardtime_default_on = 1
+  --   ]]
+  -- end}
 
   use 'janko-m/vim-test'
   use { "rcarriga/vim-ultest", requires = {"vim-test/vim-test"}, run = ":UpdateRemotePlugins" }
@@ -282,7 +284,7 @@ return require('packer').startup(function()
         config = function() vim.cmd [[ map !l :AsyncRun bash -lc 'ctags-build'<CR> ]] end }
 
   -- Languages -- 
-  use { 'tpope/vim-endwise', ft = 'ruby' }
+  -- use { 'tpope/vim-endwise', ft = 'ruby' }
   use { 'junegunn/vim-emoji', config = function() 
       vim.cmd [[ command! -range Emoji <line1>,<line2>s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g ]]
     end }
@@ -597,12 +599,24 @@ require('gitsigns').setup {
 -- print("CHANGING! " .. vim.g.gitgutter_diff_base)
 -- require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
 require'nvim-treesitter.configs'.setup {
+  ensure_installed = "all",
+  sync_install = false,
+  matchup = {
+    enable = true,
+  },
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
   autotag = {
     enable = true,
   },
-  -- indent = {
-  --   enable = true
-  -- },
+  endwise = {
+    enable = true
+  },
+  indent = {
+    enable = true
+  },
   context_commentstring = {
     enable = true,
     config = {
@@ -630,12 +644,6 @@ require'nvim-treesitter.configs'.setup {
       },
     },
   },
-}
-
-require'nvim-treesitter.configs'.setup {
-  context_commentstring = {
-    enable = true
-  }
 }
 
 -- require('dash').setup({
@@ -926,21 +934,6 @@ GPT = function()
     end),
   })
 end
-
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
-  -- ignore_install = { "javascript" }, -- List of parsers to ignore installing
-  highlight = {
-    enable = true,              -- false will disable the whole extension
-    -- disable = { "c", "rust" },  -- list of language that will be disabled
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
-}
 EOF
 
 filetype plugin indent on
