@@ -5,15 +5,12 @@ filetype off
 set encoding=utf-8
 set history=1000  " Keep more history, default is 20
 set mouse=v " Allow copy-pasting
-set mmp=5000 " Some files need more memory for syntax highlight
 " set autochdir
 set tags=.tags,./tags,tags;
+set signcolumn=yes " always show the gutter... to avoid flickering from LSP, etc.
 
 " <cword> then includes - as part of the word
 set iskeyword+=-
-
-" nvim-cmp asks for this
-" set completeopt=menu,menuone,noselect
 
 " set termguicolors
 set statusline=
@@ -26,8 +23,6 @@ augroup QuickfixStatus
 	au! BufWinEnter quickfix setlocal 
 		\ statusline+=%t\ [%{g:asyncrun_status}]\ %{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%-15(%l,%c%V%)\ %P
 augroup END
-
-let g:browser_new_tab = "chrome-cli open "
 
 lua vim.cmd [[packadd packer.nvim]]
 lua << EOF
@@ -49,23 +44,12 @@ return require('packer').startup(function()
   use 'hrsh7th/cmp-path'
   use 'hrsh7th/cmp-cmdline'
   use 'hrsh7th/nvim-cmp'
-  use "kdheepak/cmp-latex-symbols"
   use 'hrsh7th/cmp-emoji'
-
   use 'hrsh7th/cmp-vsnip'
   use 'hrsh7th/vim-vsnip'
-  -- use 'rafamadriz/friendly-snippets'
+  use "kdheepak/cmp-latex-symbols"
+  use "rafamadriz/friendly-snippets"
 
-  -- code_filetypes = { 'lua', 'rust', 'go', 'ruby', 'python', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vim' }
-  -- code_filetypes = { }
-  -- Completion -- 
-  -- Maybe try https://github.com/ms-jpq/coq_nvim
-  -- use 'hrsh7th/nvim-cmp'
-  -- use {'tzachar/cmp-tabnine', run='./install.sh', requires = 'hrsh7th/nvim-cmp'}
-  -- use 'hrsh7th/cmp-nvim-lsp'
-  -- use 'hrsh7th/cmp-buffer'
-  -- use 'hrsh7th/cmp-path'
-  -- use 'hrsh7th/cmp-cmdline'
   use {
     'jameshiew/nvim-magic',
     config = function()
@@ -79,11 +63,7 @@ return require('packer').startup(function()
       'MunifTanjim/nui.nvim'
     }
   }
-  -- Friendly Snippets --
-  -- use 'hrsh7th/cmp-vsnip'
-  -- use 'hrsh7th/vim-vsnip'
 
-  -- TreeSitter --
   use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
   use 'andymass/vim-matchup'
   use 'windwp/nvim-ts-autotag'
@@ -131,8 +111,11 @@ return require('packer').startup(function()
   use 'jose-elias-alvarez/null-ls.nvim' -- Create LS from shell tools
   use 'folke/lsp-colors.nvim'
   use { 'kyazdani42/nvim-web-devicons',
-    config = function() require('nvim-web-devicons').setup { default = true; } end,
-    event = 'VimEnter'
+    config = function()
+      require('nvim-web-devicons').setup {
+        default = true;
+      }
+    end,
   }
 
   -- Fzf -- 
@@ -150,6 +133,7 @@ return require('packer').startup(function()
   }
   use {
     'ibhagwan/fzf-lua', -- Nifty LSP commands, doesn't support tmux
+    requires = { 'kyazdani42/nvim-web-devicons' },
     config = function()
       actions = require "fzf-lua.actions"
       fzf = require('fzf-lua')
@@ -234,7 +218,8 @@ return require('packer').startup(function()
   -- Standard Vim ergonomics
   use 'norcalli/nvim-colorizer.lua'
   use 'milkypostman/vim-togglelist'
-  use { 'scrooloose/nerdtree', keys = "\\t", config = function() vim.cmd [[ map \t :NERDTreeToggle<CR> ]] end }
+  -- use { 'scrooloose/nerdtree', keys = "\\t", config = function() vim.cmd [[ map \t :NERDTreeToggle<CR> ]] end }
+  use { 'scrooloose/nerdtree' }
   use { "tpope/vim-surround",
     keys = {"c", "d", "y"},
     config = function ()
@@ -284,15 +269,27 @@ return require('packer').startup(function()
         config = function() vim.cmd [[ map !l :AsyncRun bash -lc 'ctags-build'<CR> ]] end }
 
   -- Languages -- 
-  -- use { 'tpope/vim-endwise', ft = 'ruby' }
   use { 'junegunn/vim-emoji', config = function() 
       vim.cmd [[ command! -range Emoji <line1>,<line2>s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g ]]
     end }
 
+    use {
+        'kyazdani42/nvim-tree.lua',
+        requires = {
+            'kyazdani42/nvim-web-devicons', -- optional, for file icon
+            },
+        config = function()
+          require'nvim-tree'.setup {}
+          vim.cmd [[ map \t :NvimTreeToggle<CR> ]]
+        end
+        }
+
+    use {
+}
+
   -- TODO: Periodically remove these until Treesitter indent support is good enough.
   use { 'vim-ruby/vim-ruby', ft = 'ruby' } -- Need it for the indent..
-  use { 'vim-crystal/vim-crystal' }
-
+  -- use { 'vim-crystal/vim-crystal' }
   -- use { 'vim-scripts/VimClojure', ft = 'clojure' }
   -- use { 'yuezk/vim-js', ft = 'javascript' }
   -- use { 'maxmellon/vim-jsx-pretty', ft = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' } }
@@ -308,14 +305,10 @@ return require('packer').startup(function()
   -- use { 'vim-python/python-syntax', ft = 'python' }
   -- use { 'jparise/vim-graphql', ft = 'graphql' }
   -- use { 'mmarchini/bpftrace.vim', ft = 'bpftrace' }
-
-  -- maybe:
-  -- https://github.com/mg979/vim-visual-multi
-  -- use 'dpelle/vim-LanguageTool'
-  -- use 'plasticboy/vim-markdown'
 end)
 EOF
 
+" TODO: Remove this by converting the Zettelkasten stuff to fzf-lua.
 if exists('$TMUX')
   let g:fzf_layout = { 'tmux': '-p90%,60%' }
   let g:fzf_preview_window = 'right:50%'
@@ -323,97 +316,49 @@ else
   let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 endif
 let g:fzf_tags_command = 'bash -c "build-ctags"'
-
-" function! FzfSpellSink(word)
-"   exe 'normal! "_ciw'.a:word
-" endfunction
-" function! FzfSpell()
-"   let suggestions = spellsuggest(expand("<cword>"))
-"   return fzf#run(fzf#wrap({'source': suggestions, 'sink': function("FzfSpellSink"), 'window': { 'width': 0.6, 'height': 0.3 }}))
-" endfunction
-" nnoremap z= :call FzfSpell()<CR>
-
 let g:fzf_history_dir = '~/.fzf-history'
-" function! RipgrepFzf(query, fullscreen)
-"   let command_fmt = 'rg --column --hidden --line-number --no-heading --color=always --smart-case %s || true'
-"   let initial_command = printf(command_fmt, shellescape(a:query))
-"   let reload_command = printf(command_fmt, '{q}')
-"   let options = {'options': ['--phony', '--keep-right', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-"   if a:fullscreen
-"     let options = fzf#vim#with_preview(options)
-"   endif
-"   call fzf#vim#grep(initial_command, 1, options, a:fullscreen)
-" endfunction
 
-" command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
-" map <C-g> :RG<CR> " Completely use RG, don't use fzf's fuzzy-matching
 map <C-g> :lua require('fzf-lua').live_grep()<CR>
-" map <Space>/ :execute 'Rg ' . expand('<cword>')<CR>
-" map <A-/> :BLines<CR>
 map <A-/> :lua require('fzf-lua').lines()<CR>
 map <Space>/ :lua require('fzf-lua').grep_cword()<CR>
 map <Leader>/ :lua require('fzf-lua').grep()<CR>
-" map <leader>/ :execute 'Rg ' . input('Rg/')<CR>
-
-" Redefine so for long paths in e.g. Java we still get the filename.
-" command! -bang -nargs=? -complete=dir Files
-"   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': '--keep-right'}), <bang>0)
-" map <C-t> :Files<CR>
 map <C-t> :lua require('fzf-lua').files()<CR>
-
-" map <C-j> :Buffers<CR>
 map <C-j> :lua require('fzf-lua').buffers()<CR>
-" Git Status
-" map <A-j> :GFiles?<CR>
-" map <A-c> :Commands<CR>
-" map <C-l> :FZFTags<CR>
 map <C-l> :lua require('fzf-lua').tags()<CR>
-" map <A-l> :FZFBTags<CR>
 map <A-l> :lua require('fzf-lua').btags()<CR>
-" map <Space>l :execute 'FZFTags ' . expand('<cword>')<CR>
 map <Space>l :lua require('fzf-lua').tags({ fzf_opts = { ["--query"] = vim.fn.expand("<cword>") }})<CR>
 map <Space><A-l> :lua require('fzf-lua').btags({ fzf_opts = { ["--query"] = vim.fn.expand("<cword>") }})<CR>
-" map <Space><A-l> :execute 'FZFBTags ' . expand('<cword>')<CR>
 
-set signcolumn=yes " always show the gutter... to avoid flickering from LSP, etc.
+" TODO: Rewrite these in Lua. Would be a good plugin..
+" function! FzfGem(name)
+"   let path = system("bundle info ".a:name." | rg -oP '(?<=Path: )(.+)$'")
+"   let path = substitute(path, '\n', '', '')
+"   execute ":FZF " . path
+" endfunction
+" command! -nargs=* FZFGem call FzfGem(<f-args>)
 
-function! s:build_quickfix_list(lines)
-  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-  copen
-  cc
-endfunction
+" function! Gem(name)
+"   let path = system("bundle info ".a:name." | rg -oP '(?<=Path: )(.+)$'")
+"   let path = substitute(path, '\n', '', '')
+"   silent execute ":!tmux new-window -n 'gem:" . a:name . "' bash -l -c 'cd " . path . " && /opt/homebrew/bin/nvim -c \':FZF\''"
+" endfunction
+" command! -nargs=* Gem call Gem(<f-args>)
 
-command! SqlFormat :%!sqlformat --reindent --keywords upper --identifiers lower -
+" function! Crate(name)
+"   let path = system("bash -c \"cargo metadata --format-version 1 | rb 'from_json[:packages].find { |c| c[:name] =~ /" . a:name . "/ }[:targets][0][:src_path]'\"")
+"   let path = substitute(path, '\n', '', '')
+"   let dir_path = fnamemodify(path, ':p:h') . "/../"
+"   silent execute ":!tmux new-window -n 'crate:" . a:name . "' bash -c 'cd " . dir_path . " && vim -c \':FZF\''"
+" endfunction
+" command! -nargs=* Crate call Crate(<f-args>)
 
-function! FzfGem(name)
-  let path = system("bundle info ".a:name." | rg -oP '(?<=Path: )(.+)$'")
-  let path = substitute(path, '\n', '', '')
-  execute ":FZF " . path
-endfunction
-command! -nargs=* FZFGem call FzfGem(<f-args>)
-
-function! Gem(name)
-  let path = system("bundle info ".a:name." | rg -oP '(?<=Path: )(.+)$'")
-  let path = substitute(path, '\n', '', '')
-  silent execute ":!tmux new-window -n 'gem:" . a:name . "' bash -l -c 'cd " . path . " && /opt/homebrew/bin/nvim -c \':FZF\''"
-endfunction
-command! -nargs=* Gem call Gem(<f-args>)
-
-function! Crate(name)
-  let path = system("bash -c \"cargo metadata --format-version 1 | rb 'from_json[:packages].find { |c| c[:name] =~ /" . a:name . "/ }[:targets][0][:src_path]'\"")
-  let path = substitute(path, '\n', '', '')
-  let dir_path = fnamemodify(path, ':p:h') . "/../"
-  silent execute ":!tmux new-window -n 'crate:" . a:name . "' bash -c 'cd " . dir_path . " && vim -c \':FZF\''"
-endfunction
-command! -nargs=* Crate call Crate(<f-args>)
-
-function! FzfCrate(name)
-  let path = system("bash -c \"cargo metadata --format-version 1 | rb 'from_json[:packages].find { |c| c[:name] =~ /" . a:name . "/ }[:targets][0][:src_path]'\"")
-  let path = substitute(path, '\n', '', '')
-  let dir_path = fnamemodify(path, ':p:h') . "/../"
-  execute ":FZF " . dir_path
-endfunction
-command! -nargs=* FZFCrate call FzfCrate(<f-args>)
+" function! FzfCrate(name)
+"   let path = system("bash -c \"cargo metadata --format-version 1 | rb 'from_json[:packages].find { |c| c[:name] =~ /" . a:name . "/ }[:targets][0][:src_path]'\"")
+"   let path = substitute(path, '\n', '', '')
+"   let dir_path = fnamemodify(path, ':p:h') . "/../"
+"   execute ":FZF " . dir_path
+" endfunction
+" command! -nargs=* FZFCrate call FzfCrate(<f-args>)
 
 func! s:import_path(lines)
   exec ':r !path-to-import ' . a:lines[0]
@@ -428,7 +373,6 @@ function! s:copy_results(lines)
 endfunction
 
 let g:fzf_action = {
-  \ 'ctrl-q': function('s:build_quickfix_list'),
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
   \ 'ctrl-o': ':r !echo',
@@ -521,6 +465,13 @@ local feedkey = function(key, mode)
 end
 
   cmp.setup({
+    enabled = function()
+      if require"cmp.config.context".in_treesitter_capture("comment")==true or require"cmp.config.context".in_syntax_group("Comment") then
+        return false
+      else
+        return true
+      end
+    end,
     snippet = {
       -- REQUIRED - you must specify a snippet engine
       expand = function(args)
@@ -600,6 +551,7 @@ require('gitsigns').setup {
 -- require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all",
+  ignore_install = { "phpdoc" },
   sync_install = false,
   matchup = {
     enable = true,
@@ -684,6 +636,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', ']E', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', ',E', "<cmd>lua require('fzf-lua').lsp_document_diagnostics()<CR>", opts)
   buf_set_keymap('n', ',e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua require(\'fzf-lua\').lsp_workspace_diagnostics()<CR>', opts)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', 'g<A-l>', "<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>", opts)
   buf_set_keymap('n', 'gl', "<cmd>lua require('fzf-lua').lsp_live_workspace_symbols()<CR>", opts)
@@ -801,6 +754,16 @@ lsp_installer.on_server_ready(function(server)
           }
        }
       }
+    end
+
+    if server.name == "rust-analyzer" then
+      opts.settings = {
+          ["rust-analyzer"] = {
+            checkOnSave = {
+              command = "clippy"
+            }
+          }
+        }
     end
 
     -- This setup() function is exactly the same as lspconfig's setup function.
@@ -1098,6 +1061,7 @@ command! ZKT :lua ZettelkastenTags()
 command! -range GPT :lua GPT()
 
 map \d :put =strftime(\"# %Y-%m-%d\")<CR>
+map \D :put =strftime(\"%Y-%m-%d\")<CR>
 
 au BufNewFile,BufRead *.py
     \ set tabstop=4 |
@@ -1109,27 +1073,6 @@ au BufNewFile,BufRead *.py
     \ set fileformat=unix
 
 let g:python3_host_prog="/opt/homebrew/bin/python3"
-
-" imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-" smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-
-" " Expand or jump
-" imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-" smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-
-" " Jump forward or backward
-" imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-" smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-" imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-" smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-
-" Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
-" See https://github.com/hrsh7th/vim-vsnip/pull/50
-" nmap        s   <Plug>(vsnip-select-text)
-" xmap        s   <Plug>(vsnip-select-text)
-" nmap        S   <Plug>(vsnip-cut-text)
-" xmap        S   <Plug>(vsnip-cut-text)
-
 let g:vsnip_filetypes = {}
 let g:vsnip_filetypes.javascriptreact = ['javascript']
 let g:vsnip_filetypes.typescriptreact = ['typescript']
