@@ -8,6 +8,13 @@ set mouse=v " Allow copy-pasting
 " set autochdir
 set tags=.tags,./tags,tags;
 set signcolumn=yes " always show the gutter... to avoid flickering from LSP, etc.
+" Set completeopt to have a better completion experience
+" :help completeopt
+" menuone: popup even when there's only one match
+" noinsert: Do not insert text until a selection is made
+" noselect: Do not select, force user to select one from the menu
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
 
 " <cword> then includes - as part of the word
 set iskeyword+=-
@@ -138,15 +145,8 @@ return require('packer').startup(function()
       actions = require "fzf-lua.actions"
       fzf = require('fzf-lua')
       fzf.setup {
-        previewers = {
-          -- bat = {
-          --   cmd = "head --bytes 1000 | bat"
-          -- },
-            builtin = {
-              syntax          = true,         -- preview syntax highlight?
-            },
-        },
         winopts = {
+          preview = { default = 'bat_native' },
           height = 0.9,
           width = 0.9,
           preview = {
@@ -174,15 +174,15 @@ return require('packer').startup(function()
         tags = {
           fzf_opts = { ['--nth'] = '2' },
         },
-      files = {
+        files = {
           -- previewer      = "bat",
         },
         actions = {
             buffers = {
-                    ["default"]     = actions.buf_edit,
-                    ["ctrl-x"]      = actions.buf_split,
-                    ["ctrl-v"]      = actions.buf_vsplit,
-                    ["ctrl-t"]      = actions.buf_tabedit,
+                ["default"]     = actions.buf_edit,
+                ["ctrl-x"]      = actions.buf_split,
+                ["ctrl-v"]      = actions.buf_vsplit,
+                ["ctrl-t"]      = actions.buf_tabedit,
             },
             files = {
                 ["default"]     = actions.file_edit_or_qf,
@@ -191,6 +191,11 @@ return require('packer').startup(function()
                 ["ctrl-t"]      = actions.file_tabedit,
                 ["alt-q"]       = actions.file_sel_to_qf,
             }
+        },
+        buffers = {
+          actions = {
+            ["ctrl-x"]          = actions.buf_split,
+          }
         }
       }
 
@@ -756,14 +761,19 @@ lsp_installer.on_server_ready(function(server)
       }
     end
 
-    if server.name == "rust-analyzer" then
-      opts.settings = {
+    print(server.name)
+    if server.name == "rust_analyzer" then
+      opts = {
+        on_attach = on_attach,
+        capabilities = capabilities,
+        settings = {
           ["rust-analyzer"] = {
             checkOnSave = {
               command = "clippy"
             }
           }
         }
+      }
     end
 
     -- This setup() function is exactly the same as lspconfig's setup function.
@@ -794,7 +804,7 @@ null_ls.setup({
 
 -- https://github.com/neovim/nvim-lspconfig/wiki/UI-customization
 vim.o.updatetime = 250
-vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float({focusable=false})]]
+vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focusable=false})]]
 
 vim.lsp.set_log_level("info")
 
