@@ -629,8 +629,9 @@ local on_attach = function(client, bufnr)
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
-  --buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', '<C-[>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true, async = true })<CR>', opts)
+  -- buf_set_keymap('n', '<C-[>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
+  buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', '<C-K>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('n', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
@@ -724,17 +725,26 @@ lsp_installer.on_server_ready(function(server)
       end
     end
 
-    -- if server.name == "eslint" then
-    --   opts.on_attach = function (client, bufnr)
-    --       -- neovim's LSP client does not currently support dynamic capabilities registration, so we need to set
-    --       -- the resolved capabilities of the eslint server ourselves!
-    --       client.resolved_capabilities.document_formatting = true
-    --       on_attach(client, bufnr)
-    --   end
-    --   opts.settings = {
-    --       format = { enable = true }, -- this will enable formatting
-    --   }
-    -- end
+    if server.name == "eslint" then
+      -- local eslint_config = require("lspconfig.server_configurations.eslint")
+      -- opts = {
+      --   capabilities = opts.capabilities,
+      --   on_attach = on_attach,
+      --   cmd = { "yarn", "exec", unpack(eslint_config.default_config.cmd) }
+      -- }
+    end
+
+    if server.name == "eslint" then
+      opts.on_attach = function (client, bufnr)
+          -- neovim's LSP client does not currently support dynamic capabilities registration, so we need to set
+          -- the resolved capabilities of the eslint server ourselves!
+          client.resolved_capabilities.document_formatting = true
+          on_attach(client, bufnr)
+      end
+      opts.settings = {
+          format = { enable = true }, -- this will enable formatting
+      }
+    end
 
     if server.name == "solargraph" then
       opts = {
@@ -762,7 +772,6 @@ lsp_installer.on_server_ready(function(server)
       }
     end
 
-    print(server.name)
     if server.name == "rust_analyzer" then
       opts = {
         on_attach = on_attach,
