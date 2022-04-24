@@ -57,17 +57,9 @@ alias squash='git rebase -i $(git merge-base HEAD master)'
 alias rebase_latest_green='gfo && git rebase $(ci_last_green_master)'
 alias rlg=rebase_latest_green
 
-# Git Diff Files
-gdf() {
-  local default_branch=$(git rev-parse --abbrev-ref HEAD)
-  local branch="${1:-$default_branch}"
-  local base="${2:-master}"
-
-  git diff --name-only origin/$base...$branch
-}
-
-# Git Diff Files Test
-alias gdft='gdf | rg "test/.*_test"'
+alias gdfm='git diff --relative --name-only $(default_branch)'
+alias gdf='git diff --relative --name-only'
+alias gdfjs='gdf | rg "\.(js|ts)$"'
 
 alias git_diff_commit='git diff-tree --no-commit-id --name-only -r HEAD'
 alias gdc=git_diff_commit

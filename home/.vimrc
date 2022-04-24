@@ -5,6 +5,7 @@ filetype off
 set encoding=utf-8
 set history=1000  " Keep more history, default is 20
 set mouse=v " Allow copy-pasting
+set autoread " Update the file automatically if changed and buffer isn't modified, e.g. external linter
 " set autochdir
 set tags=.tags,./tags,tags;
 set signcolumn=yes " always show the gutter... to avoid flickering from LSP, etc.
@@ -225,7 +226,7 @@ return require('packer').startup(function()
   use 'norcalli/nvim-colorizer.lua'
   use 'milkypostman/vim-togglelist'
   -- use { 'scrooloose/nerdtree', keys = "\\t", config = function() vim.cmd [[ map \t :NERDTreeToggle<CR> ]] end }
-  use { 'scrooloose/nerdtree' }
+  -- use { 'scrooloose/nerdtree' }
   use { "tpope/vim-surround",
     keys = {"c", "d", "y"},
     config = function ()
@@ -334,6 +335,8 @@ map <C-l> :lua require('fzf-lua').tags()<CR>
 map <A-l> :lua require('fzf-lua').btags()<CR>
 map <Space>l :lua require('fzf-lua').tags({ fzf_opts = { ["--query"] = vim.fn.expand("<cword>") }})<CR>
 map <Space><A-l> :lua require('fzf-lua').btags({ fzf_opts = { ["--query"] = vim.fn.expand("<cword>") }})<CR>
+
+map <c-[> :lua vim.lsp.buf.definition()<CR>
 
 " TODO: Rewrite these in Lua. Would be a good plugin..
 " function! FzfGem(name)
@@ -629,9 +632,15 @@ local on_attach = function(client, bufnr)
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
+  -- This broke in Neovim 0.7
+  -- https://github.com/neovim/neovim/issues/17867 then map to C-[
   -- buf_set_keymap('n', '<C-[>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
   buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', '[[', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  -- buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  -- buf_set_keymap('n', '<Esc>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', '<Esc>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
+
   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', '<C-K>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
@@ -726,26 +735,20 @@ lsp_installer.on_server_ready(function(server)
       end
     end
 
-    if server.name == "eslint" then
-      -- local eslint_config = require("lspconfig.server_configurations.eslint")
-      -- opts = {
-      --   capabilities = opts.capabilities,
-      --   on_attach = on_attach,
-      --   cmd = { "yarn", "exec", unpack(eslint_config.default_config.cmd) }
-      -- }
-    end
-
-    if server.name == "eslint" then
-      opts.on_attach = function (client, bufnr)
-          -- neovim's LSP client does not currently support dynamic capabilities registration, so we need to set
-          -- the resolved capabilities of the eslint server ourselves!
-          client.resolved_capabilities.document_formatting = true
-          on_attach(client, bufnr)
-      end
-      opts.settings = {
-          format = { enable = true }, -- this will enable formatting
-      }
-    end
+    -- if server.name == "eslint" then
+    --   local eslint_config = require("lspconfig.server_configurations.eslint")
+    --   opts.on_attach = function (client, bufnr)
+    --       -- neovim's LSP client does not currently support dynamic capabilities registration, so we need to set
+    --       -- the resolved capabilities of the eslint server ourselves!
+    --       client.resolved_capabilities.document_formatting = true
+    --       on_attach(client, bufnr)
+    --   end
+    --   -- print(eslint_config.default_config.cmd[1]);
+    --   opts.settings = {
+    --       format = { enable = true }, -- this will enable formatting
+    --       -- cmd = { "yarn", unpack(eslint_config.default_config.cmd) }
+    --   }
+    -- end
 
     if server.name == "solargraph" then
       opts = {

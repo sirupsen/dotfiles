@@ -1,5 +1,5 @@
 rename_tmux_window_to_current_dir() {
-  if [[ "$TERM" == "screen-256color" && -n "$TMUX" ]]; then
+  if [[ "$TERM" == "screen-256color-bce" && -n "$TMUX" ]]; then
     if [[ -z "$SKIP_TMUX_RENAME" ]]; then
       if [[ "$PWD" != "$LPWD" ]]; then
         LPWD="$PWD"
