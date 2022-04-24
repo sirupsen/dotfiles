@@ -64,6 +64,7 @@ if [[ -d ~/src/github.com/Shopify/cloudplatform ]]; then
 fi
 
 export ZK_PATH="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/Zettelkasten"
+export FTS_PATH="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/Zettelkasten"
 export PATH="$PATH:$HOME/src/zk/bin"
 export BIGTABLE_EMULATOR_HOST=localhost:8086
 
