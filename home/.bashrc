@@ -40,9 +40,15 @@ export RIPGREP_CONFIG_PATH="$HOME/.rgrc"
 # Big node projects will be bogged down otherwise.
 export NODE_OPTIONS='--max_old_space_size=4096'
 
-if [ $(uname) == "Darwin" ]; then
-  (ssh-add -l 2>&1 | grep -q "Error connecting to agent") && ssh-agent bash
-  (ssh-add -l 2>&1 | grep -q "no identities") && ssh-add --apple-use-keychain --apple-load-keychain
+# Interactive
+if [[ $- == *i* ]]; then
+  if [ $(uname) == "Darwin" ]; then
+    (ssh-add -l 2>&1 | grep -q "Error connecting to agent") && ssh-agent bash
+    (ssh-add -l 2>&1 | grep -q "no identities") && ssh-add --apple-use-keychain --apple-load-keychain
+  else
+    (ssh-add -l 2>&1 | grep -q "Error connecting to agent") && eval `ssh-agent -s`
+    (ssh-add -l 2>&1 | grep -q "no identities") && ssh-add
+  fi
 fi
 
 if [[ -f ~/.env ]]; then
@@ -63,8 +69,12 @@ if [[ -d ~/src/github.com/Shopify/cloudplatform ]]; then
   kubectl-short-aliases
 fi
 
-export ZK_PATH="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/Zettelkasten"
-export FTS_PATH="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/Zettelkasten"
+if [ $(uname) == "Darwin" ]; then
+  export ZK_PATH="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/Zettelkasten"
+else
+  export ZK_PATH="$HOME/zettelkasten"
+fi
+export FTS_PATH=$ZK_PATH
 export PATH="$PATH:$HOME/src/zk/bin"
 export BIGTABLE_EMULATOR_HOST=localhost:8086
 
