@@ -6,7 +6,6 @@ set encoding=utf-8
 set history=1000  " Keep more history, default is 20
 set mouse=v " Allow copy-pasting
 set autoread " Update the file automatically if changed and buffer isn't modified, e.g. external linter
-" set autochdir
 set tags=.tags,./tags,tags;
 set signcolumn=yes " always show the gutter... to avoid flickering from LSP, etc.
 " Set completeopt to have a better completion experience
@@ -81,6 +80,7 @@ return require('packer').startup(function()
   use 'JoosepAlviste/nvim-ts-context-commentstring'
   use 'romgrk/nvim-treesitter-context' -- Show context for code you're navigating in
   use 'tpope/vim-commentary'
+  use 'tpope/vim-sleuth' -- Set shiftwidth automatically
   -- use {"lukas-reineke/indent-blankline.nvim", config = function() require("indent_blankline").setup() end}
 
   -- We rely on TreeSitter by default, but for some languages we may want more.
@@ -105,6 +105,26 @@ return require('packer').startup(function()
       if vim.g.gitgutter_diff_base then
         require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
       end
+
+      require('gitsigns').setup {
+        keymaps = {
+          noremap = true,
+          ['n ]h'] = { expr = true, "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'"},
+          ['n [h'] = { expr = true, "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'"},
+          ['n <leader>hs'] = '<cmd>Gitsigns stage_hunk<CR>',
+          ['v <leader>hs'] = ':Gitsigns stage_hunk<CR>',
+          ['n <leader>hu'] = '<cmd>Gitsigns undo_stage_hunk<CR>',
+          ['n <leader>hr'] = '<cmd>Gitsigns reset_hunk<CR>',
+          ['v <leader>hr'] = ':Gitsigns reset_hunk<CR>',
+          ['n <leader>hR'] = '<cmd>Gitsigns reset_buffer<CR>',
+          ['n <leader>hp'] = '<cmd>Gitsigns preview_hunk<CR>',
+          ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line{full=true}<CR>',
+          ['n <leader>hS'] = '<cmd>Gitsigns stage_buffer<CR>',
+          ['n <leader>hU'] = '<cmd>Gitsigns reset_buffer_index<CR>',
+          ['n <leader>hC'] = '<cmd>lua require"gitsigns".change_base(vim.g.gitgutter_diff_base or \'master\', true)<CR>',
+          ['n <leader>hc'] = '<cmd>lua vim.ui.input({prompt = \'Change Git Base To: \', default = vim.g.gitgutter_diff_base}, function(input) require("gitsigns").change_base(input, true); end, true)<CR>'
+        }
+      }
     end
   }
   use 'tpope/vim-rhubarb' -- Gbrowse
@@ -116,7 +136,28 @@ return require('packer').startup(function()
   -- Lsp --
   use 'neovim/nvim-lspconfig'
   use 'williamboman/nvim-lsp-installer' -- LspInstallInfo
-  use 'jose-elias-alvarez/null-ls.nvim' -- Create LS from shell tools
+  use { 'jose-elias-alvarez/null-ls.nvim', -- Create LS from shell tools
+    config = function()
+      local null_ls = require("null-ls")
+      null_ls.setup({
+          debug = true,
+          sources = {
+              null_ls.builtins.diagnostics.flake8,
+              -- null_ls.builtins.diagnostics.eslint,
+              null_ls.builtins.diagnostics.hadolint,
+              null_ls.builtins.diagnostics.jsonlint,
+              null_ls.builtins.formatting.autopep8,
+              null_ls.builtins.formatting.isort,
+              -- null_ls.builtins.formatting.eslint_d,
+              null_ls.builtins.formatting.fixjson,
+              null_ls.builtins.formatting.stylua,
+              null_ls.builtins.code_actions.gitsigns,
+              null_ls.builtins.formatting.goimports
+          }
+      })
+    end,
+  }
+
   use 'folke/lsp-colors.nvim'
   use { 'kyazdani42/nvim-web-devicons',
     config = function()
@@ -240,8 +281,9 @@ return require('packer').startup(function()
       vim.cmd("nmap ySS      <Plug>YSsurround")
       vim.cmd("xmap gs       <Plug>VSurround")
       vim.cmd("xmap gS       <Plug>VgSurround")
-      vim.cmd [[ let g:surround_111 = "**\r**" ]]
       vim.g.surround_111 = "**\\r**"
+      vim.cmd [[ let g:surround_111 = "**\r**" ]]
+      vim.cmd [[ let g:surround_{char2nr('b')} = "**\r**" ]]
     end
   }
   use 'tpope/vim-eunuch' -- Unix commands
@@ -280,19 +322,16 @@ return require('packer').startup(function()
       vim.cmd [[ command! -range Emoji <line1>,<line2>s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g ]]
     end }
 
-    use {
-        'kyazdani42/nvim-tree.lua',
-        requires = {
-            'kyazdani42/nvim-web-devicons', -- optional, for file icon
-            },
-        config = function()
-          require'nvim-tree'.setup {}
-          vim.cmd [[ map \t :NvimTreeToggle<CR> ]]
-        end
-        }
-
-    use {
-}
+  use {
+    'kyazdani42/nvim-tree.lua',
+    requires = {
+        'kyazdani42/nvim-web-devicons', -- optional, for file icon
+    },
+    config = function()
+      require'nvim-tree'.setup {}
+      vim.cmd [[ map \t :NvimTreeToggle<CR> ]]
+    end
+  }
 
   -- TODO: Periodically remove these until Treesitter indent support is good enough.
   use { 'vim-ruby/vim-ruby', ft = 'ruby' } -- Need it for the indent..
@@ -335,8 +374,6 @@ map <C-l> :lua require('fzf-lua').tags()<CR>
 map <A-l> :lua require('fzf-lua').btags()<CR>
 map <Space>l :lua require('fzf-lua').tags({ fzf_opts = { ["--query"] = vim.fn.expand("<cword>") }})<CR>
 map <Space><A-l> :lua require('fzf-lua').btags({ fzf_opts = { ["--query"] = vim.fn.expand("<cword>") }})<CR>
-
-map <c-[> :lua vim.lsp.buf.definition()<CR>
 
 " TODO: Rewrite these in Lua. Would be a good plugin..
 " function! FzfGem(name)
@@ -421,17 +458,6 @@ map <A-e> :call RunSomethingInTmux()<CR>
 map <Space>b :call VimuxRunCommand(bufname("%") . ":" . line("."), 0)<CR>
 map !b :call VimuxRunCommand(bufname("%") . ":" . line("."), 1)<CR>
 
-" let g:vim_markdown_folding_disabled = 1
-" let g:vim_markdown_new_list_item_indent = 0
-" let g:vim_markdown_auto_insert_bullets = 1
-" let g:vim_markdown_frontmatter = 1
-" let g:vim_markdown_no_extensions_in_markdown = 0
-" let g:vim_markdown_follow_anchor = 1
-" let g:vim_markdown_strikethrough = 1
-" let g:vim_markdown_autowrite = 1
-" set conceallevel=0
-
-
 augroup my_spelling_colors
   " Underline, don't do intrusive red things.
   autocmd!
@@ -443,25 +469,7 @@ augroup my_spelling_colors
 augroup END
 set spell spelllang=en_ca
 
-" let ruby_operators = 1
-" let ruby_space_errors = 1
-" let ruby_spellcheck_strings = 0
-" " }}
-" " {{
-" let g:go_def_mapping_enabled = 0
-" let g:go_fmt_fail_silently = 1
-" let g:go_gopls_enabled = 0 " using ale
-" " }}
-" " {{{
-" let g:rustfmt_autosave = 0
-" let g:rust_recommended_style = 1
-" }}}
-" {
-" let g:python_highlight_all = 1
-" }
-
 lua << EOF
-
 local cmp = require'cmp'
 
 local has_words_before = function()
@@ -536,25 +544,6 @@ end
     })
   })
 
-require('gitsigns').setup {
-  keymaps = {
-    noremap = true,
-    ['n ]h'] = { expr = true, "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'"},
-    ['n [h'] = { expr = true, "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'"},
-    ['n <leader>hs'] = '<cmd>Gitsigns stage_hunk<CR>',
-    ['v <leader>hs'] = ':Gitsigns stage_hunk<CR>',
-    ['n <leader>hu'] = '<cmd>Gitsigns undo_stage_hunk<CR>',
-    ['n <leader>hr'] = '<cmd>Gitsigns reset_hunk<CR>',
-    ['v <leader>hr'] = ':Gitsigns reset_hunk<CR>',
-    ['n <leader>hR'] = '<cmd>Gitsigns reset_buffer<CR>',
-    ['n <leader>hp'] = '<cmd>Gitsigns preview_hunk<CR>',
-    ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line{full=true}<CR>',
-    ['n <leader>hS'] = '<cmd>Gitsigns stage_buffer<CR>',
-    ['n <leader>hU'] = '<cmd>Gitsigns reset_buffer_index<CR>',
-    ['n <leader>hC'] = '<cmd>lua require"gitsigns".change_base(vim.g.gitgutter_diff_base or \'master\', true)<CR>',
-    ['n <leader>hc'] = '<cmd>lua vim.ui.input({prompt = \'Change Git Base To: \', default = vim.g.gitgutter_diff_base}, function(input) require("gitsigns").change_base(input, true); end, true)<CR>'
-  }
-}
 
 -- print("CHANGING! " .. vim.g.gitgutter_diff_base)
 -- require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
@@ -607,23 +596,7 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
--- require('dash').setup({
-  -- your config here
--- })
--- FZF lua has its own preview window... so can't use with fzf-tmux :(
-  -- local saga = require 'lspsaga'
-  -- saga.init_lsp_saga()
-  -- local cmp = require'cmp'
   local lspconfig = require("lspconfig")
-  -- local tabnine = require('cmp_tabnine.config')
-  -- tabnine:setup({
-  --   max_lines = 5000;
-  --   max_num_results = 10;
-  --   sort = true;
-  --   run_on_every_keystroke = true;
-  --   snippet_placeholder = '..';
-  -- })
-
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -798,46 +771,13 @@ lsp_installer.on_server_ready(function(server)
     -- end
 end)
 
-local null_ls = require("null-ls")
-null_ls.setup({
-    debug = true,
-    sources = {
-        null_ls.builtins.diagnostics.flake8,
-        -- null_ls.builtins.diagnostics.eslint,
-        null_ls.builtins.diagnostics.hadolint,
-        null_ls.builtins.diagnostics.jsonlint,
-        null_ls.builtins.formatting.autopep8,
-        null_ls.builtins.formatting.isort,
-        -- null_ls.builtins.formatting.eslint_d,
-        null_ls.builtins.formatting.fixjson,
-        null_ls.builtins.formatting.stylua,
-        null_ls.builtins.code_actions.gitsigns,
-        null_ls.builtins.formatting.goimports
-    }
-})
-
 -- https://github.com/neovim/nvim-lspconfig/wiki/UI-customization
 vim.o.updatetime = 250
 vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focusable=false})]]
 
 vim.lsp.set_log_level("info")
-
---local signs = { Error = "✗", Warn = "⚠", Hint = "h", Info = "i" }
---local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
-
--- for type, icon in pairs(signs) do
---   local hl = "DiagnosticSign" .. type
---   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
--- end
 --
 local fzf = require("fzf")
-
--- command! ZKRT call fzf#run(fzf#wrap({
---         \ 'source': 'zk-related-tags "' .. bufname("%") .. '"',
---         \ 'options': '--ansi --exact --nth 2',
---         \ 'sink':    function("InsertSecondColumn")
---       \}))
-
 function insert_line_at_cursor(text)
   local cursor = vim.api.nvim_win_get_cursor(0)
   local row = cursor[1]
@@ -1111,4 +1051,3 @@ au BufNew,BufNewFile,BufRead /Users/simon/Documents/Zettelkasten/*.md call Zette
 autocmd FileType markdown setlocal spell
 autocmd FileType markdown setlocal linebreak " wrap on words, not characters
 
-let g:surround_{char2nr('b')} = "**\r**"
