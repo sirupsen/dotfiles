@@ -854,7 +854,7 @@ GPT = function()
       local buffer = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_open_win(buffer, true, {
         relative = 'win', width=90, height=50, row=10, col=10,
-        border = 'rounded', style = 'minimal'
+        -- border = 'rounded', style = 'minimal'
       })
       local lines = iterators.lines(gpt_ans):tolist();
       vim.api.nvim_buf_set_lines(buffer, 0, 0, false, lines)
