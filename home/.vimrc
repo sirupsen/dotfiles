@@ -81,6 +81,7 @@ return require('packer').startup(function()
   use 'romgrk/nvim-treesitter-context' -- Show context for code you're navigating in
   use 'tpope/vim-commentary'
   use 'tpope/vim-sleuth' -- Set shiftwidth automatically
+  use 'editorconfig/editorconfig-vim'
   -- use {"lukas-reineke/indent-blankline.nvim", config = function() require("indent_blankline").setup() end}
 
   -- We rely on TreeSitter by default, but for some languages we may want more.
@@ -142,11 +143,12 @@ return require('packer').startup(function()
       null_ls.setup({
           debug = true,
           sources = {
-              null_ls.builtins.diagnostics.flake8,
+              -- null_ls.builtins.diagnostics.flake8,
+              null_ls.builtins.diagnostics.black,
               -- null_ls.builtins.diagnostics.eslint,
               null_ls.builtins.diagnostics.hadolint,
               null_ls.builtins.diagnostics.jsonlint,
-              null_ls.builtins.formatting.autopep8,
+              -- null_ls.builtins.formatting.autopep8,
               null_ls.builtins.formatting.isort,
               -- null_ls.builtins.formatting.eslint_d,
               null_ls.builtins.formatting.fixjson,

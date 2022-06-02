@@ -4,6 +4,7 @@ if command -v hub > /dev/null; then
 fi
 
 alias box="mosh napkin -p 60001 -- tmux new-session -A -s main"
+alias box2="mosh napkin2 -p 60001 -- tmux new-session -A -s main"
 alias box-ssh="ssh -t napkin tmux new-session -A -s main"
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -48,6 +49,7 @@ alias gd='git diff'
 alias gg='git grep'
 alias ggi='git grep -i'
 alias ga='git add'
+alias gfoa='git fetch origin'
 alias gfo='git fetch origin $(default_branch)'
 alias gro='git rebase origin/$(default_branch)'
 alias gfogro='gfo && gro'
@@ -110,11 +112,11 @@ refresh() {
   brew update
   brew upgrade fzf neovim bash ripgrep git universal-ctags \
     fd go curl redis ruby-install telnet tree jemalloc ruby-install \
-    mysql youtube-dl curl cmake docker gdb wget coreutils \
+    mysql yt-dlp curl cmake docker gdb wget coreutils \
     lua luajit markdown gh hub htop reattach-to-user-namespace \
     jq sqlite hugo htop grep graphviz entr fio aspell \
     llvm cmark chrome-cli gcc bat gopls typescript git-delta \
-    imagemagick
+    imagemagick angle-grinder
 
   # rustup update
   # vim +PlugUpdate +qall
@@ -261,3 +263,4 @@ zk-media-from-clipboard() {
 }
 
 alias loc=scc
+alias youtube-dl="yt-dlp"
