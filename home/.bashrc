@@ -46,7 +46,7 @@ if [[ $- == *i* ]]; then
     (ssh-add -l 2>&1 | grep -q "Error connecting to agent") && ssh-agent bash
     (ssh-add -l 2>&1 | grep -q "no identities") && ssh-add --apple-use-keychain --apple-load-keychain
   else
-    (ssh-add -l 2>&1 | grep -q "Error connecting to agent") && eval `ssh-agent -s`
+    (ssh-add -l 2>&1 | grep -q "Error connecting to agent") && ssh-agent bash
     (ssh-add -l 2>&1 | grep -q "no identities") && ssh-add
   fi
 fi

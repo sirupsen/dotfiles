@@ -1,4 +1,5 @@
 " BASIC
+set notermguicolors
 set nocompatible " No vi compatility, this first because it resets some options
 let mapleader="," " Mapleader
 filetype off
