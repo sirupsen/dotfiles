@@ -4,7 +4,6 @@ if command -v hub > /dev/null; then
 fi
 
 alias box="mosh napkin -p 60001 -- tmux new-session -A -s main"
-alias box2="mosh napkin2 -p 60001 -- tmux new-session -A -s main"
 alias box-ssh="ssh -t napkin tmux new-session -A -s main"
 alias ..='cd ..'
 alias ...='cd ../..'
