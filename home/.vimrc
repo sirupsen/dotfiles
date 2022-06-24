@@ -47,6 +47,17 @@ vim.cmd [[
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
+  -- use 'github/copilot.vim' -- required for auth
+  use {
+    "zbirenbaum/copilot.lua",
+    event = {"VimEnter"},
+    config = function()
+      vim.defer_fn(function()
+        require("copilot").setup()
+      end, 100)
+    end,
+  }
+  use { "zbirenbaum/copilot-cmp", module = "copilot_cmp", }
   use 'hrsh7th/cmp-nvim-lsp'
   use 'hrsh7th/cmp-buffer'
   use 'hrsh7th/cmp-path'
@@ -314,7 +325,6 @@ return require('packer').startup(function()
   -- end}
 
   use 'janko-m/vim-test'
-  use { "rcarriga/vim-ultest", requires = {"vim-test/vim-test"}, run = ":UpdateRemotePlugins" }
   use 'mfussenegger/nvim-dap'
   use 'benmills/vimux'
   use { 'skywind3000/asyncrun.vim', keys = "!l",
@@ -474,6 +484,7 @@ set spell spelllang=en_ca
 
 lua << EOF
 local cmp = require'cmp'
+--local comparator = require("copilot_cmp.comparators")
 
 local has_words_before = function()
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -532,11 +543,31 @@ end
       }),
       ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     },
+--      sorting = {
+--    priority_weight = 2,
+--    comparators = {
+--      comparator.prioritize,
+--      comparator.score,
+--
+--      -- Below is the default comparitor list and order for nvim-cmp
+--      cmp.config.compare.offset,
+--      -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+--      cmp.config.compare.exact,
+--      cmp.config.compare.score,
+--      cmp.config.compare.recently_used,
+--      cmp.config.compare.locality,
+--      cmp.config.compare.kind,
+--      cmp.config.compare.sort_text,
+--      cmp.config.compare.length,
+--      cmp.config.compare.order,
+--    },
+--  },
     sources = cmp.config.sources({
-      { name = 'emoji' },
-      { name = "latex_symbols" },
-      { name = 'nvim_lsp' },
-      { name = 'vsnip' }, -- For vsnip users.
+      { name = "copilot", group_index = 2  },
+      { name = 'emoji', group_index = 2 },
+      { name = "latex_symbols", group_index = 2 },
+      { name = 'nvim_lsp', group_index = 2 },
+      { name = 'vsnip', group_index = 2 }, -- For vsnip users.
     }, {
       { name = 'buffer' },
     })
@@ -653,15 +684,15 @@ local on_attach = function(client, bufnr)
   -- end
 
   -- Set autocommands conditional on server_capabilities
-  if client.resolved_capabilities.document_highlight then
-    vim.api.nvim_exec([[
-    augroup lsp_document_highlight
-    autocmd! * <buffer>
-    autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-    autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-    augroup END
-    ]], false)
-  end
+  -- if client.resolved_capabilities.document_highlight then
+  --   vim.api.nvim_exec([[
+  --   augroup lsp_document_highlight
+  --   autocmd! * <buffer>
+  --   autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+  --   autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+  --   augroup END
+  --   ]], false)
+  -- end
 end
 
 local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -776,7 +807,26 @@ end)
 
 -- https://github.com/neovim/nvim-lspconfig/wiki/UI-customization
 vim.o.updatetime = 250
-vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focusable=false})]]
+-- vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focusable=false})]]
+
+-- https://www.reddit.com/r/neovim/comments/uqb50c/with_native_lsp_nvimcmp_how_do_you_prevent_the/
+_G.LspDiagnosticsPopupHandler = function()
+  local current_cursor = vim.api.nvim_win_get_cursor(0)
+  local last_popup_cursor = vim.w.lsp_diagnostics_last_cursor or {nil, nil}
+
+  -- Show the popup diagnostics window,
+  -- but only once for the current cursor location (unless moved afterwards).
+  if not (current_cursor[1] == last_popup_cursor[1] and current_cursor[2] == last_popup_cursor[2]) then
+    vim.w.lsp_diagnostics_last_cursor = current_cursor
+    vim.diagnostic.open_float(0, {scope="cursor", focusable=false})
+  end
+end
+vim.cmd [[
+augroup LSPDiagnosticsOnHover
+  autocmd!
+  autocmd CursorHold *   lua _G.LspDiagnosticsPopupHandler()
+augroup END
+]]
 
 vim.lsp.set_log_level("info")
 --
@@ -1029,6 +1079,7 @@ command! -range GPT :lua GPT()
 
 map \d :put =strftime(\"# %Y-%m-%d\")<CR>
 map \D :put =strftime(\"%Y-%m-%d\")<CR>
+map ,c :Copilot<CR>
 
 au BufNewFile,BufRead *.py
     \ set tabstop=4 |
@@ -1053,4 +1104,3 @@ au FileType markdown setlocal commentstring=>\ %s
 au BufNew,BufNewFile,BufRead /Users/simon/Documents/Zettelkasten/*.md call ZettelkastenSetup()
 autocmd FileType markdown setlocal spell
 autocmd FileType markdown setlocal linebreak " wrap on words, not characters
-
