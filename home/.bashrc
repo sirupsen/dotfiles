@@ -100,3 +100,5 @@ export NVM_DIR="$HOME/.nvm"
 export TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling
 
 nvm use 16 > /dev/null
+BUN_INSTALL="/Users/simon/.bun"
+PATH="$BUN_INSTALL/bin:$PATH"
