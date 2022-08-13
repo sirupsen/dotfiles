@@ -88,9 +88,9 @@ return require('packer').startup(function()
   use 'windwp/nvim-ts-autotag'
   use 'RRethy/nvim-treesitter-endwise'
   use 'nvim-treesitter/nvim-treesitter-textobjects' -- if / af for selection body
+  use 'nvim-treesitter/nvim-treesitter-context'
   use 'michaeljsmith/vim-indent-object'
   use 'JoosepAlviste/nvim-ts-context-commentstring'
-  use 'romgrk/nvim-treesitter-context' -- Show context for code you're navigating in
   use 'tpope/vim-commentary'
   use 'tpope/vim-sleuth' -- Set shiftwidth automatically
   use 'editorconfig/editorconfig-vim'
@@ -104,6 +104,8 @@ return require('packer').startup(function()
     vim.cmd [[
       let g:vim_markdown_new_list_item_indent = 2
       let g:vim_markdown_folding_disabled = 1
+      let g:vim_markdown_frontmatter = 1
+      let g:vim_markdown_math = 1
     ]]
   end }
 
@@ -148,7 +150,142 @@ return require('packer').startup(function()
   ----------------------
   -- Lsp --
   use 'neovim/nvim-lspconfig'
-  use 'williamboman/nvim-lsp-installer' -- LspInstallInfo
+  use { 'williamboman/mason.nvim', config = function() 
+    require("mason").setup({
+      log_level = vim.log.levels.DEBUG
+    })
+  end
+  }
+  use {'williamboman/mason-lspconfig.nvim', config = function()
+    require("mason-lspconfig").setup()
+    require("mason-lspconfig").setup_handlers({
+        -- The first entry (without a key) will be the default handler
+        -- and will be called for each installed server that doesn't have
+        -- a dedicated handler.
+        function (server_name) -- default handler (optional)
+
+            local on_attach = function(client, bufnr)
+              local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+              local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+              buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+              -- Mappings.
+              local opts = { noremap=true, silent=true }
+              -- This broke in Neovim 0.7
+              -- https://github.com/neovim/neovim/issues/17867 then map to C-[
+              -- buf_set_keymap('n', '<C-[>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
+              buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+              buf_set_keymap('n', '[[', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+              -- buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+              -- buf_set_keymap('n', '<Esc>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+              buf_set_keymap('n', '<Esc>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
+
+              buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+              buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+              buf_set_keymap('n', '<C-K>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+              buf_set_keymap('n', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
+              -- buf_set_keymap('v', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
+              buf_set_keymap('v', ',ca', ":<c-u>lua vim.lsp.buf.range_code_action()<CR>", opts)
+              buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_references()<CR>", opts)
+              buf_set_keymap('n', '[e', '<cmd>lua vim.diagnostic.goto_prev({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
+              buf_set_keymap('n', ']e', '<cmd>lua vim.diagnostic.goto_next({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
+              buf_set_keymap('n', '[E', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+              buf_set_keymap('n', ']E', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+              buf_set_keymap('n', ',e', "<cmd>lua require('fzf-lua').lsp_document_diagnostics()<CR>", opts)
+              buf_set_keymap('n', ',E', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+              buf_set_keymap('n', '<space>e', '<cmd>lua require(\'fzf-lua\').lsp_workspace_diagnostics()<CR>', opts)
+              buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+              buf_set_keymap('n', 'g<A-l>', "<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>", opts)
+              buf_set_keymap('n', 'gl', "<cmd>lua require('fzf-lua').lsp_live_workspace_symbols()<CR>", opts)
+
+              buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+              buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+              buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+              buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+              buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+              buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+              buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+
+              -- Set some keybinds conditional on server capabilities
+              -- if client.resolved_capabilities.document_formatting then
+              buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.formatting_seq_sync({}, 10000)<CR>", opts)
+              buf_set_keymap("n", ",F", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+              -- end
+
+              -- if client.resolved_capabilities.document_range_formatting then
+              --   buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+              -- end
+
+              -- Set autocommands conditional on server_capabilities
+              -- if client.resolved_capabilities.document_highlight then
+              --   vim.api.nvim_exec([[
+              --   augroup lsp_document_highlight
+              --   autocmd! * <buffer>
+              --   autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+              --   autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+              --   augroup END
+              --   ]], false)
+              -- end
+            end
+
+            local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+            local opts = { noremap=true, silent=true }
+
+            vim.diagnostic.config({virtual_text = false})
+
+            require("lspconfig")[server_name].setup {
+              on_attach = on_attach,
+            }
+        end,
+    })
+  end
+  }
+
+  use {'WhoIsSethDaniel/mason-tool-installer.nvim', config = function()
+      require'mason-tool-installer'.setup {
+        ensure_installed = {
+          'lua-language-server',
+          'stylua',
+
+          'bash-language-server',
+          'shellcheck',
+          'shfmt',
+
+          'vim-language-server',
+
+          'rust-analyzer',
+
+          'dockerfile-language-server',
+
+          'fixjson',
+          'json-lsp',
+
+          -- writing
+          'remark-language-server',
+
+          'goimports',
+          'gofumpt',
+          'gopls',
+          'staticcheck',
+          'vint',
+
+          -- python
+          'autopep8',
+          'black',
+          'pyright',
+
+          'solargraph',
+
+          'sql-formatter',
+          'sqls',
+
+          'typescript-language-server',
+          'eslint-lsp',
+        }
+      }
+  end }
+
   use { 'jose-elias-alvarez/null-ls.nvim', -- Create LS from shell tools
     config = function()
       local null_ls = require("null-ls")
@@ -182,24 +319,13 @@ return require('packer').startup(function()
   }
 
   -- Fzf -- 
-  use { 'junegunn/fzf', run = './install --bin', }
-  use 'junegunn/fzf.vim'
-  use 'chengzeyi/fzf-preview.vim' -- Tag previews
-  use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
-  use {
-    'nvim-telescope/telescope.nvim',
-    requires = { {'nvim-lua/plenary.nvim'} },
-    config = function()
-      require('telescope').load_extension('fzf')
-      require('telescope').setup()
-    end
-  }
   use {
     'ibhagwan/fzf-lua', -- Nifty LSP commands, doesn't support tmux
     requires = { 'kyazdani42/nvim-web-devicons' },
     config = function()
       actions = require "fzf-lua.actions"
       fzf = require('fzf-lua')
+      fzf.register_ui_select()
       fzf.setup {
         winopts = {
           preview = { default = 'bat_native' },
@@ -262,7 +388,6 @@ return require('packer').startup(function()
       ]]
     end
   }
-  use 'vijaymarupudi/nvim-fzf' -- Lua api
   use {
     'majutsushi/tagbar',
     cmd = "TagbarToggle",
@@ -431,15 +556,15 @@ function! s:copy_results(lines)
   let @+ = joined_lines
 endfunction
 
-let g:fzf_action = {
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-o': ':r !echo',
-  \ 'ctrl-s': ':silent !git add %',
-  \ 'ctrl-r':  function('s:import_path'),
-  \ 'ctrl-y':  function('s:copy_results'),
-  \ 'ctrl-v': 'vsplit' }
-let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
+" let g:fzf_action = {
+"   \ 'ctrl-t': 'tab split',
+"   \ 'ctrl-x': 'split',
+"   \ 'ctrl-o': ':r !echo',
+"   \ 'ctrl-s': ':silent !git add %',
+"   \ 'ctrl-r':  function('s:import_path'),
+"   \ 'ctrl-y':  function('s:copy_results'),
+"   \ 'ctrl-v': 'vsplit' }
+" let $FZF_DEFAULT_OPTS = '--bind ctrl-a:toggle-all'
 " }}}
 
 " {{{
@@ -583,7 +708,7 @@ end
 -- require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all",
-  ignore_install = { "phpdoc" },
+  ignore_install = { "phpdoc", "markdown" },
   sync_install = false,
   matchup = {
     enable = true,
@@ -591,6 +716,7 @@ require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,
+    disable = { "markdown" },
   },
   autotag = {
     enable = true,
@@ -630,180 +756,114 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
-  local lspconfig = require("lspconfig")
-local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- Mappings.
-  local opts = { noremap=true, silent=true }
-  -- This broke in Neovim 0.7
-  -- https://github.com/neovim/neovim/issues/17867 then map to C-[
-  -- buf_set_keymap('n', '<C-[>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
-  buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', '[[', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  -- buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  -- buf_set_keymap('n', '<Esc>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', '<Esc>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
-
-  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', '<C-K>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
-  buf_set_keymap('v', ',ca', ":<c-u>lua vim.lsp.buf.range_code_action()<CR>", opts)
-  buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_references()<CR>", opts)
-  buf_set_keymap('n', '[e', '<cmd>lua vim.diagnostic.goto_prev({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
-  buf_set_keymap('n', ']e', '<cmd>lua vim.diagnostic.goto_next({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
-  buf_set_keymap('n', '[E', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']E', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', ',e', "<cmd>lua require('fzf-lua').lsp_document_diagnostics()<CR>", opts)
-  buf_set_keymap('n', ',E', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua require(\'fzf-lua\').lsp_workspace_diagnostics()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', 'g<A-l>', "<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>", opts)
-  buf_set_keymap('n', 'gl', "<cmd>lua require('fzf-lua').lsp_live_workspace_symbols()<CR>", opts)
-
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-
-  -- Set some keybinds conditional on server capabilities
-  -- if client.resolved_capabilities.document_formatting then
-  buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.formatting_seq_sync({}, 10000)<CR>", opts)
-  buf_set_keymap("n", ",F", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-  -- end
-
-  -- if client.resolved_capabilities.document_range_formatting then
-  --   buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
-  -- end
-
-  -- Set autocommands conditional on server_capabilities
-  -- if client.resolved_capabilities.document_highlight then
-  --   vim.api.nvim_exec([[
-  --   augroup lsp_document_highlight
-  --   autocmd! * <buffer>
-  --   autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-  --   autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-  --   augroup END
-  --   ]], false)
-  -- end
-end
-
-local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-local opts = { noremap=true, silent=true }
-
-vim.diagnostic.config({virtual_text = false})
-
-local lsp_installer = require("nvim-lsp-installer")
+-- local lspconfig = require("lspconfig")
+-- local lsp_installer = require("nvim-lsp-installer")
+-- lsp_installer.setup {
+--   automatic_installation = true
+-- }
 -- Register a handler that will be called for all installed servers.
 -- Alternatively, you may also register handlers on specific server instances instead (see example below).
-lsp_installer.on_server_ready(function(server)
-    local opts = {
-      on_attach = on_attach,
-      capabilities = capabilities
-    }
-    opts.capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+--lsp_installer.on_server_ready(function(server)
+--    local opts = {
+--      on_attach = on_attach,
+--      capabilities = capabilities
+--    }
+--    opts.capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-    if server.name == "elm" then
-        opts.settings = {
-            rootMarkers = {".git/"},
-            languages = {
-                python = {
-                    {
-                            lintCommand = "flake8 --stdin-display-name ${INPUT} -",
-                            formatStdin = true,
-                            lintFormats = { '%f:%l:%c: %m' }
-                    }
-                }
-            }
-        }
-    end
+--    if server.name == "elm" then
+--        opts.settings = {
+--            rootMarkers = {".git/"},
+--            languages = {
+--                python = {
+--                    {
+--                            lintCommand = "flake8 --stdin-display-name ${INPUT} -",
+--                            formatStdin = true,
+--                            lintFormats = { '%f:%l:%c: %m' }
+--                    }
+--                }
+--            }
+--        }
+--    end
 
-    -- (optional) Customize the options passed to the server
-    if server.name == "pyright" then
-        opts.settings = {
-            python = {
-                pythonPath = "/opt/homebrew/bin/python3"
-            }
-        }
-    end
+--    -- (optional) Customize the options passed to the server
+--    if server.name == "pyright" then
+--        opts.settings = {
+--            python = {
+--                pythonPath = "/opt/homebrew/bin/python3"
+--            }
+--        }
+--    end
 
-    if server.name == "clangd" then
-      if opts.capabilities then
-        opts.capabilities.offsetEncoding = { "utf-16" }
-      else
-        opts.capabilities = { offsetEncoding = "utf-16" }
-      end
-    end
+--    if server.name == "clangd" then
+--      if opts.capabilities then
+--        opts.capabilities.offsetEncoding = { "utf-16" }
+--      else
+--        opts.capabilities = { offsetEncoding = "utf-16" }
+--      end
+--    end
 
-    -- if server.name == "eslint" then
-    --   local eslint_config = require("lspconfig.server_configurations.eslint")
-    --   opts.on_attach = function (client, bufnr)
-    --       -- neovim's LSP client does not currently support dynamic capabilities registration, so we need to set
-    --       -- the resolved capabilities of the eslint server ourselves!
-    --       client.resolved_capabilities.document_formatting = true
-    --       on_attach(client, bufnr)
-    --   end
-    --   -- print(eslint_config.default_config.cmd[1]);
-    --   opts.settings = {
-    --       format = { enable = true }, -- this will enable formatting
-    --       -- cmd = { "yarn", unpack(eslint_config.default_config.cmd) }
-    --   }
-    -- end
+--    -- if server.name == "eslint" then
+--    --   local eslint_config = require("lspconfig.server_configurations.eslint")
+--    --   opts.on_attach = function (client, bufnr)
+--    --       -- neovim's LSP client does not currently support dynamic capabilities registration, so we need to set
+--    --       -- the resolved capabilities of the eslint server ourselves!
+--    --       client.resolved_capabilities.document_formatting = true
+--    --       on_attach(client, bufnr)
+--    --   end
+--    --   -- print(eslint_config.default_config.cmd[1]);
+--    --   opts.settings = {
+--    --       format = { enable = true }, -- this will enable formatting
+--    --       -- cmd = { "yarn", unpack(eslint_config.default_config.cmd) }
+--    --   }
+--    -- end
 
-    if server.name == "solargraph" then
-      opts = {
-       on_attach = on_attach,
-       capabilities = capabilities,
+--    if server.name == "solargraph" then
+--      opts = {
+--       on_attach = on_attach,
+--       capabilities = capabilities,
 
-       filetypes = { "ruby", "gemfile", "rakefile" },
-       cmd_env = {
-         GEM_HOME = "/Users/simon/.gem/ruby/3.0.1",
-         GEM_PATH = "/Users/simon/.gem/ruby/3.0.1:/Users/simon/.rubies/ruby-3.0.1/lib/ruby/gems/3.0.0"
-       },
-       --root_dir = function() 
-       --  return "/Users/simon/.rubies/ruby-3.0.1"
-       --end,
-       cmd = {
-         "/Users/simon/.gem/ruby/3.0.1/bin/solargraph", "stdio"
-       },
-       settings = {
-          solargraph = {
-            commandPath = "/Users/simon/.gem/ruby/3.0.1/bin/solargraph",
-            useBundler = true,
-            bundlerPath = "/Users/simon/.rubies/ruby-3.0.1/bin/bundle"
-          }
-       }
-      }
-    end
+--       filetypes = { "ruby", "gemfile", "rakefile" },
+--       cmd_env = {
+--         GEM_HOME = "/Users/simon/.gem/ruby/3.0.1",
+--         GEM_PATH = "/Users/simon/.gem/ruby/3.0.1:/Users/simon/.rubies/ruby-3.0.1/lib/ruby/gems/3.0.0"
+--       },
+--       --root_dir = function() 
+--       --  return "/Users/simon/.rubies/ruby-3.0.1"
+--       --end,
+--       cmd = {
+--         "/Users/simon/.gem/ruby/3.0.1/bin/solargraph", "stdio"
+--       },
+--       settings = {
+--          solargraph = {
+--            commandPath = "/Users/simon/.gem/ruby/3.0.1/bin/solargraph",
+--            useBundler = true,
+--            bundlerPath = "/Users/simon/.rubies/ruby-3.0.1/bin/bundle"
+--          }
+--       }
+--      }
+--    end
 
-    if server.name == "rust_analyzer" then
-      opts = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-        settings = {
-          ["rust-analyzer"] = {
-            checkOnSave = {
-              command = "clippy"
-            }
-          }
-        }
-      }
-    end
+--    if server.name == "rust_analyzer" then
+--      opts = {
+--        on_attach = on_attach,
+--        capabilities = capabilities,
+--        settings = {
+--          ["rust-analyzer"] = {
+--            checkOnSave = {
+--              command = "clippy"
+--            }
+--          }
+--        }
+--      }
+--    end
 
-    -- This setup() function is exactly the same as lspconfig's setup function.
-    -- Refer to https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-    -- if vim.g.coq_enabled then
-    --   local coq = require("coq") 
-    server:setup(opts)
-    -- end
-end)
+--    -- This setup() function is exactly the same as lspconfig's setup function.
+--    -- Refer to https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+--    -- if vim.g.coq_enabled then
+--    --   local coq = require("coq") 
+--    server:setup(opts)
+--    -- end
+--end)
 
 -- https://github.com/neovim/nvim-lspconfig/wiki/UI-customization
 vim.o.updatetime = 250
@@ -830,40 +890,80 @@ augroup END
 
 vim.lsp.set_log_level("info")
 --
-local fzf = require("fzf")
-function insert_line_at_cursor(text)
+function insert_line_at_cursor(text, newline)
   local cursor = vim.api.nvim_win_get_cursor(0)
   local row = cursor[1]
-  local _column = cursor[2]
+  local column = cursor[2]
 
-  -- vim.api.nvim_buf_set_text(0, row, column, row, column, {text})
-  vim.api.nvim_buf_set_lines(0, row, row, false, {text})
+  if not newline then
+    vim.api.nvim_buf_set_text(0, row - 1, column, row - 1, column, {text})
+  else
+    vim.api.nvim_buf_set_lines(0, row, row, false, {text})
+  end
 end
 
-function insert_tag_at_cursor(text)
+function insert_tag_at_cursor(text, newline)
   local tag = string.match(text, "([#%a-]+)")
-  insert_line_at_cursor(tag)
+  insert_line_at_cursor(tag, newline)
+end
+
+function ZettelkastenSearch()
+  require'fzf-lua'.fzf_live(
+    "textgrep", {
+        actions = require'fzf-lua'.defaults.actions.files,
+        previewer = 'builtin',
+        exec_empty_query = true,
+        fzf_opts = {
+          ["--exact"] = '',
+          ["--ansi"] = '',
+          ["--tac"] = '',
+          ["--no-multi"] = '',
+          ["--no-info"] = '',
+          ["--phony"] = '',
+          ['--bind'] = 'change:reload:textgrep \"{q}\"',
+        }
+    }
+  )
 end
 
 function ZettelkastenRelatedTags()
-  -- We use fzf.vim because it supports fzf.vim
-  vim.cmd [[
-    function! CallLuaFunction(arg1)
-      call v:lua.insert_tag_at_cursor(a:arg1)
-    endfunction
-
-    call fzf#run(fzf#wrap({'source': 'zk-related-tags "' .. bufname("%") .. '"', 'options': '--ansi --exact --nth 2', 'sink': function('CallLuaFunction')}))
-  ]]
+  require'fzf-lua'.fzf_exec(
+    "zk-related-tags \"" .. vim.fn.bufname("%") .. "\"", {
+        actions = { ['default'] = function(selected, opts) insert_tag_at_cursor(selected[1], true) end },
+        fzf_opts = { ["--exact"] = '', ["--nth"] = '2' }
+    }
+  )
 end
 
 function ZettelkastenTags()
-  vim.cmd [[
-    function! CallLuaFunction(arg1)
-      call v:lua.insert_tag_at_cursor(a:arg1)
-    endfunction
+  require'fzf-lua'.fzf_exec(
+    "zkt-raw", {
+        actions = { ['default'] = function(selected, opts) insert_tag_at_cursor(selected[1], true) end },
+        fzf_opts = { ["--exact"] = '', ["--nth"] = '2' }
+    }
+  )
+end
 
-    call fzf#run(fzf#wrap({'source': 'zkt-raw', 'options': '--ansi --exact --nth 2', 'sink': function('CallLuaFunction')}))
-  ]]
+function CompleteZettelkastenPath()
+  require'fzf-lua'.fzf_exec(
+    "rg --files -t md | sed 's/^/[[/g' | sed 's/$/]]/'", {
+        actions = { ['default'] = function(selected, opts) insert_line_at_cursor(selected[1], false) end },
+    }
+  )
+end
+
+function CompleteZettelkastenTag()
+  require'fzf-lua'.fzf_exec(
+    "zkt-raw", {
+        actions = { ['default'] = function(selected, opts) insert_tag_at_cursor(selected[1], false) end },
+        fzf_opts = {
+          ["--exact"] = '',
+          ["--nth"] = '2',
+          ["--print-query"] = '',
+          ["--multi"] = "",
+        }
+    }
+  )
 end
 
 local function get_visual_selection()
@@ -957,10 +1057,6 @@ if has('nvim')
   set inccommand=split " Neovim will preview search
 end
 
-imap jk <esc>
-map <leader>d :bd<CR>
-nnoremap Y y$ " Make Y behave like other capitals
-nmap L :set invnumber<CR>
 " https://medium.com/@vinodkri/zooming-vim-window-splits-like-a-pro-d7a9317d40
 " map <c-w>z <c-w>_ \| <c-w>\|
 function! s:zoom()
@@ -993,22 +1089,6 @@ set nospell
 " allow spaces in file-names, which makes gf more useful
 set isfname+=32
 set hidden
-autocmd! BufWritePost $MYVIMRC source $MYVIMRC
-map <space>v :source $MYVIMRC<CR>
-map <leader>v :sp $MYVIMRC<CR>
-
-function! MRIIndent()
-  setlocal cindent
-  setlocal noexpandtab
-  setlocal shiftwidth=4
-  setlocal softtabstop=4
-  setlocal tabstop=8
-  setlocal textwidth=80
-  " Ensure function return types are not indented
-  setlocal cinoptions=(0,t0
-endfunction
-
-autocmd BufNewFile,BufRead ~/src/github.com/ruby/ruby/**/*.c call MRIIndent()
 
 " https://stackoverflow.com/questions/4946421/vim-moving-with-hjkl-in-long-lines-screen-lines
 function! ScreenMovement(movement)
@@ -1018,6 +1098,7 @@ function! ScreenMovement(movement)
       return a:movement
    endif
 endfunction
+
 onoremap <silent> <expr> j ScreenMovement("j")
 onoremap <silent> <expr> k ScreenMovement("k")
 onoremap <silent> <expr> 0 ScreenMovement("0")
@@ -1028,7 +1109,6 @@ nnoremap <silent> <expr> k ScreenMovement("k")
 nnoremap <silent> <expr> 0 ScreenMovement("0")
 nnoremap <silent> <expr> ^ ScreenMovement("^")
 nnoremap <silent> <expr> $ ScreenMovement("$")
-
 
 function! SNote(...)
   let path = strftime("%Y%m%d%H%M")." ".trim(join(a:000)).".md"
@@ -1046,26 +1126,21 @@ function! ZettelkastenSetup()
   if expand("%:t") !~ '^[0-9]\+'
     return
   endif
-  " syn region mkdFootnotes matchgroup=mkdDelimiter start="\[\["    end="\]\]"
-
-  inoremap <expr> <plug>(fzf-complete-path-custom) fzf#vim#complete#path("rg --files -t md \| sed 's/^/[[/g' \| sed 's/$/]]/'")
-  imap <buffer> [[ <plug>(fzf-complete-path-custom)
-
-  function! s:CompleteTagsReducer(lines)
-    if len(a:lines) == 1
-      return "#" . a:lines[0]
-    else
-      return split(a:lines[1], '\t ')[1]
-    end
-  endfunction
-
-  inoremap <expr> <plug>(fzf-complete-tags) fzf#vim#complete(fzf#wrap({
-        \ 'source': 'zkt-raw',
-        \ 'options': '--multi --ansi --nth 2 --print-query --exact --header "Enter without a selection creates new tag"',
-        \ 'reducer': function('<sid>CompleteTagsReducer')
-        \ }))
-  imap <buffer> # <plug>(fzf-complete-tags)
+  lua vim.api.nvim_set_keymap('i', '[[', '<cmd>lua CompleteZettelkastenPath()<cr>', {})
+  lua vim.api.nvim_set_keymap('i', '#', '<cmd>lua CompleteZettelkastenTag()<cr>', {})
 endfunction
+
+command! ZKRT :lua ZettelkastenRelatedTags()
+command! ZKS :lua ZettelkastenSearch()
+command! ZKT :lua ZettelkastenTags()
+command! -range GPT :lua GPT()
+map \d :put =strftime(\"# %Y-%m-%d\")<CR>
+map \D :put =strftime(\"%Y-%m-%d\")<CR>
+map ,c :Copilot<CR>
+imap jk <esc>
+map <leader>d :bd<CR>
+nnoremap Y y$ " Make Y behave like other capitals
+nmap L :set invnumber<CR>
 
 " Don't know why I can't get FZF to return {2}
 " function! InsertSecondColumn(line)
@@ -1073,34 +1148,27 @@ endfunction
   " exe 'normal! o' .. split(a:line, '\t')[1]
 " endfunction
 
-command! ZKRT :lua ZettelkastenRelatedTags()
-command! ZKT :lua ZettelkastenTags()
-command! -range GPT :lua GPT()
+" au BufNewFile,BufRead *.py
+"     \ set tabstop=4 |
+"     \ set softtabstop=4 |
+"     \ set shiftwidth=4 |
+"     \ set textwidth=80 |
+"     \ set expandtab |
+"     \ set autoindent |
+"     \ set fileformat=unix
 
-map \d :put =strftime(\"# %Y-%m-%d\")<CR>
-map \D :put =strftime(\"%Y-%m-%d\")<CR>
-map ,c :Copilot<CR>
-
-au BufNewFile,BufRead *.py
-    \ set tabstop=4 |
-    \ set softtabstop=4 |
-    \ set shiftwidth=4 |
-    \ set textwidth=80 |
-    \ set expandtab |
-    \ set autoindent |
-    \ set fileformat=unix
-
-let g:python3_host_prog="/opt/homebrew/bin/python3"
-let g:vsnip_filetypes = {}
-let g:vsnip_filetypes.javascriptreact = ['javascript']
-let g:vsnip_filetypes.typescriptreact = ['typescript']
+" let g:python3_host_prog="/opt/homebrew/bin/python3"
+" let g:vsnip_filetypes = {}
+" let g:vsnip_filetypes.javascriptreact = ['javascript']
+" let g:vsnip_filetypes.typescriptreact = ['typescript']
 
 au BufNewFile,BufRead *.tsx set filetype=typescriptreact
 au BufNewFile,BufRead *.jsx set filetype=javascriptreact
 au BufNewFile,BufRead *.ejson,*.jsonl,*.avsc set filetype=json
 au BufNewFile,BufRead *.s set filetype=gas
-" au FileType markdown lua require('cmp').setup.buffer { enabled = false }
-au FileType markdown setlocal commentstring=>\ %s
-au BufNew,BufNewFile,BufRead /Users/simon/Documents/Zettelkasten/*.md call ZettelkastenSetup()
+"
+autocmd BufNew,BufNewFile,BufRead /Users/simon/Documents/Zettelkasten/*.md call ZettelkastenSetup()
+autocmd FileType markdown setlocal commentstring=>\ %s
 autocmd FileType markdown setlocal spell
 autocmd FileType markdown setlocal linebreak " wrap on words, not characters
+autocmd FileType markdown highlight link mkdBlockquote Comment
