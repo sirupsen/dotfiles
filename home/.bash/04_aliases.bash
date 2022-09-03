@@ -263,3 +263,4 @@ zk-media-from-clipboard() {
 
 alias loc=scc
 alias youtube-dl="yt-dlp"
+alias semsearch="~/src/semsearch/judge.bash"

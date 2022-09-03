@@ -15,7 +15,7 @@ match = url.match(GITHUB_REPO_REGEX)
 match ||= url.match(SLASH_REGEX)
 file_match = url.match(FILE_REGEX)
 
-vim_command = 'nvim -c ":FZF"'
+vim_command = 'nvim -c ":lua require(\'fzf-lua\').files()"'
 if file_match
   vim_command = "nvim '#{file_match['path']}'"
   vim_command << " +#{file_match['line']}" if file_match['line']

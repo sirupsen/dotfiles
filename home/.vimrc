@@ -47,13 +47,22 @@ vim.cmd [[
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
-  -- use 'github/copilot.vim' -- required for auth
+  -- use {'github/copilot.vim', config = function()
+  --   vim.cmd [[ command Copilot disable ]]
+  -- end}
+
   use {
     "zbirenbaum/copilot.lua",
     event = {"VimEnter"},
     config = function()
       vim.defer_fn(function()
-        require("copilot").setup()
+        require("copilot").setup {
+          cmp = {
+            enabled = true,
+            method = "getCompletionsCycling",
+          },
+          ft_disable = { "markdown" },
+        }
       end, 100)
     end,
   }
@@ -609,11 +618,11 @@ set spell spelllang=en_ca
 
 lua << EOF
 local cmp = require'cmp'
---local comparator = require("copilot_cmp.comparators")
 
 local has_words_before = function()
+  if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+  return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
 end
 
 local feedkey = function(key, mode)
@@ -637,18 +646,28 @@ end
         -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
       end,
     },
+    completion = {
+    completeopt = 'menu,menuone,noinsert'
+  },
     mapping = {
-      ["<Tab>"] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_next_item()
-        elseif vim.fn["vsnip#available"](1) == 1 then
-          feedkey("<Plug>(vsnip-expand-or-jump)", "")
-        elseif has_words_before() then
-          cmp.complete()
+      ["<Tab>"] = vim.schedule_wrap(function(fallback)
+        if cmp.visible() and has_words_before() then
+          cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
         else
-          fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+          fallback()
         end
-      end, { "i", "s" }),
+      end),
+      -- ["<Tab>"] = cmp.mapping(function(fallback)
+      --   if cmp.visible() then
+      --     cmp.select_next_item()
+      --   elseif vim.fn["vsnip#available"](1) == 1 then
+      --     feedkey("<Plug>(vsnip-expand-or-jump)", "")
+      --   elseif has_words_before() then
+      --     cmp.complete()
+      --   else
+      --     fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+      --   end
+      -- end, { "i", "s" }),
 
       ["<S-Tab>"] = cmp.mapping(function()
         if cmp.visible() then
@@ -658,6 +677,10 @@ end
         end
       end, { "i", "s" }),
 
+      ['C-j'] = cmp.mapping(function() cmp.select_next_item() end),
+      ['C-K'] = cmp.mapping(function() cmp.select_prev_item() end),
+      ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+      ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
       ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
       ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
       ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
@@ -668,30 +691,31 @@ end
       }),
       ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     },
---      sorting = {
---    priority_weight = 2,
---    comparators = {
---      comparator.prioritize,
---      comparator.score,
---
---      -- Below is the default comparitor list and order for nvim-cmp
---      cmp.config.compare.offset,
---      -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
---      cmp.config.compare.exact,
---      cmp.config.compare.score,
---      cmp.config.compare.recently_used,
---      cmp.config.compare.locality,
---      cmp.config.compare.kind,
---      cmp.config.compare.sort_text,
---      cmp.config.compare.length,
---      cmp.config.compare.order,
---    },
---  },
+--    sorting = {
+ --     priority_weight = 2,
+ --     comparators = {
+ --       require("copilot_cmp.comparators").prioritize,
+ --       require("copilot_cmp.comparators").score,
+
+ --       -- Below is the default comparitor list and order for nvim-cmp
+ --       cmp.config.compare.offset,
+ --       -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+ --       cmp.config.compare.exact,
+ --       cmp.config.compare.score,
+ --       cmp.config.compare.recently_used,
+ --       cmp.config.compare.locality,
+ --       cmp.config.compare.kind,
+ --       cmp.config.compare.sort_text,
+ --       cmp.config.compare.length,
+ --       cmp.config.compare.order,
+ --     },
+ --   },
     sources = cmp.config.sources({
-      { name = "copilot", group_index = 2  },
-      { name = 'emoji', group_index = 2 },
+      { name = "copilot", group_index = 2 },
+      { name = 'emoji', group_index = 2},
       { name = "latex_symbols", group_index = 2 },
       { name = 'nvim_lsp', group_index = 2 },
+      { name = 'path', group_index = 2 },
       { name = 'vsnip', group_index = 2 }, -- For vsnip users.
     }, {
       { name = 'buffer' },

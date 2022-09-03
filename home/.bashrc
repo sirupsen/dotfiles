@@ -102,3 +102,4 @@ export TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling
 nvm use 16 > /dev/null
 BUN_INSTALL="/Users/simon/.bun"
 PATH="$BUN_INSTALL/bin:$PATH"
+export OPENBLAS="$(brew --prefix openblas)"
