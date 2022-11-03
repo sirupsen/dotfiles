@@ -106,42 +106,45 @@ font:
   #
   # Thin strokes are suitable for retina displays, but for non-retina screens
   # it is recommended to set `use_thin_strokes` to `false`
-  use_thin_strokes: true
+  # use_thin_strokes: true
 
 # If `true`, bold text is drawn using the bright color variants.
 draw_bold_text_with_bright_colors: false
 
 colors:
-  # SOLARIZED
-  # # Default colors
+  # LIGHT!!
   # primary:
-  #   background: '0x002b36'
-  #   foreground: '0x839496'
+  #   background: '0xfafafa'
+  #   foreground: '0x383a42'
+
+  # # Colors the cursor will use if `custom_cursor_colors` is true
+  # cursor:
+  #   text: '0xfafafa'
+  #   cursor: '0x383a42'
 
   # # Normal colors
   # normal:
-  #   black:   '0x073642'
-  #   red:     '0xdc322f'
-  #   green:   '0x859900'
-  #   yellow:  '0xb58900'
-  #   blue:    '0x268bd2'
-  #   magenta: '0xd33682'
-  #   cyan:    '0x2aa198'
-  #   white:   '0xeee8d5'
+  #   black:   '0xfafafa'
+  #   red:     '0xca1243'
+  #   green:   '0x50a14f'
+  #   yellow:  '0xc18401'
+  #   blue:    '0x4078f2'
+  #   magenta: '0xa626a4'
+  #   cyan:    '0x0184bc'
+  #   white:   '0x383a42'
 
   # # Bright colors
   # bright:
-  #   black:   '0x002b36'
-  #   red:     '0xcb4b16'
-  #   green:   '0x586e75'
-  #   yellow:  '0x657b83'
-  #   blue:    '0x839496'
-  #   magenta: '0x6c71c4'
-  #   cyan:    '0x93a1a1'
-  #   white:   '0xfdf6e3'
+  #   black:   '0xa0a1a7'
+  #   red:     '0xd75f00'
+  #   green:   '0xf0f0f1'
+  #   yellow:  '0xe5e5e6'
+  #   blue:    '0x696c77'
+  #   magenta: '0x202227'
+  #   cyan:    '0x986801'
+  #   white:   '0x090a0b'
 
-  colors:
-  # Default colors
+  # DARK
   primary:
     background: '0x181818'
     foreground: '0xd8d8d8'
@@ -210,7 +213,7 @@ bell:
 #
 # Window opacity as a floating point number from `0.0` to `1.0`.
 # The value `0.0` is completely transparent and `1.0` is opaque.
-background_opacity: 1.0
+# background_opacity: 1.0
 
 # Mouse bindings
 #

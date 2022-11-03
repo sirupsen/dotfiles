@@ -42,6 +42,7 @@ alias gbr='git branch --no-merged origin/master --sort=-committerdate --verbose'
 alias grc='git rebase --continue'
 alias gl='git log --oneline'
 alias gco='git checkout'
+alias gcof='git checkout $(gb | fzf)'
 alias gb='git branch'
 alias gpf='if [[ $(gcb) != "master" ]]; then git push `git_origin_or_fork` +`gcb`; else echo "Not going to force push master bud"; fi'
 alias gd='git diff'
@@ -264,3 +265,5 @@ zk-media-from-clipboard() {
 alias loc=scc
 alias youtube-dl="yt-dlp"
 alias semsearch="~/src/semsearch/judge.bash"
+# alias python='python3.10'
+# alias pip='python -m pip'
