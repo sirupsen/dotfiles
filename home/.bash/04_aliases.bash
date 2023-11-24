@@ -3,8 +3,10 @@ if command -v hub > /dev/null; then
   alias git=hub
 fi
 
-alias box="mosh napkin -p 60001 -- tmux new-session -A -s main"
-alias box-ssh="ssh -t napkin tmux new-session -A -s main"
+# alias box="mosh pufferbox -p 60000 -- tmux new-session -A -s main"
+# alias box-ssh="ssh -t pufferbox tmux new-session -A -s main"
+alias box="mosh gcp1 -p 60000 -- tmux new-session -A -s main"
+alias box-ssh="ssh -t gcp1 tmux new-session -A -s main"
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ls="ls -G"
@@ -17,7 +19,16 @@ git_origin_or_fork() {
   fi
 }
 
+alias m='mutagen'
+alias t='terraform'
 alias k='kubectl'
+alias kctx='kubectx'
+alias kg='k get'
+alias kgp='k get pods'
+alias kgd='k get deploy'
+alias kgi='k get ingress'
+alias kd='k describe'
+alias kns='kubens'
 alias k-pod="k get pods | tail -n +2 | awk '{ print \$1 }' | fzf"
 alias k-node="k describe \"pod/\$(k-pod)\" | rg 'Node:' | rg -o 'gke-([\w-]+)'"
 
@@ -35,6 +46,7 @@ alias cbt="BIGTABLE_EMULATOR_HOST= cbt"
 alias gcb="git rev-parse --abbrev-ref HEAD"
 alias gp='git push `git_origin_or_fork` `gcb`'
 alias gpl='git pull `git_origin_or_fork` `gcb`'
+# alias gc='git commit --verbose --signoff'
 alias gc='git commit --verbose'
 alias gs='git status --short --branch'
 alias gsp='git stash pop'
@@ -45,11 +57,14 @@ alias gco='git checkout'
 alias gcof='git checkout $(gb | fzf)'
 alias gb='git branch'
 alias gpf='if [[ $(gcb) != "master" ]]; then git push `git_origin_or_fork` +`gcb`; else echo "Not going to force push master bud"; fi'
-alias gd='git diff'
+function gd() {
+  git diff $@ ':!*lock'
+}
 alias gg='git grep'
 alias ggi='git grep -i'
 alias ga='git add'
 alias gfoa='git fetch origin'
+alias gf='git fetch origin'
 alias gfo='git fetch origin $(default_branch)'
 alias gro='git rebase origin/$(default_branch)'
 alias gfogro='gfo && gro'
@@ -109,18 +124,53 @@ reset-camera () {
 }
 
 refresh() {
+  gcloud components update
+
   brew update
+
   brew upgrade fzf neovim bash ripgrep git universal-ctags \
     fd go curl redis ruby-install telnet tree jemalloc ruby-install \
     mysql yt-dlp curl cmake docker gdb wget coreutils \
     lua luajit markdown gh hub htop reattach-to-user-namespace \
-    jq sqlite hugo htop grep graphviz entr fio aspell \
+    jq sqlite htop grep graphviz entr fio aspell \
     llvm cmark chrome-cli gcc bat gopls typescript git-delta \
-    imagemagick angle-grinder
+    imagemagick angle-grinder sgpt
 
-  # rustup update
-  # vim +PlugUpdate +qall
-  # gcloud components update
+  rustup update
+  rustup update nightly
+
+  vim +PackerSync +qall
+}
+
+alias g4='sgpt --model gpt-4 --temperature 0.5 --no-cache'
+alias g4c='g4 --repl=temp'
+alias g4code='g4 --code'
+
+gsum() {
+    if [ $# -eq 2 ]; then
+        query="Generate git commit message using semantic versioning. Declare commit message as $1. $2. My changes: $(git diff)"
+    elif [ $# -eq 1 ]; then
+        query="Generate git commit message using semantic versioning. Declare commit message as $1. My changes: $(git diff)"
+    else
+        query="Generate git commit message using semantic versioning. My changes: $(git diff)"
+    fi
+    commit_message="$(sgpt txt "$query")"
+    printf "%s\n" "$commit_message"
+    read -rp "Do you want to commit your changes with this commit message? [y/N] " response
+    if [[ $response =~ ^[Yy]$ ]]; then
+        git add . && git commit -m "$commit_message"
+    else
+        echo "Commit cancelled."
+    fi
+}
+
+alias g3='sgpt --model gpt-3.5-turbo --temperature 0.5 --no-cache'
+alias g3c='g3 --repl=temp'
+alias g3code='g3 --code'
+
+gcg() {
+  msg=$(gd --staged | sgpt 'Write a short, descriptive commit message for these changes')
+  git commit -e -m "$msg"
 }
 
 # ZETTELKASTEN ALIASES MOVED TO https://github.com/sirupsen/zk
@@ -259,7 +309,17 @@ pdfrename() {
 }
 
 zk-media-from-clipboard() {
-  pbpaste > $ZK_PATH/media/$1
+  pbpaste > ${ZK_PATH}/media/${1}
+}
+
+stopwatch() {
+  start=$(date +%s)
+  while true; do
+    now=$(date +%s)
+    elapsed=$((now-start))
+    printf "\rElapsed time: %02d:%02d:%02d" $((elapsed/3600)) $((elapsed%3600/60)) $((elapsed%60))
+    sleep 1
+  done
 }
 
 alias loc=scc
