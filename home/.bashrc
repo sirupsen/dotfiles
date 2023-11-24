@@ -64,12 +64,7 @@ if [[ $- == *i* ]]; then
   fi
 fi
 
-# cloudplatform: add Shopify clusters to your local kubernetes config
-export KUBECONFIG=/Users/$(whoami)/.kube/config:/Users/$(whoami)/.kube/config.shopify.cloudplatform
-if [[ -d ~/src/github.com/Shopify/cloudplatform ]]; then
-  for file in ~/src/github.com/Shopify/cloudplatform/workflow-utils/*.bash; do source ${file}; done
-  kubectl-short-aliases
-fi
+export KUBECONFIG=/Users/$(whoami)/.kube/config
 
 if [ $(uname) == "Darwin" ]; then
   export ZK_PATH="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/Zettelkasten"
@@ -108,3 +103,11 @@ export OPENBLAS="$(brew --prefix openblas)"
 
 # https://stackoverflow.com/questions/50168647/multiprocessing-causes-python-to-crash-and-gives-an-error-may-have-been-in-progr
 # export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+source <(kubectl completion bash)
+source ~/.kubectl_fzf.bash
+
+PATH="/Users/simon/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/Users/simon/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/Users/simon/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/Users/simon/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/simon/perl5"; export PERL_MM_OPT;
