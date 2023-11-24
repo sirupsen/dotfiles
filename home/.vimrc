@@ -37,22 +37,19 @@ augroup QuickfixStatus
 augroup END
 
 lua vim.cmd [[packadd packer.nvim]]
+augroup Packer
+  autocmd!
+  autocmd BufWritePost ~/.vimrc PackerCompile
+augroup end
 
 lua << EOF
-vim.cmd [[
-  augroup Packer
-    autocmd!
-    autocmd BufWritePost ~/.vimrc PackerCompile
-  augroup end
-]]
-
 
 simon_on_attach = function(client, bufnr)
    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
    local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
    buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-   print(client.name, "attached")
+   -- print(client.name, "attached")
 
    -- Mappings.
    local opts = { noremap=true, silent=true }
@@ -69,9 +66,10 @@ simon_on_attach = function(client, bufnr)
    buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
    buf_set_keymap('n', '<C-K>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
    buf_set_keymap('n', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
+   buf_set_keymap('v', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
    -- buf_set_keymap('v', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
-   buf_set_keymap('v', ',ca', ":<c-u>lua vim.lsp.buf.range_code_action()<CR>", opts)
-   buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_references()<CR>", opts)
+   -- buf_set_keymap('v', ',ca', ":<c-u>lua vim.lsp.buf.code_action()<CR>", opts)
+   buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_finder()<CR>", opts)
    buf_set_keymap('n', '[e', '<cmd>lua vim.diagnostic.goto_prev({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
    buf_set_keymap('n', ']e', '<cmd>lua vim.diagnostic.goto_next({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
    buf_set_keymap('n', '[E', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
@@ -79,7 +77,7 @@ simon_on_attach = function(client, bufnr)
    buf_set_keymap('n', ',e', "<cmd>lua require('fzf-lua').lsp_document_diagnostics()<CR>", opts)
    buf_set_keymap('n', ',E', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
    buf_set_keymap('n', '<space>e', '<cmd>lua require(\'fzf-lua\').lsp_workspace_diagnostics()<CR>', opts)
-   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+   buf_set_keymap('n', '<space>r', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
    buf_set_keymap('n', 'g<A-l>', "<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>", opts)
    buf_set_keymap('n', 'gl', "<cmd>lua require('fzf-lua').lsp_live_workspace_symbols()<CR>", opts)
 
@@ -124,12 +122,74 @@ return require('packer').startup(function()
 
   -- use {'github/copilot.vim' }
 
+  -- use({
+  --   "dpayne/CodeGPT.nvim",
+  --   requires = {
+  --     "MunifTanjim/nui.nvim",
+  --     "nvim-lua/plenary.nvim",
+  --   },
+  --   config = function()
+  --     require("codegpt.config")
+  --   end
+  -- })
+  -- or https://github.com/Robitx/gp.nvim
+  -- use { 'sourcegraph/sg.nvim', run = 'nvim -l build/init.lua' }
+
+  use({
+      "robitx/gp.nvim",
+      config = function()
+          require("gp").setup()
+      end,
+  })
+
+--   use({
+--   "jackMort/ChatGPT.nvim",
+--     config = function()
+--       require("chatgpt").setup({
+--          openai_params = { 
+--            model = "gpt-4", 
+--            frequency_penalty = 0, 
+--            presence_penalty = 0, 
+--            max_tokens = 300, 
+--            temperature = 0, 
+--            top_p = 1, 
+--            n = 1, 
+--          },
+--          openai_edit_params = { 
+--            model = "gpt-4", 
+--            frequency_penalty = 0, 
+--            presence_penalty = 0, 
+--            max_tokens = 300, 
+--            temperature = 0, 
+--            top_p = 1, 
+--            n = 1, 
+--          },
+--         -- keymaps = {
+--         --   submit = "<C-s>"
+--         -- }
+--       })
+--     end,
+--     requires = {
+--       "MunifTanjim/nui.nvim",
+--       "nvim-lua/plenary.nvim",
+--       "nvim-telescope/telescope.nvim"
+--     }
+--   })
+
   use {
     "zbirenbaum/copilot.lua",
     event = {"VimEnter"},
     config = function()
       -- vim.defer_fn(function()
         require("copilot").setup {
+          server_opts_overrides = {
+            settings = {
+              advanced = {
+                listCount = 10, -- #completions for panel
+                inlineSuggestCount = 3, -- #completions for getCompletions
+              }
+            },
+          },
           filetypes = {
           },
           suggestion = {
@@ -193,7 +253,7 @@ return require('packer').startup(function()
 
 
   use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
-  use 'andymass/vim-matchup'
+  -- use 'andymass/vim-matchup'
   use 'windwp/nvim-ts-autotag'
   use 'RRethy/nvim-treesitter-endwise'
   use 'nvim-treesitter/nvim-treesitter-textobjects' -- if / af for selection body
@@ -205,13 +265,19 @@ return require('packer').startup(function()
   })
   use 'nvim-treesitter/nvim-treesitter-context'
   use 'michaeljsmith/vim-indent-object'
-  use 'JoosepAlviste/nvim-ts-context-commentstring'
+  use { 
+    'JoosepAlviste/nvim-ts-context-commentstring',
+    config = function()
+      vim.g.skip_ts_context_commentstring_module = true
+    end
+  }
   use 'tpope/vim-commentary'
   use 'tpope/vim-sleuth' -- Set shiftwidth automatically
   use 'editorconfig/editorconfig-vim'
 
   ---- Lua --
   use 'nvim-lua/plenary.nvim' -- Utility functions
+  use "MunifTanjim/nui.nvim"
 
   -- Git --
   use {
@@ -219,9 +285,9 @@ return require('packer').startup(function()
     'lewis6991/gitsigns.nvim',
     requires = { 'nvim-lua/plenary.nvim' },
     config = function()
-      if vim.g.gitgutter_diff_base then
-        require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
-      end
+      -- if vim.g.gitgutter_diff_base then
+      --   require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
+      -- end
 
       require('gitsigns').setup {
           current_line_blame = true,
@@ -230,7 +296,9 @@ return require('packer').startup(function()
           },
           on_attach = function(bufnr)
               local gs = package.loaded.gitsigns
-              gs.change_base(vim.g.gitgutter_diff_base, true)
+              if vim.g.gitgutter_diff_base then
+                gs.change_base(vim.g.gitgutter_diff_base, true)
+              end
 
               local function map(mode, l, r, opts)
                 opts = opts or {}
@@ -261,12 +329,17 @@ return require('packer').startup(function()
               map('n', '<leader>hB', function() gs.blame_line{full=true} end)
               map('n', '<leader>hb', gs.toggle_current_line_blame)
 
-              -- map('n', '<leader>hd', gs.diffthis)
-              -- map('n', '<leader>hD', function() gs.diffthis('~') end)
+              -- if not vim.g.gitgutter_main_branch then
+              --   vim.g.gitgutter_main_branch = vim.api.nvim_exec("!git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'", true):sub(0, -2)
+              -- end
+              -- map('n', '<leader>hm', function() gs.change_base(vim.g.gitgutter_main_branch, true) end)
+              -- map('n', '<leader>hM', function() gs.change_base(nil, true) end)
+
+              map('n', '<leader>hd', gs.diffthis)
+              map('n', '<leader>hD', function() gs.diffthis('~') end)
 
               -- map('n', '<leader>he', gs.toggle_deleted)
 
-              -- map('n', '<leader>hC', gs.change_base(vim.g.gitgutter_diff_base or 'master', true))
               -- map('n', '<leader>hc', vim.ui.input({prompt = 'Change Git Base To: ', default = vim.g.gitgutter_diff_base}, function(input) gs.change_base(input, true); end, true))
 
               -- Text object
@@ -283,14 +356,13 @@ return require('packer').startup(function()
   ---- Code Navigbation --
   ------------------------
   -- Lsp --
-  use 'neovim/nvim-lspconfig'
   use { 'williamboman/mason.nvim', config = function() 
-    require("mason").setup({
-      -- log_level = vim.log.levels.DEBUG
-    })
+    -- require("mason").setup({})
   end
   }
+
   use {'williamboman/mason-lspconfig.nvim', config = function()
+    require("mason").setup()
     require("mason-lspconfig").setup()
     require("mason-lspconfig").setup_handlers({
         -- The first entry (without a key) will be the default handler
@@ -302,9 +374,28 @@ return require('packer').startup(function()
               on_attach = simon_on_attach,
             }
         end,
+
+        ["rust_analyzer"] = function ()
+            require("rust-tools").setup {}
+            require("lspconfig")["rust_analyzer"].setup {
+              on_attach = simon_on_attach,
+              settings = {
+                ["rust-analyzer"] = {
+                  checkOnSave = {
+                    command = "clippy"
+                  },
+                  diagnostics = {
+                    disabled = {"inactive-code"}
+                  }
+                }
+              }
+            }
+        end
     })
   end
   }
+
+  use 'neovim/nvim-lspconfig'
 
   use {'WhoIsSethDaniel/mason-tool-installer.nvim', config = function()
       require'mason-tool-installer'.setup {
@@ -315,6 +406,8 @@ return require('packer').startup(function()
           'bash-language-server',
           'shellcheck',
           'shfmt',
+
+          'tailwindcss-language-server',
 
           'vim-language-server',
 
@@ -340,13 +433,13 @@ return require('packer').startup(function()
           'black',
           -- 'pyright', 'pyre',
           'mypy',
+          'ruff',
           'isort',
           'flake8',
 
           'solargraph',
 
           'sql-formatter',
-          'sqls',
 
           'typescript-language-server',
           'eslint-lsp',
@@ -370,11 +463,11 @@ return require('packer').startup(function()
               -- https://github.com/DmytroLitvinov/awesome-flake8-extensions
               --   pandas-vet flake8-bugbear flake8-simplify flake8-pie flake8-django
               -- https://github.com/williamboman/mason.nvim/issues/392 should fix!
-              null_ls.builtins.diagnostics.flake8.with({
-                extra_args = { "--max-line-length", "120" },
-              }),
+              -- null_ls.builtins.diagnostics.flake8.with({
+              --   extra_args = { "--max-line-length", "120" },
+              -- }),
               null_ls.builtins.formatting.black.with({
-                extra_args = { "--line-length", "120" },
+                -- extra_args = { "--line-length", "120" },
               }),
               null_ls.builtins.formatting.isort,
               null_ls.builtins.diagnostics.mypy.with({
@@ -431,18 +524,28 @@ return require('packer').startup(function()
       actions = require "fzf-lua.actions"
       fzf = require('fzf-lua')
       fzf.register_ui_select()
+      -- https://github.com/ibhagwan/nvim-lua/blob/main/lua/plugins/fzf-lua/init.lua
       fzf.setup {
         winopts = {
           height = 0.9,
           width = 0.9,
           preview = {
-            -- default = 'bat',
+            default = 'bat',
             flip_columns        = 500,        -- how many columns to allow vertical split
             winopts = {                       -- builtin previewer window options
               number            = false,
               relativenumber    = false,
             },
           }
+        },
+        previewers = {
+          builtin = {
+            syntax_limit_b = 1024 * 24,
+            limit_b = 1024 * 24,
+          },
+          bat = {
+            theme = 'base16-256',
+          },
         },
         fzf_opts = {
           ['--ansi']        = '',
@@ -476,6 +579,7 @@ return require('packer').startup(function()
         buffers = {
           actions = {
             ["ctrl-x"]          = actions.buf_split,
+            ["ctrl-d"]          = { actions.buf_del, actions.resume },
           }
         }
       }
@@ -497,6 +601,17 @@ return require('packer').startup(function()
         let g:tagbar_compact = 1
         let g:tagbar_indent = 1
       ]]
+    end
+  }
+  use {
+    'simrat39/symbols-outline.nvim',
+    keys = "\\l",
+    config = function()
+      require("symbols-outline").setup()
+      vim.keymap.set("n", "\\l", "<cmd>SymbolsOutline<CR>")
+      -- vim.cmd [[
+      --   nmap \l :SymbolsOutline<CR>
+      -- ]]
     end
   }
 
@@ -558,6 +673,9 @@ return require('packer').startup(function()
       let g:vim_markdown_math = 1
     ]]
   end }
+  use 'godlygeek/tabular'
+  use 'simrat39/rust-tools.nvim'
+  use 'dcharbon/vim-flatbuffers'
 
   use { 'vim-ruby/vim-ruby', ft = 'ruby' } -- Need it for the indent..
 end)
@@ -721,9 +839,9 @@ require'nvim-treesitter.configs'.setup {
   ensure_installed = "all",
   ignore_install = { "phpdoc", "markdown" },
   sync_install = false,
-  matchup = {
-    enable = true,
-  },
+  -- matchup = {
+  --   enable = true,
+  -- },
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,
@@ -870,7 +988,10 @@ end
 
 local a = require "plenary/async"
 
+-- TODO: Format links as <a href> or markdown, which should be easier for GPT to understand
+-- TODO: A better pop up?
 GPT = function()
+  local prompt_prefix = vim.fn.input("Prompt prefix: ")
   local curl = require "plenary.curl"
   local iterators = require "plenary.iterators"
   local token = vim.fn.getenv("OPENAI_TOKEN")
@@ -879,15 +1000,24 @@ GPT = function()
   line2 = vim.api.nvim_buf_get_mark(0, ">")[1]
 
   local lines = vim.api.nvim_buf_get_lines(0, line1, line2, false)
-  local file = table.concat(lines, "\n")
+  local selected_text = table.concat(lines, "\n")
+  local prompt = selected_text
+
+  if prompt:len() > 0 then
+    prompt = prompt_prefix .. "\n\n\"\"\"" .. selected_text .. "\n\"\"\""
+  end
+
   local body = vim.fn.json_encode({
-    prompt = file,
+    model = 'text-davinci-002',
+    prompt = prompt,
     max_tokens = 512,
     temperature = 0.7, -- risk-taking 0 to 1
+    presence_penalty = 0.5, -- penalize using existing words? -2 to 2
+    frequency_penalty = 0.0, -- penalize words based on their frequency -2 to 2
     best_of = 1,
   })
 
-  curl.post('https://api.openai.com/v1/engines/davinci/completions', {
+  curl.post('https://api.openai.com/v1/completions', {
     accept = 'application/json',
     headers = {
       authorization = 'Bearer ' .. token,
@@ -896,6 +1026,7 @@ GPT = function()
     body = body,
     -- schedule_wrap schedules the callback so it has access to the Vim APIs.
     callback = vim.schedule_wrap(function(out)
+      print(out.body)
       local gpt_ans = vim.fn.json_decode(out.body).choices[1].text
       local buffer = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_open_win(buffer, true, {
@@ -922,6 +1053,9 @@ set wildignore+=.git/**,public/assets/**,log/**,tmp/**,Cellar/**,app/assets/imag
 syntax enable
 let base16colorspace=256
 colorscheme base16-default-dark
+" Light
+" https://github.com/RRethy/nvim-base16
+" colorscheme base16-gruvbox-material-light-hard
 
 set t_Co=256  " 2000s plz
 set textwidth=80  " Switch line at 80 characters
@@ -1017,6 +1151,11 @@ command! ZKS :lua ZettelkastenSearch()
 command! ZKT :lua ZettelkastenTags()
 command! -range GPT :lua GPT()
 
+" nmap <silent> <leader>v :ChatGPTEditWithInstructions<CR>
+" vmap <silent> <leader>v :<C-U>:ChatGPTEditWithInstructions<CR>
+" vmap <silent> <C-j> :<C-U>:ChatGPTEditWithInstructions<CR>
+"
+
 map \d :put =strftime(\"# %Y-%m-%d\")<CR>
 map \D :put =strftime(\"%Y-%m-%d\")<CR>
 imap jk <esc>
@@ -1025,8 +1164,8 @@ nnoremap Y y$ " Make Y behave like other capitals
 nmap L :set invnumber<CR>
 nmap <leader>b :Git blame<CR>
 
-au BufNewFile,BufRead *.tsx set filetype=typescriptreact
-au BufNewFile,BufRead *.jsx set filetype=javascriptreact
+" au BufNewFile,BufRead *.tsx set filetype=typescriptreact
+" au BufNewFile,BufRead *.jsx set filetype=javascriptreact
 au BufNewFile,BufRead *.ejson,*.jsonl,*.avsc set filetype=json
 au BufNewFile,BufRead *.s set filetype=gas
 "
