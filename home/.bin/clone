@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Paste an ugly URL from Github anywhere and launch a Tmux Window with a Vim session in it.
 
-GITHUB_REPO_REGEX = %r{https://github.com/(?<org>[\w._-]+)/(?<project>[\w_\-.]+?)(\.git)?}.freeze
+GITHUB_REPO_REGEX = %r{https://github.com/(?<org>[\w._-]+)/(?<project>[\w_\-.]+)(\.git)?}.freeze
 SLASH_REGEX = %r{(?<org>[\w._-]+)/(?<project>[\w._-]+)}.freeze
 FILE_REGEX = %r{/blob/(?<sha>\w+)/(?<path>[\w/.-_]+)(#L?)?(?<line>\d+)?}.freeze
 
