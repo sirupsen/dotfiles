@@ -29,20 +29,31 @@ set statusline=
 set statusline+=%f:%l:%c\ %m
 " set statusline+=%{tagbar#currenttag('\ [%s]\ ','','')}
 set statusline+=%=
-set statusline+=%{FugitiveStatusline()}
+" set statusline+=%{FugitiveStatusline()}
 let g:asyncrun_status = "stopped"
 augroup QuickfixStatus
 	au! BufWinEnter quickfix setlocal 
 		\ statusline+=%t\ [%{g:asyncrun_status}]\ %{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%-15(%l,%c%V%)\ %P
 augroup END
 
-lua vim.cmd [[packadd packer.nvim]]
-augroup Packer
-  autocmd!
-  autocmd BufWritePost ~/.vimrc PackerCompile
-augroup end
-
 lua << EOF
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+print(lazypath)
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require('lazy').startup({
+	'tpope/vim-commentary',
+})
 
 simon_on_attach = function(client, bufnr)
    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -89,6 +100,17 @@ simon_on_attach = function(client, bufnr)
    buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
    buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
 
+    if client.supports_method("textDocument/formatting") then
+            vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                    group = augroup,
+                    buffer = bufnr,
+                    callback = function()
+                            vim.lsp.buf.format { async = false }
+                    end,
+            })
+    end
+
    -- Set some keybinds conditional on server capabilities
    -- if client.resolved_capabilities.document_formatting then
    buf_set_keymap("n", ",f", "<cmd>lua vim.lsp.buf.format({ async = true })<CR>", opts)
@@ -109,576 +131,479 @@ simon_on_attach = function(client, bufnr)
    --   augroup END
    --   ]], false)
    -- end
- end
--- Need it here for null_ls and for mason
--- REMEMBER TO RUN PackerSync, especially for opt = true!
--- TODO: Move all configuration in here
--- TODO: Lazy-load as much as possible
--- TODO: Convert configuration to Lua
-return require('packer').startup(function()
-  local enable_all = function() return true end
+end
 
-  use 'wbthomason/packer.nvim'
+--require('lazy').startup({
+--    {
+--        "zbirenbaum/copilot.lua",
+--        event = {"VimEnter"},
+--        config = function()
+--            require("copilot").setup {
+--              server_opts_overrides = {
+--                settings = {
+--                  advanced = {
+--                    listCount = 10, -- #completions for panel
+--                    inlineSuggestCount = 3, -- #completions for getCompletions
+--                  }
+--                },
+--              },
+--              filetypes = {
+--              },
+--              suggestion = {
+--                auto_trigger = false,
+--                debounce = 1000,
+--                keymap = {
+--                  next = "<C-j>",
+--                  prev = "<C-k>",
+--                  accept = "<C-l>",
+--                }
+--              },
+--              panel = {
+--                enabled = true,
+--                auto_refresh = false,
+--                keymap = {
+--                  jump_prev = "[[",
+--                  jump_next = "]]",
+--                  accept = "<CR>",
+--                  refresh = "gr",
+--                  open = "<C-h>"
+--                },
+--              },
+--            }
+--        end
+--  },
+--  {
+--    "zbirenbaum/copilot-cmp",
+--    dependencies = { "copilot.lua" },
+--    config = function ()
+--      require("copilot_cmp").setup {
+--        method = "getCompletionsCycling",
+--      }
+--    end
+--  },
+--  { 'sourcegraph/sg.nvim', build = 'nvim -l build/init.lua' },
+--  { 'hrsh7th/cmp-nvim-lsp'},
+--  { 'hrsh7th/cmp-buffer'},
+--  { 'hrsh7th/cmp-path'},
+--  { 'hrsh7th/cmp-cmdline'},
+--  { 'hrsh7th/nvim-cmp'},
+--  { 'hrsh7th/vim-vsnip'},
+--  { 'hrsh7th/cmp-vsnip'},
+--  {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'},
 
-  -- use {'github/copilot.vim' }
-
-  -- use({
-  --   "dpayne/CodeGPT.nvim",
-  --   requires = {
-  --     "MunifTanjim/nui.nvim",
-  --     "nvim-lua/plenary.nvim",
-  --   },
-  --   config = function()
-  --     require("codegpt.config")
-  --   end
-  -- })
-  -- or https://github.com/Robitx/gp.nvim
-  -- use { 'sourcegraph/sg.nvim', run = 'nvim -l build/init.lua' }
-
-  use({
-      "robitx/gp.nvim",
-      config = function()
-          require("gp").setup()
-      end,
-  })
-
---   use({
---   "jackMort/ChatGPT.nvim",
---     config = function()
---       require("chatgpt").setup({
---          openai_params = { 
---            model = "gpt-4", 
---            frequency_penalty = 0, 
---            presence_penalty = 0, 
---            max_tokens = 300, 
---            temperature = 0, 
---            top_p = 1, 
---            n = 1, 
+--  'windwp/nvim-ts-autotag',
+--  'RRethy/nvim-treesitter-endwise',
+--  'nvim-treesitter/nvim-treesitter-textobjects', -- if / af for selection body
+--  {
+--    "arsham/indent-tools.nvim",
+--    dependencies = { "arsham/arshlib.nvim" },
+--  },
+--  'nvim-treesitter/nvim-treesitter-context',
+--  'michaeljsmith/vim-indent-object',
+--  { 
+--    'JoosepAlviste/nvim-ts-context-commentstring',
+--    config = function()
+--      vim.g.skip_ts_context_commentstring_module = true
+--    end
+--  },
+--  'tpope/vim-commentary',
+--  'tpope/vim-sleuth', -- Set shiftwidth automatically
+--  'editorconfig/editorconfig-vim',
+--
+--  'nvim-lua/plenary.nvim', -- Utility functions
+--  "MunifTanjim/nui.nvim", -- UI library dependency
+--
+--  {
+--    'lewis6991/gitsigns.nvim',
+--    dependencies = { 'nvim-lua/plenary.nvim' },
+--    config = function()
+--      require('gitsigns').setup {
+--          current_line_blame = true,
+--          current_line_blame_opts = {
+--            delay = 2000,
 --          },
---          openai_edit_params = { 
---            model = "gpt-4", 
---            frequency_penalty = 0, 
---            presence_penalty = 0, 
---            max_tokens = 300, 
---            temperature = 0, 
---            top_p = 1, 
---            n = 1, 
+--          on_attach = function(bufnr)
+--              local gs = package.loaded.gitsigns
+--              if vim.g.gitgutter_diff_base then
+--                gs.change_base(vim.g.gitgutter_diff_base, true)
+--              end
+--
+--              local function map(mode, l, r, opts)
+--                opts = opts or {}
+--                opts.buffer = bufnr
+--                vim.keymap.set(mode, l, r, opts)
+--              end
+--
+--              -- Navigation
+--              map('n', ']h', function()
+--                if vim.wo.diff then return ']h' end
+--                vim.schedule(function() gs.next_hunk() end)
+--                return '<Ignore>'
+--              end, {expr=true})
+--
+--              map('n', '[h', function()
+--                if vim.wo.diff then return '[h' end
+--                vim.schedule(function() gs.prev_hunk() end)
+--                return '<Ignore>'
+--              end, {expr=true})
+--
+--              -- Our own
+--              -- map('n', '<leader>hm', gs.change_base('master', true))
+--              -- map('n', '<leader>hc', vim.ui.input({prompt = 'Change Git Base To: ', default = vim.g.gitgutter_diff_base}, function(input) gs.change_base(input, true); end, true))
+--
+--              -- -- Actions
+--              map('n', '<leader>hs', gs.stage_hunk)
+--              map('n', '<leader>hr', gs.reset_hunk)
+--              map('v', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+--              map('v', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+--              map('n', '<leader>hS', gs.stage_buffer)
+--              map('n', '<leader>hu', gs.undo_stage_hunk)
+--              map('n', '<leader>hR', gs.reset_buffer)
+--              map('n', '<leader>hp', gs.preview_hunk)
+--              map('n', '<leader>hB', function() gs.blame_line{full=true} end)
+--              map('n', '<leader>hb', gs.toggle_current_line_blame)
+--              map('n', '<leader>hd', gs.diffthis)
+--              map('n', '<leader>hD', function() gs.diffthis('~') end)
+--              map('n', '<leader>he', gs.toggle_deleted)
+--              map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+--          end
+--        }
+--    end
+--  },
+--  'tpope/vim-rhubarb', -- Gbrowse
+--  'tpope/vim-fugitive',
+--
+--  ------------------------
+--  ---- Code Navigbation --
+--  ------------------------
+--  -- Lsp --
+--  'williamboman/mason.nvim',
+--
+--  {'williamboman/mason-lspconfig.nvim', config = function()
+--    require("mason").setup()
+--    require("mason-lspconfig").setup()
+--    require("mason-lspconfig").setup_handlers({
+--        -- The first entry (without a key) will be the default handler
+--        -- and will be called for each installed server that doesn't have
+--        -- a dedicated handler.
+--        function (server_name) -- default handler (optional)
+--            -- Basically just https://github.com/neovim/nvim-lspconfig
+--            require("lspconfig")[server_name].setup {
+--              on_attach = simon_on_attach,
+--            }
+--        end,
+--
+--        ["rust_analyzer"] = function ()
+--            require("rust-tools").setup {}
+--            require("lspconfig")["rust_analyzer"].setup {
+--              on_attach = simon_on_attach,
+--              settings = {
+--                ["rust-analyzer"] = {
+--                  checkOnSave = {
+--                    command = "clippy"
+--                  },
+--                  diagnostics = {
+--                    disabled = {"inactive-code"}
+--                  }
+--                }
+--              }
+--            }
+--        end
+--    })
+--  end
+--  },
+--  'neovim/nvim-lspconfig',
+--
+--  {'WhoIsSethDaniel/mason-tool-installer.nvim', config = function()
+--      require'mason-tool-installer'.setup {
+--        ensure_installed = {
+--          'lua-language-server',
+--          'stylua',
+--
+--          'bash-language-server',
+--          'shellcheck',
+--          'shfmt',
+--
+--          'tailwindcss-language-server',
+--
+--          'vim-language-server',
+--
+--          'rust-analyzer',
+--
+--          'dockerfile-language-server',
+--          'hadolint', -- Dockerfiles
+--
+--          'fixjson',
+--          'json-lsp',
+--
+--          -- writing
+--          -- 'remark-language-server',
+--
+--          'goimports',
+--          'gofumpt',
+--          'gopls',
+--          'staticcheck',
+--          'vint',
+--
+--          -- python
+--          'autopep8',
+--          'black',
+--          -- 'pyright', 'pyre',
+--          'mypy',
+--          'ruff',
+--          'isort',
+--          'flake8',
+--
+--          'solargraph',
+--
+--          'sql-formatter',
+--
+--          'typescript-language-server',
+--          'eslint-lsp',
+--        }
+--      }
+--    end
+--  },
+--
+--  { 'jose-elias-alvarez/null-ls.nvim', -- Create LS from shell tools
+--    -- Probably need to do this https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTIN_CONFIG.md#using-local-executables
+--    config = function()
+--      local null_ls = require("null-ls")
+--      local methods = require("null-ls.methods")
+--      null_ls.setup({
+--          on_attach = simon_on_attach,
+--          -- debug = true,
+--          sources = {
+--              -- How to install plugins when installed by Mason..?
+--              --   1. cd to ~/.local/share/nvim/mason/packages/flake8
+--              --   2. activate the venv: source venv/bin/activate
+--              -- https://github.com/williamboman/mason.nvim/issues/179#issuecomment-1198291091
+--              -- https://github.com/DmytroLitvinov/awesome-flake8-extensions
+--              --   pandas-vet flake8-bugbear flake8-simplify flake8-pie flake8-django
+--              -- https://github.com/williamboman/mason.nvim/issues/392 should fix!
+--              -- null_ls.builtins.diagnostics.flake8.with({
+--              --   extra_args = { "--max-line-length", "120" },
+--              -- }),
+--              null_ls.builtins.formatting.black.with({
+--                -- extra_args = { "--line-length", "120" },
+--              }),
+--              null_ls.builtins.formatting.isort,
+--              null_ls.builtins.diagnostics.mypy.with({
+--                 command = '/Users/simon/.asdf/shims/mypy',
+--                 method = methods.internal.DIAGNOSTICS_ON_SAVE,
+--               }),
+--              -- null_ls.builtins.formatting.autopep8,
+--
+--              null_ls.builtins.formatting.fixjson,
+--              null_ls.builtins.formatting.stylua,
+--
+--              null_ls.builtins.formatting.goimports,
+--              null_ls.builtins.formatting.jq,
+--
+--              -- null_ls.builtins.diagnostics.eslint,
+--              -- null_ls.builtins.formatting.eslint,
+--
+--              -- null_ls.builtins.formatting.eslint_d,
+--              -- null_ls.builtins.diagonistics.eslint_d,
+--              -- null_ls.builtins.code_actions.xo -- Try xo an eslint wrapper if eslint not working?
+--
+--              null_ls.builtins.diagnostics.hadolint, -- Dockerfiles
+--              null_ls.builtins.diagnostics.jsonlint,
+--              null_ls.builtins.diagnostics.shellcheck,
+--              null_ls.builtins.code_actions.refactoring,
+--          }
+--      })
+--    end,
+--  },
+--
+--  'folke/lsp-colors.nvim',
+--
+--  { 'kyazdani42/nvim-web-devicons',
+--    config = function()
+--      require('nvim-web-devicons').setup {
+--        default = true;
+--      }
+--    end,
+--  },
+--  {
+--    "ThePrimeagen/refactoring.nvim",
+--    dependencies = {
+--      {"nvim-lua/plenary.nvim"},
+--      {"nvim-treesitter/nvim-treesitter"}
+--    }
+--  },
+--
+--  ---- Fzf -- 
+--  {
+--    'ibhagwan/fzf-lua',
+--    dependencies = { 'kyazdani42/nvim-web-devicons' },
+--    config = function()
+--      actions = require "fzf-lua.actions"
+--      fzf = require('fzf-lua')
+--      fzf.register_ui_select()
+--      -- https://github.com/ibhagwan/nvim-lua/blob/main/lua/plugins/fzf-lua/init.lua
+--      fzf.setup {
+--        winopts = {
+--          height = 0.9,
+--          width = 0.9,
+--          preview = {
+--            default = 'bat',
+--            flip_columns        = 500,        -- how many columns to allow vertical split
+--            winopts = {                       -- builtin previewer window options
+--              number            = false,
+--              relativenumber    = false,
+--            },
+--          }
+--        },
+--        previewers = {
+--          builtin = {
+--            syntax_limit_b = 1024 * 24,
+--            limit_b = 1024 * 24,
 --          },
---         -- keymaps = {
---         --   submit = "<C-s>"
---         -- }
---       })
---     end,
---     requires = {
---       "MunifTanjim/nui.nvim",
---       "nvim-lua/plenary.nvim",
---       "nvim-telescope/telescope.nvim"
---     }
---   })
-
-  use {
-    "zbirenbaum/copilot.lua",
-    event = {"VimEnter"},
-    config = function()
-      -- vim.defer_fn(function()
-        require("copilot").setup {
-          server_opts_overrides = {
-            settings = {
-              advanced = {
-                listCount = 10, -- #completions for panel
-                inlineSuggestCount = 3, -- #completions for getCompletions
-              }
-            },
-          },
-          filetypes = {
-          },
-          suggestion = {
-            auto_trigger = false,
-            debounce = 1000,
-            keymap = {
-              next = "<C-j>",
-              prev = "<C-k>",
-              accept = "<C-l>",
-            }
-          },
-          panel = {
-            enabled = true,
-            auto_refresh = false,
-            keymap = {
-              jump_prev = "[[",
-              jump_next = "]]",
-              accept = "<CR>",
-              refresh = "gr",
-              open = "<C-h>"
-            },
-          },
-        }
-      -- end, 100)
-    end,
-  }
-
-  use {
-    "zbirenbaum/copilot-cmp",
-    after = { "copilot.lua" },
-    config = function ()
-      require("copilot_cmp").setup {
-        method = "getCompletionsCycling",
-      }
-    end
-  }
-
-  use { 'hrsh7th/cmp-nvim-lsp'}
-  use { 'hrsh7th/cmp-buffer'}
-  use { 'hrsh7th/cmp-path'}
-  use { 'hrsh7th/cmp-cmdline'}
-  use { "kdheepak/cmp-latex-symbols"}
-
-  use { 'hrsh7th/nvim-cmp'}
-
-  use { 'hrsh7th/vim-vsnip'}
-  use { 'hrsh7th/cmp-vsnip'}
-  use { "rafamadriz/friendly-snippets"}
-  -- https://github.com/mrjones2014/dash.nvim/issues/25
-  -- use({
-  --   'mrjones2014/dash.nvim',
-  --   run = 'make install',
-  --   config = function()
-  --     require('dash').setup({
-  --       file_type_keywords = {
-  --         python = { 'py', 'torch', 'pandas', 'scikit' }
-  --       }
-  --     })
-  --   end
-  -- })
-
-
-  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
-  -- use 'andymass/vim-matchup'
-  use 'windwp/nvim-ts-autotag'
-  use 'RRethy/nvim-treesitter-endwise'
-  use 'nvim-treesitter/nvim-treesitter-textobjects' -- if / af for selection body
-  use({
-    "arsham/indent-tools.nvim",
-    requires = { "arsham/arshlib.nvim" },
-    config = function() require("indent-tools").config({}) end,
-    -- keys = { "]i", "[i", { "v", "ii" }, { "o", "ii" } },
-  })
-  use 'nvim-treesitter/nvim-treesitter-context'
-  use 'michaeljsmith/vim-indent-object'
-  use { 
-    'JoosepAlviste/nvim-ts-context-commentstring',
-    config = function()
-      vim.g.skip_ts_context_commentstring_module = true
-    end
-  }
-  use 'tpope/vim-commentary'
-  use 'tpope/vim-sleuth' -- Set shiftwidth automatically
-  use 'editorconfig/editorconfig-vim'
-
-  ---- Lua --
-  use 'nvim-lua/plenary.nvim' -- Utility functions
-  use "MunifTanjim/nui.nvim"
-
-  -- Git --
-  use {
-    -- https://github.com/lewis6991/gitsigns.nvim has deprecated `keymaps`, switch to the new one in the README.
-    'lewis6991/gitsigns.nvim',
-    requires = { 'nvim-lua/plenary.nvim' },
-    config = function()
-      -- if vim.g.gitgutter_diff_base then
-      --   require('gitsigns').change_base(vim.g.gitgutter_diff_base, true)
-      -- end
-
-      require('gitsigns').setup {
-          current_line_blame = true,
-          current_line_blame_opts = {
-            delay = 2000,
-          },
-          on_attach = function(bufnr)
-              local gs = package.loaded.gitsigns
-              if vim.g.gitgutter_diff_base then
-                gs.change_base(vim.g.gitgutter_diff_base, true)
-              end
-
-              local function map(mode, l, r, opts)
-                opts = opts or {}
-                opts.buffer = bufnr
-                vim.keymap.set(mode, l, r, opts)
-              end
-
-              -- Navigation
-              map('n', ']h', function()
-                if vim.wo.diff then return ']h' end
-                vim.schedule(function() gs.next_hunk() end)
-                return '<Ignore>'
-              end, {expr=true})
-
-              map('n', '[h', function()
-                if vim.wo.diff then return '[h' end
-                vim.schedule(function() gs.prev_hunk() end)
-                return '<Ignore>'
-              end, {expr=true})
-
-              -- Actions
-              map({'n', 'v'}, '<leader>hs', ':Gitsigns stage_hunk<CR>')
-              map({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>')
-              map('n', '<leader>hS', gs.stage_buffer)
-              map('n', '<leader>hu', gs.undo_stage_hunk)
-              map('n', '<leader>hR', gs.reset_buffer)
-              map('n', '<leader>hp', gs.preview_hunk)
-              map('n', '<leader>hB', function() gs.blame_line{full=true} end)
-              map('n', '<leader>hb', gs.toggle_current_line_blame)
-
-              -- if not vim.g.gitgutter_main_branch then
-              --   vim.g.gitgutter_main_branch = vim.api.nvim_exec("!git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'", true):sub(0, -2)
-              -- end
-              -- map('n', '<leader>hm', function() gs.change_base(vim.g.gitgutter_main_branch, true) end)
-              -- map('n', '<leader>hM', function() gs.change_base(nil, true) end)
-
-              map('n', '<leader>hd', gs.diffthis)
-              map('n', '<leader>hD', function() gs.diffthis('~') end)
-
-              -- map('n', '<leader>he', gs.toggle_deleted)
-
-              -- map('n', '<leader>hc', vim.ui.input({prompt = 'Change Git Base To: ', default = vim.g.gitgutter_diff_base}, function(input) gs.change_base(input, true); end, true))
-
-              -- Text object
-              map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-          end
-
-        }
-    end
-  }
-  use 'tpope/vim-rhubarb' -- Gbrowse
-  use 'tpope/vim-fugitive'
-
-  ------------------------
-  ---- Code Navigbation --
-  ------------------------
-  -- Lsp --
-  use { 'williamboman/mason.nvim', config = function() 
-    -- require("mason").setup({})
-  end
-  }
-
-  use {'williamboman/mason-lspconfig.nvim', config = function()
-    require("mason").setup()
-    require("mason-lspconfig").setup()
-    require("mason-lspconfig").setup_handlers({
-        -- The first entry (without a key) will be the default handler
-        -- and will be called for each installed server that doesn't have
-        -- a dedicated handler.
-        function (server_name) -- default handler (optional)
-            -- Basically just https://github.com/neovim/nvim-lspconfig
-            require("lspconfig")[server_name].setup {
-              on_attach = simon_on_attach,
-            }
-        end,
-
-        ["rust_analyzer"] = function ()
-            require("rust-tools").setup {}
-            require("lspconfig")["rust_analyzer"].setup {
-              on_attach = simon_on_attach,
-              settings = {
-                ["rust-analyzer"] = {
-                  checkOnSave = {
-                    command = "clippy"
-                  },
-                  diagnostics = {
-                    disabled = {"inactive-code"}
-                  }
-                }
-              }
-            }
-        end
-    })
-  end
-  }
-
-  use 'neovim/nvim-lspconfig'
-
-  use {'WhoIsSethDaniel/mason-tool-installer.nvim', config = function()
-      require'mason-tool-installer'.setup {
-        ensure_installed = {
-          'lua-language-server',
-          'stylua',
-
-          'bash-language-server',
-          'shellcheck',
-          'shfmt',
-
-          'tailwindcss-language-server',
-
-          'vim-language-server',
-
-          'rust-analyzer',
-
-          'dockerfile-language-server',
-          'hadolint', -- Dockerfiles
-
-          'fixjson',
-          'json-lsp',
-
-          -- writing
-          -- 'remark-language-server',
-
-          'goimports',
-          'gofumpt',
-          'gopls',
-          'staticcheck',
-          'vint',
-
-          -- python
-          'autopep8',
-          'black',
-          -- 'pyright', 'pyre',
-          'mypy',
-          'ruff',
-          'isort',
-          'flake8',
-
-          'solargraph',
-
-          'sql-formatter',
-
-          'typescript-language-server',
-          'eslint-lsp',
-        }
-      }
-  end }
-
-  use { 'jose-elias-alvarez/null-ls.nvim', -- Create LS from shell tools
-    -- Probably need to do this https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTIN_CONFIG.md#using-local-executables
-    config = function()
-      local null_ls = require("null-ls")
-      local methods = require("null-ls.methods")
-      null_ls.setup({
-          on_attach = simon_on_attach,
-          -- debug = true,
-          sources = {
-              -- How to install plugins when installed by Mason..?
-              --   1. cd to ~/.local/share/nvim/mason/packages/flake8
-              --   2. activate the venv: source venv/bin/activate
-              -- https://github.com/williamboman/mason.nvim/issues/179#issuecomment-1198291091
-              -- https://github.com/DmytroLitvinov/awesome-flake8-extensions
-              --   pandas-vet flake8-bugbear flake8-simplify flake8-pie flake8-django
-              -- https://github.com/williamboman/mason.nvim/issues/392 should fix!
-              -- null_ls.builtins.diagnostics.flake8.with({
-              --   extra_args = { "--max-line-length", "120" },
-              -- }),
-              null_ls.builtins.formatting.black.with({
-                -- extra_args = { "--line-length", "120" },
-              }),
-              null_ls.builtins.formatting.isort,
-              null_ls.builtins.diagnostics.mypy.with({
-                 command = '/Users/simon/.asdf/shims/mypy',
-                 method = methods.internal.DIAGNOSTICS_ON_SAVE,
-               }),
-              -- null_ls.builtins.formatting.autopep8,
-
-              null_ls.builtins.formatting.fixjson,
-              null_ls.builtins.formatting.stylua,
-
-              null_ls.builtins.formatting.goimports,
-              null_ls.builtins.formatting.jq,
-
-              -- null_ls.builtins.diagnostics.eslint,
-              -- null_ls.builtins.formatting.eslint,
-
-              -- null_ls.builtins.formatting.eslint_d,
-              -- null_ls.builtins.diagonistics.eslint_d,
-              -- null_ls.builtins.code_actions.xo -- Try xo an eslint wrapper if eslint not working?
-
-              null_ls.builtins.diagnostics.hadolint, -- Dockerfiles
-              null_ls.builtins.diagnostics.jsonlint,
-              null_ls.builtins.diagnostics.shellcheck,
-
-              null_ls.builtins.code_actions.gitsigns,
-              null_ls.builtins.code_actions.refactoring,
-          }
-      })
-    end,
-  }
-
-  use 'folke/lsp-colors.nvim'
-  use { 'kyazdani42/nvim-web-devicons',
-    config = function()
-      require('nvim-web-devicons').setup {
-        default = true;
-      }
-    end,
-  }
-  use {
-    "ThePrimeagen/refactoring.nvim",
-    requires = {
-      {"nvim-lua/plenary.nvim"},
-      {"nvim-treesitter/nvim-treesitter"}
-    }
-  }
-
-  ---- Fzf -- 
-  use {
-    'ibhagwan/fzf-lua', -- Nifty LSP commands, doesn't support tmux
-    requires = { 'kyazdani42/nvim-web-devicons' },
-    config = function()
-      actions = require "fzf-lua.actions"
-      fzf = require('fzf-lua')
-      fzf.register_ui_select()
-      -- https://github.com/ibhagwan/nvim-lua/blob/main/lua/plugins/fzf-lua/init.lua
-      fzf.setup {
-        winopts = {
-          height = 0.9,
-          width = 0.9,
-          preview = {
-            default = 'bat',
-            flip_columns        = 500,        -- how many columns to allow vertical split
-            winopts = {                       -- builtin previewer window options
-              number            = false,
-              relativenumber    = false,
-            },
-          }
-        },
-        previewers = {
-          builtin = {
-            syntax_limit_b = 1024 * 24,
-            limit_b = 1024 * 24,
-          },
-          bat = {
-            theme = 'base16-256',
-          },
-        },
-        fzf_opts = {
-          ['--ansi']        = '',
-          ['--prompt']      = '> ',
-          ['--info']        = 'inline',
-          ['--height']      = '100%',
-          ['--layout']      = 'reverse',
-        },
-        tags = {
-          fzf_opts = { ['--nth'] = '2' },
-        },
-        files = {
-          -- Don't follow symlinks, weird behavior in JS repos.
-          fd_opts           = "--color=never --type f --hidden --exclude .git",
-        },
-        actions = {
-            buffers = {
-                ["default"]     = actions.buf_edit,
-                ["ctrl-x"]      = actions.buf_split,
-                ["ctrl-v"]      = actions.buf_vsplit,
-                ["ctrl-t"]      = actions.buf_tabedit,
-            },
-            files = {
-                ["default"]     = actions.file_edit_or_qf,
-                ["ctrl-x"]      = actions.file_split,
-                ["ctrl-v"]      = actions.file_vsplit,
-                ["ctrl-t"]      = actions.file_tabedit,
-                ["alt-q"]       = actions.file_sel_to_qf,
-            }
-        },
-        buffers = {
-          actions = {
-            ["ctrl-x"]          = actions.buf_split,
-            ["ctrl-d"]          = { actions.buf_del, actions.resume },
-          }
-        }
-      }
-
-      vim.cmd [[
-        map z= :lua require("fzf-lua").spell_suggest()<CR>
-        map <A-j> :lua require("fzf-lua").git_status()<CR>
-      ]]
-    end
-  }
-  use {
-    'majutsushi/tagbar',
-    cmd = "TagbarToggle",
-    keys = "\\l",
-    config = function()
-      vim.cmd [[
-        nmap \l :TagbarToggle<CR>
-        map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-        let g:tagbar_compact = 1
-        let g:tagbar_indent = 1
-      ]]
-    end
-  }
-  use {
-    'simrat39/symbols-outline.nvim',
-    keys = "\\l",
-    config = function()
-      require("symbols-outline").setup()
-      vim.keymap.set("n", "\\l", "<cmd>SymbolsOutline<CR>")
-      -- vim.cmd [[
-      --   nmap \l :SymbolsOutline<CR>
-      -- ]]
-    end
-  }
-
-  -- Standard Vim ergonomics
-  use 'norcalli/nvim-colorizer.lua'
-  use 'milkypostman/vim-togglelist'
-
-  use { "tpope/vim-surround",
-    keys = {"c", "d", "y"},
-    config = function ()
-      vim.cmd("nmap ds       <Plug>Dsurround")
-      vim.cmd("nmap cs       <Plug>Csurround")
-      vim.cmd("nmap cS       <Plug>CSurround")
-      vim.cmd("nmap ys       <Plug>Ysurround")
-      vim.cmd("nmap yS       <Plug>YSurround")
-      vim.cmd("nmap yss      <Plug>Yssurround")
-      vim.cmd("nmap ySs      <Plug>YSsurround")
-      vim.cmd("nmap ySS      <Plug>YSsurround")
-      vim.cmd("xmap gs       <Plug>VSurround")
-      vim.cmd("xmap gS       <Plug>VgSurround")
-      vim.g.surround_111 = "**\\r**"
-      vim.cmd [[ let g:surround_111 = "**\r**" ]]
-      vim.cmd [[ let g:surround_{char2nr('b')} = "**\r**" ]]
-    end
-  }
-  use 'tpope/vim-eunuch' -- Unix commands
-  use 'tpope/vim-unimpaired'
-  use 'tpope/vim-repeat'
-  use 'RRethy/nvim-base16'
-
-  use 'janko-m/vim-test'
-  use 'mfussenegger/nvim-dap'
-  use 'benmills/vimux'
-  use { 'skywind3000/asyncrun.vim', keys = "!l",
-    config = function() vim.cmd [[ map !l :AsyncRun bash -lc 'ctags-build'<CR> ]] end }
-
-  use {
-    'kyazdani42/nvim-tree.lua',
-    requires = {
-        'kyazdani42/nvim-web-devicons', -- optional, for file icon
-    },
-    config = function()
-      require'nvim-tree'.setup {}
-      vim.cmd [[ map \t :NvimTreeToggle<CR> ]]
-    end
-  }
-
-  ---- Languages -- 
-  ---- We rely on TreeSitter by default, but for some languages we may want more.
-  ----
-  ---- * List indentation
-  ---- * Make quote syntax nice and greyed out (like a comment)
-  use {'preservim/vim-markdown', ft = {'markdown'}, config = function()
-    vim.cmd [[
-      let g:vim_markdown_new_list_item_indent = 2
-      let g:vim_markdown_folding_disabled = 1
-      let g:vim_markdown_frontmatter = 1
-      let g:vim_markdown_auto_insert_bullets = 1
-      let g:vim_markdown_math = 1
-    ]]
-  end }
-  use 'godlygeek/tabular'
-  use 'simrat39/rust-tools.nvim'
-  use 'dcharbon/vim-flatbuffers'
-
-  use { 'vim-ruby/vim-ruby', ft = 'ruby' } -- Need it for the indent..
-end)
+--          bat = {
+--            theme = 'base16-256',
+--          },
+--        },
+--        fzf_opts = {
+--          ['--ansi']        = '',
+--          ['--prompt']      = '> ',
+--          ['--info']        = 'inline',
+--          ['--height']      = '100%',
+--          ['--layout']      = 'reverse',
+--        },
+--        tags = {
+--          fzf_opts = { ['--nth'] = '2' },
+--        },
+--        lsp = {
+--          fzf_opts = { ['--tiebreak'] = 'short,begin' },
+--        },
+--        files = {
+--          -- Don't follow symlinks, weird behavior in JS repos.
+--          fd_opts           = "--color=never --type f --hidden --exclude .git",
+--        },
+--        actions = {
+--            buffers = {
+--                ["default"]     = actions.buf_edit,
+--                ["ctrl-x"]      = actions.buf_split,
+--                ["ctrl-v"]      = actions.buf_vsplit,
+--                ["ctrl-t"]      = actions.buf_tabedit,
+--            },
+--            files = {
+--                ["default"]     = actions.file_edit_or_qf,
+--                ["ctrl-x"]      = actions.file_split,
+--                ["ctrl-v"]      = actions.file_vsplit,
+--                ["ctrl-t"]      = actions.file_tabedit,
+--                ["alt-q"]       = actions.file_sel_to_qf,
+--            }
+--        },
+--        buffers = {
+--          actions = {
+--            ["ctrl-x"]          = actions.buf_split,
+--            ["ctrl-d"]          = { actions.buf_del, actions.resume },
+--          }
+--        }
+--      }
+--
+--      vim.cmd [[
+--        map z= :lua require("fzf-lua").spell_suggest()<CR>
+--        map <A-j> :lua require("fzf-lua").git_status()<CR>
+--      ]]
+--    end
+--  },
+--  {
+--    'majutsushi/tagbar',
+--    keys = { 
+--      { "\\l", "<cmd>TagbarToggle<cr>" }
+--    },
+--    config = function()
+--      vim.cmd [[
+--        nmap \l :TagbarToggle<CR>
+--        map <C-W>[ :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+--        let g:tagbar_compact = 1
+--        let g:tagbar_indent = 1
+--      ]]
+--    end
+--  },
+--  {
+--    'simrat39/symbols-outline.nvim',
+--    keys = { 
+--      { "\\l" }
+--    },
+--    config = function()
+--      require("symbols-outline").setup()
+--      vim.keymap.set("n", "\\l", "<cmd>SymbolsOutline<CR>")
+--      -- vim.cmd [[
+--      --   nmap \l :SymbolsOutline<CR>
+--      -- ]]
+--    end
+--  },
+--  -- Standard Vim ergonomics
+--  'norcalli/nvim-colorizer.lua',
+--  'milkypostman/vim-togglelist',
+--  { "tpope/vim-surround",
+--    keys = {"c", "d", "y"},
+--    config = function ()
+--      vim.cmd("nmap ds       <Plug>Dsurround")
+--      vim.cmd("nmap cs       <Plug>Csurround")
+--      vim.cmd("nmap cS       <Plug>CSurround")
+--      vim.cmd("nmap ys       <Plug>Ysurround")
+--      vim.cmd("nmap yS       <Plug>YSurround")
+--      vim.cmd("nmap yss      <Plug>Yssurround")
+--      vim.cmd("nmap ySs      <Plug>YSsurround")
+--      vim.cmd("nmap ySS      <Plug>YSsurround")
+--      vim.cmd("xmap gs       <Plug>VSurround")
+--      vim.cmd("xmap gS       <Plug>VgSurround")
+--      vim.g.surround_111 = "**\\r**"
+--      vim.cmd [[ let g:surround_111 = "**\r**" ]]
+--      vim.cmd [[ let g:surround_{char2nr('b')} = "**\r**" ]]
+--    end
+--  },
+--  'tpope/vim-eunuch',
+--  'tpope/vim-unimpaired',
+--  'tpope/vim-repeat',
+--  'RRethy/nvim-base16',
+--  'janko-m/vim-test',
+--  'mfussenegger/nvim-dap',
+--  'benmills/vimux',
+--  { 'skywind3000/asyncrun.vim', keys = { { "!l" } },
+--    config = function()
+--      vim.cmd [[ map !l :AsyncRun bash -lc 'ctags-build'<CR> ]]
+--    end
+--  },
+--  {
+--    'kyazdani42/nvim-tree.lua',
+--    dependencies = {
+--        'kyazdani42/nvim-web-devicons', -- optional, for file icon
+--    },
+--    config = function()
+--      require'nvim-tree'.setup {}
+--      vim.cmd [[ map \t :NvimTreeToggle<CR> ]]
+--    end
+--  },
+--
+--  ---- Languages -- 
+--  ---- We rely on TreeSitter by default, but for some languages we may want more.
+--  ----
+--  ---- * List indentation
+--  ---- * Make quote syntax nice and greyed out (like a comment)
+--  {'preservim/vim-markdown', ft = {'markdown'},
+--    config = function()
+--      vim.cmd [[
+--        let g:vim_markdown_new_list_item_indent = 2
+--        let g:vim_markdown_folding_disabled = 1
+--        let g:vim_markdown_frontmatter = 1
+--        let g:vim_markdown_auto_insert_bullets = 1
+--        let g:vim_markdown_math = 1
+--      ]]
+--    end
+--  },
+--  'godlygeek/tabular',
+--  'simrat39/rust-tools.nvim',
+--  'dcharbon/vim-flatbuffers',
+--
+--   -- Need it for the indent..
+--  { 'vim-ruby/vim-ruby', ft = 'ruby' },
+--})
 EOF
 
 map <C-g> :lua require('fzf-lua').live_grep()<CR>
@@ -758,7 +683,7 @@ set spell spelllang=en_ca
 set completeopt=menu,menuone,noselect
 
 lua << EOF
- local cmp = require'cmp'
+ local cmp = require("cmp")
  
  local has_words_before = function()
    if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
@@ -769,7 +694,7 @@ lua << EOF
  local feedkey = function(key, mode)
    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
  end
- 
+
  cmp.setup({
    enabled = function()
      if require"cmp.config.context".in_treesitter_capture("comment")==true or require"cmp.config.context".in_syntax_group("Comment") then
@@ -820,6 +745,8 @@ lua << EOF
       }),
    },
    sources = cmp.config.sources({
+     -- { name = 'cmp_ai', group_index = 2 },
+     { name = "cody", group_index = 2 },
      { name = "copilot", group_index = 2 },
      { name = "latex_symbols", group_index = 2 },
      { name = 'nvim_lsp', group_index = 2 },

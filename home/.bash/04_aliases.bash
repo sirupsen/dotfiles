@@ -157,13 +157,13 @@ alias g4code='g4 --code'
 
 gsum() {
     if [ $# -eq 2 ]; then
-        query="Generate git commit message using semantic versioning. Declare commit message as $1. $2. My changes: $(git diff)"
+        query="Generate git commit message using semantic versioning. Declare commit message as $1. $2. My changes: $(git diff --staged)"
     elif [ $# -eq 1 ]; then
-        query="Generate git commit message using semantic versioning. Declare commit message as $1. My changes: $(git diff)"
+        query="Generate git commit message using semantic versioning. Declare commit message as $1. My changes: $(git diff --staged)"
     else
-        query="Generate git commit message using semantic versioning. My changes: $(git diff)"
+        query="Generate git commit message using semantic versioning. My changes: $(git diff --staged)"
     fi
-    commit_message="$(sgpt txt "$query")"
+    commit_message="$(sgpt --model gpt-3.5-turbo-16k txt "$query")"
     printf "%s\n" "$commit_message"
     read -rp "Do you want to commit your changes with this commit message? [y/N] " response
     if [[ $response =~ ^[Yy]$ ]]; then
