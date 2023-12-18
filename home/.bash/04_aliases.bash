@@ -7,6 +7,7 @@ fi
 # alias box-ssh="ssh -t pufferbox tmux new-session -A -s main"
 alias box="mosh gcp1 -p 60000 -- tmux new-session -A -s main"
 alias box-ssh="ssh -t gcp1 tmux new-session -A -s main"
+alias spot-ssh='gcloud compute ssh --zone "us-central1-c" "gcp-spotbox1" --project "turbopuffer"'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ls="ls -G"
@@ -41,7 +42,7 @@ git-find-merge() {
     | tail -1
 }
 
-alias default_branch="git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
+alias default_branch="git remote show origin | sed -n '/HEAD branch/s/.*: //p'"
 alias cbt="BIGTABLE_EMULATOR_HOST= cbt"
 alias gcb="git rev-parse --abbrev-ref HEAD"
 alias gp='git push `git_origin_or_fork` `gcb`'
@@ -54,11 +55,19 @@ alias gbr='git branch --no-merged origin/master --sort=-committerdate --verbose'
 alias grc='git rebase --continue'
 alias gl='git log --oneline'
 alias gco='git checkout'
+function gb() {
+  branch="$(git branch --sort=-committerdate --format="%(committerdate:relative)%09%(refname:short)%09%(subject)" \
+      | column -ts $'\t' \
+      | fzf \
+      | sed 's/.*ago \+\([^ ]*\) .*/\1/')" 
+
+  git checkout "$branch"
+}
 alias gcof='git checkout $(gb | fzf)'
-alias gb='git branch'
+# alias gb='git branch'
 alias gpf='if [[ $(gcb) != "master" ]]; then git push `git_origin_or_fork` +`gcb`; else echo "Not going to force push master bud"; fi'
 function gd() {
-  git diff $@ ':!*lock'
+  git diff "$@" ':!*lock'
 }
 alias gg='git grep'
 alias ggi='git grep -i'
@@ -108,7 +117,7 @@ alias tfc='tmux set-buffer "$(pbpaste)"'
 alias walrus="ruby -e 'loop { 0.upto(50) { |i| print \"\r\" + (\" \" * i) + \":\" + %w(€ c)[i%2] + \".\" * (50-i); sleep 0.25 } }'"
 alias rlias=". ~/.bash/*alias*"
 alias elias="vim ~/.bash/04_aliases.bash; rlias"
-alias vimrc="vim ~/.vimrc"
+alias vimrc="vim ~/.config/nvim/init.vim"
 alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
 alias churl="chrome --headless --disable-gpu --dump-dom"
 
