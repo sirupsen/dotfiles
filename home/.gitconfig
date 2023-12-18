@@ -24,9 +24,9 @@
 [diff]
 	algorithm = patience
 [core]
-	commitGraph = true
+  commitGraph = true
   pager = delta
-	excludesfile = ~/.global_gitignore
+  excludesfile = ~/.global_gitignore
 [gc]
 	writeCommitGraph = true
 [web]
