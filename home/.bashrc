@@ -74,29 +74,7 @@ fi
 export FTS_PATH=$ZK_PATH
 export PATH="$PATH:$HOME/src/zk/bin"
 export BIGTABLE_EMULATOR_HOST=localhost:8086
-
-# load dev, but only if present and the shell is interactive
-# if [[ -f /opt/dev/dev.sh ]] && [[ $- == *i* ]]; then
-#   source /opt/dev/dev.sh
-# fi
-
-# if [ $(uname) == "Darwin" ]; then
-#   source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
-#   chruby 3
-# else
-#   source /usr/local/share/chruby/chruby.sh
-# fi
-
-# conda init "$(basename "${SHELL}")" > /dev/null 2>&1
-# conda init bash
-# source /Users/simon/src/github.com/vitessio/vitess/examples/local/env.sh
-
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 export TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling
-
-# nvm use 16 > /dev/null
 BUN_INSTALL="/Users/simon/.bun"
 PATH="$BUN_INSTALL/bin:$PATH"
 export OPENBLAS="$(brew --prefix openblas)"
