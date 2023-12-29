@@ -1,0 +1,1159 @@
+live_config_reload = true
+
+[bell]
+animation = "EaseOutExpo"
+duration = 0
+
+[colors]
+draw_bold_text_with_bright_colors = false
+
+[[colors.indexed_colors]]
+color = "0xdc9656"
+index = 16
+
+[[colors.indexed_colors]]
+color = "0xa16946"
+index = 17
+
+[[colors.indexed_colors]]
+color = "0x282828"
+index = 18
+
+[[colors.indexed_colors]]
+color = "0x383838"
+index = 19
+
+[[colors.indexed_colors]]
+color = "0xb8b8b8"
+index = 20
+
+[[colors.indexed_colors]]
+color = "0xe8e8e8"
+index = 21
+
+[colors.bright]
+black = "0x585858"
+blue = "0x7cafc2"
+cyan = "0x86c1b9"
+green = "0xa1b56c"
+magenta = "0xba8baf"
+red = "0xab4642"
+white = "0xf8f8f8"
+yellow = "0xf7ca88"
+
+[colors.cursor]
+cursor = "0xd8d8d8"
+text = "0x181818"
+
+[colors.normal]
+black = "0x181818"
+blue = "0x7cafc2"
+cyan = "0x86c1b9"
+green = "0xa1b56c"
+magenta = "0xba8baf"
+red = "0xab4642"
+white = "0xd8d8d8"
+yellow = "0xf7ca88"
+
+[colors.primary]
+background = "0x181818"
+foreground = "0xd8d8d8"
+
+[cursor]
+style = "Block"
+unfocused_hollow = true
+
+[font]
+size = 20.0
+
+[font.bold]
+family = "Inconsolata Nerd Font"
+style = "Bold"
+
+[font.glyph_offset]
+x = 0
+y = 0
+
+[font.italic]
+family = "Inconsolata Nerd Font"
+style = "Italic"
+
+[font.normal]
+family = "Inconsolata Nerd Font"
+style = "Regular"
+
+[font.offset]
+x = 0
+y = 0
+
+[[keyboard.bindings]]
+chars = "\u001B[13;2u"
+key = "Return"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[13;5u"
+key = "Return"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[32;2u"
+key = "Space"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[32;5u"
+key = "Space"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "Paste"
+key = "V"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "Copy"
+key = "C"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "Paste"
+key = "Paste"
+
+[[keyboard.bindings]]
+action = "Copy"
+key = "Copy"
+
+[[keyboard.bindings]]
+action = "Hide"
+key = "H"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "Quit"
+key = "Q"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001BOH"
+key = "Home"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001B[H"
+key = "Home"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001BOF"
+key = "End"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001B[F"
+key = "End"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+action = "ResetFontSize"
+key = "Key0"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "IncreaseFontSize"
+key = "Equals"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "DecreaseFontSize"
+key = "Minus"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "ClearHistory"
+key = "K"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\f"
+key = "K"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[5;2~"
+key = "PageUp"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[5;5~"
+key = "PageUp"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[5~"
+key = "PageUp"
+
+[[keyboard.bindings]]
+chars = "\u001B[6;2~"
+key = "PageDown"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[6;5~"
+key = "PageDown"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[6~"
+key = "PageDown"
+
+[[keyboard.bindings]]
+chars = "\u001B[Z"
+key = "Tab"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u007F"
+key = "Back"
+
+[[keyboard.bindings]]
+chars = "\u001B\u007F"
+key = "Back"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[2~"
+key = "Insert"
+
+[[keyboard.bindings]]
+chars = "\u001B[3~"
+key = "Delete"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;2D"
+key = "Left"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;5D"
+key = "Left"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[D"
+key = "Left"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001BOD"
+key = "Left"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;2C"
+key = "Right"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;5C"
+key = "Right"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[C"
+key = "Right"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001BOC"
+key = "Right"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;2A"
+key = "Up"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;5A"
+key = "Up"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;3A"
+key = "Up"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[A"
+key = "Up"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001BOA"
+key = "Up"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;2B"
+key = "Down"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;5B"
+key = "Down"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;3B"
+key = "Down"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[B"
+key = "Down"
+mode = "~AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001BOB"
+key = "Down"
+mode = "AppCursor"
+
+[[keyboard.bindings]]
+chars = "\u001BOP"
+key = "F1"
+
+[[keyboard.bindings]]
+chars = "\u001BOQ"
+key = "F2"
+
+[[keyboard.bindings]]
+chars = "\u001BOR"
+key = "F3"
+
+[[keyboard.bindings]]
+chars = "\u001BOS"
+key = "F4"
+
+[[keyboard.bindings]]
+chars = "\u001B[15~"
+key = "F5"
+
+[[keyboard.bindings]]
+chars = "\u001B[17~"
+key = "F6"
+
+[[keyboard.bindings]]
+chars = "\u001B[18~"
+key = "F7"
+
+[[keyboard.bindings]]
+chars = "\u001B[19~"
+key = "F8"
+
+[[keyboard.bindings]]
+chars = "\u001B[20~"
+key = "F9"
+
+[[keyboard.bindings]]
+chars = "\u001B[21~"
+key = "F10"
+
+[[keyboard.bindings]]
+chars = "\u001B[23~"
+key = "F11"
+
+[[keyboard.bindings]]
+chars = "\u001B[24~"
+key = "F12"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;2P"
+key = "F1"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;2Q"
+key = "F2"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;2R"
+key = "F3"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;2S"
+key = "F4"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[15;2~"
+key = "F5"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[17;2~"
+key = "F6"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[18;2~"
+key = "F7"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[19;2~"
+key = "F8"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[20;2~"
+key = "F9"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[21;2~"
+key = "F10"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[23;2~"
+key = "F11"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[24;2~"
+key = "F12"
+mods = "Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;5P"
+key = "F1"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;5Q"
+key = "F2"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;5R"
+key = "F3"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;5S"
+key = "F4"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[15;5~"
+key = "F5"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[17;5~"
+key = "F6"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[18;5~"
+key = "F7"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[19;5~"
+key = "F8"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[20;5~"
+key = "F9"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[21;5~"
+key = "F10"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[23;5~"
+key = "F11"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[24;5~"
+key = "F12"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;6P"
+key = "F1"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;6Q"
+key = "F2"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;6R"
+key = "F3"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;6S"
+key = "F4"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[15;6~"
+key = "F5"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[17;6~"
+key = "F6"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[18;6~"
+key = "F7"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[19;6~"
+key = "F8"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[20;6~"
+key = "F9"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[21;6~"
+key = "F10"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[23;6~"
+key = "F11"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[24;6~"
+key = "F12"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;3P"
+key = "F1"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;3Q"
+key = "F2"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;3R"
+key = "F3"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[1;3S"
+key = "F4"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[15;3~"
+key = "F5"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[17;3~"
+key = "F6"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[18;3~"
+key = "F7"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[19;3~"
+key = "F8"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[20;3~"
+key = "F9"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[21;3~"
+key = "F10"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[23;3~"
+key = "F11"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[24;3~"
+key = "F12"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = """
+
+"""
+key = "NumpadEnter"
+
+[[keyboard.bindings]]
+chars = "\u001Bb"
+key = "Left"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bf"
+key = "Right"
+mods = "Alt"
+
+[[keyboard.bindings]]
+action = "ToggleSimpleFullscreen"
+key = "F"
+mods = "Control|Command"
+
+[[keyboard.bindings]]
+key = "LBracket"
+mods = "Command|Shift"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t:-"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "RBracket"
+mods = "Command|Shift"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t:+"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "W"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["kill-pane"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "T"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["new-window", "-c", "#{pane_current_path}"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Left"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["resize-pane", "-L", "5"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Right"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["resize-pane", "-R", "5"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Down"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["resize-pane", "-D", "5"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Up"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["resize-pane", "-U", "5"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key0"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "0"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key1"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "1"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key2"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "2"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key3"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "3"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key4"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "4"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key5"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "5"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key6"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "6"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key7"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "7"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key8"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "8"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+key = "Key9"
+mods = "Command"
+
+[keyboard.bindings.command]
+args = ["select-window", "-t", "9"]
+program = "/usr/local/bin/tmux"
+
+[[keyboard.bindings]]
+chars = "\u001B[76;5u"
+key = "L"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001Bb"
+key = "B"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bc"
+key = "C"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bd"
+key = "D"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Be"
+key = "E"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bf"
+key = "F"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bg"
+key = "G"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bh"
+key = "H"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bi"
+key = "I"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bj"
+key = "J"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bl"
+key = "L"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bm"
+key = "M"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bn"
+key = "N"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bp"
+key = "P"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bq"
+key = "Q"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Br"
+key = "R"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bs"
+key = "S"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bt"
+key = "T"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bu"
+key = "U"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bv"
+key = "V"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bw"
+key = "W"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bx"
+key = "X"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001By"
+key = "Y"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bz"
+key = "Z"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001BB"
+key = "B"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BC"
+key = "C"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BD"
+key = "D"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BE"
+key = "E"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BF"
+key = "F"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BG"
+key = "G"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BH"
+key = "H"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BI"
+key = "I"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BJ"
+key = "J"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BL"
+key = "L"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BM"
+key = "M"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BN"
+key = "N"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BP"
+key = "P"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BQ"
+key = "Q"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BR"
+key = "R"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BS"
+key = "S"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BT"
+key = "T"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BU"
+key = "U"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BV"
+key = "V"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BW"
+key = "W"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BX"
+key = "X"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BY"
+key = "Y"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001BZ"
+key = "Z"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B1"
+key = "Key1"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B2"
+key = "Key2"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B3"
+key = "Key3"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B4"
+key = "Key4"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B5"
+key = "Key5"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B6"
+key = "Key6"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B7"
+key = "Key7"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B8"
+key = "Key8"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B9"
+key = "Key9"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B0"
+key = "Key0"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u0000"
+key = "Space"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B`"
+key = "`"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B~"
+key = "`"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B."
+key = "Period"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B/"
+key = "Slash"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B*"
+key = "Key8"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B#"
+key = "Key3"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B>"
+key = "Period"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B<"
+key = "Comma"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B_"
+key = "Minus"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B%"
+key = "Key5"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B^"
+key = "Key6"
+mods = "Alt|Shift"
+
+[[keyboard.bindings]]
+chars = "\u001B\\"
+key = "Backslash"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B|"
+key = "Backslash"
+mods = "Alt|Shift"
+
+[mouse]
+hide_when_typing = false
+
+[[mouse.bindings]]
+action = "PasteSelection"
+mouse = "Middle"
+
+[scrolling]
+history = 0
+multiplier = 3
+
+[selection]
+save_to_clipboard = false
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+
+[shell]
+args = ["--login", "-c", "tmux new-session -A -s main-alacritty"]
+program = "/opt/homebrew/bin/bash"
+
+[window]
+decorations = "none"
+startup_mode = "SimpleFullscreen"
+
+[window.dimensions]
+columns = 120
+lines = 35
+
+[window.padding]
+x = 2
+y = 2
