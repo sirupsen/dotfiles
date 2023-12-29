@@ -30,15 +30,17 @@ alias kgd='k get deploy'
 alias kgi='k get ingress'
 alias kd='k describe'
 alias kns='kubens'
-alias k-pod="k get pods | tail -n +2 | awk '{ print \$1 }' | fzf"
+k-pod() {
+  k get pods | tail -n +2 | awk '{ print $1 }' | fzf
+}
 alias k-node="k describe \"pod/\$(k-pod)\" | rg 'Node:' | rg -o 'gke-([\w-]+)'"
 
 alias npm-update="npm-check --skip-unused -u"
 
 git-find-merge() {
-  git rev-list $1..master --ancestry-path \
+  git rev-list "$1"..master --ancestry-path \
     | grep -f \
-      <(git rev-list $1..master --first-parent) \
+      <(git rev-list "$1"..master --first-parent) \
     | tail -1
 }
 
@@ -54,21 +56,15 @@ alias gsp='git stash pop'
 alias gbr='git branch --no-merged origin/master --sort=-committerdate --verbose'
 alias grc='git rebase --continue'
 alias gl='git log --oneline'
-alias gco='git checkout'
-function gb() {
-  branch="$(git branch --sort=-committerdate --format="%(committerdate:relative)%09%(refname:short)%09%(subject)" \
-      | column -ts $'\t' \
-      | fzf \
-      | sed 's/.*ago \+\([^ ]*\) .*/\1/')" 
-
-  git checkout "$branch"
+gco() {
+  _fzf_git_each_ref --no-multi | xargs git checkout
 }
-alias gcof='git checkout $(gb | fzf)'
 # alias gb='git branch'
 alias gpf='if [[ $(gcb) != "master" ]]; then git push `git_origin_or_fork` +`gcb`; else echo "Not going to force push master bud"; fi'
 function gd() {
   git diff "$@" ':!*lock'
 }
+alias ghgd="gh pr create --web"
 alias gg='git grep'
 alias ggi='git grep -i'
 alias ga='git add'
@@ -91,13 +87,13 @@ alias git_diff_commit='git diff-tree --no-commit-id --name-only -r HEAD'
 alias gdc=git_diff_commit
 
 review-latest-commit() {
-  nvim -c "let g:gitgutter_diff_base = 'HEAD~1'" -c ":e!" $(git_diff_commit)
+  nvim -c "let g:gitgutter_diff_base = 'HEAD~1'" -c ":e!" "$(git_diff_commit)"
 }
 alias rlc='review-latest-commit'
 
 garch() {
   local commit=$(git rev-list -n 1 --before="$1" master)
-  git checkout ${commit}
+  git checkout "${commit}"
 }
 
 alias peek=clone
@@ -124,12 +120,7 @@ alias churl="chrome --headless --disable-gpu --dump-dom"
 alias whatsmyip='curl -s https://am.i.mullvad.net/json | jq'
 
 cliphighlight() {
-  pbpaste | highlight -O rtf --font-size 54 --font Inconsolata --style solarized-dark -W -J 80 -j 3 --src-lang $1 | pbcopy
-}
-
-reset-camera () {
-  sudo killall AppleCameraAssistant
-  sudo killall VDCAssistant
+  pbpaste | highlight -O rtf --font-size 54 --font Inconsolata --style solarized-dark -W -J 80 -j 3 --src-lang "$1" | pbcopy
 }
 
 refresh() {
@@ -140,20 +131,26 @@ refresh() {
   brew upgrade fzf neovim bash ripgrep git universal-ctags \
     fd go curl redis ruby-install telnet tree jemalloc ruby-install \
     mysql yt-dlp curl cmake docker gdb wget coreutils \
-    lua luajit markdown gh hub htop reattach-to-user-namespace \
+    lua luajit luajit-openresty luarocks markdown gh hub htop reattach-to-user-namespace \
     jq sqlite htop grep graphviz entr fio aspell \
     llvm cmark chrome-cli gcc bat gopls typescript git-delta \
-    imagemagick angle-grinder sgpt
+    imagemagick angle-grinder sgpt kubectl asdf ca-certificates \
+    duckdb gnuplot gperf heroku libuv mutagen openblas terraform tree-sitter \
+    xxhash xsimd 1password-cli zstd font-inconsolata-nerd-font ngrok aichat
+
+  bun upgrade
 
   rustup update
   rustup update nightly
+  rustup component add clippy-preview
 
-  vim +PackerSync +qall
+  asdf install nodejs latest
+  asdf install golang latest
+  asdf install python latest
+  asdf install ruby latest
+
+  nvim --headless "+Lazy! sync" +qa
 }
-
-alias g4='sgpt --model gpt-4 --temperature 0.5 --no-cache'
-alias g4c='g4 --repl=temp'
-alias g4code='g4 --code'
 
 gsum() {
     if [ $# -eq 2 ]; then
@@ -246,12 +243,12 @@ man() {
 }
 
 tldr() {
-  curl "cheat.sh/$@"
+  curl "cheat.sh/$*"
 }
 
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 manf() {
-  /usr/bin/man $@
+  /usr/bin/man "$@"
 }
 
 zk-uniq() {
