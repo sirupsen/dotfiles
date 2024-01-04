@@ -131,8 +131,8 @@ simon_on_attach = function(client, bufnr)
    -- buf_set_keymap('v', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
    -- buf_set_keymap('v', ',ca', ":<c-u>lua vim.lsp.buf.code_action()<CR>", opts)
    buf_set_keymap('n', 'gR', "<cmd>lua require('fzf-lua').lsp_finder()<CR>", opts)
-   -- buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_incoming_calls()<CR>", opts)
-   buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_references()<CR>", opts)
+   buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_incoming_calls()<CR>", opts)
+   -- buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_references()<CR>", opts)
    buf_set_keymap('n', 'go', "<cmd>lua require('fzf-lua').lsp_outgoing_calls()<CR>", opts)
 
    buf_set_keymap('n', '[e', '<cmd>lua vim.diagnostic.goto_prev({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
@@ -155,6 +155,14 @@ simon_on_attach = function(client, bufnr)
    buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
 
     if client.supports_method("textDocument/formatting") then
+       local excluded_filetypes = {
+          yaml = true,
+          json = true,
+          markdown = true
+      }
+
+      local filetype = vim.bo.filetype
+      if not excluded_filetypes[filetype] then
             vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
             vim.api.nvim_create_autocmd("BufWritePre", {
                     group = augroup,
@@ -163,6 +171,7 @@ simon_on_attach = function(client, bufnr)
                             vim.lsp.buf.format { async = false }
                     end,
             })
+    end
   end
 
    vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focusable=false})]]
@@ -231,11 +240,100 @@ require('lazy').setup({
       end)
     end
   },
+  {
+    "michaelb/sniprun",
+    branch = "master",
+    build = "sh install.sh",
+    config = function()
+      require("sniprun").setup({ })
+    end,
+  },
   { 'hrsh7th/cmp-nvim-lsp'},
   { 'hrsh7th/cmp-buffer'},
   { 'hrsh7th/cmp-path'},
   { 'hrsh7th/cmp-cmdline'},
-  { 'hrsh7th/nvim-cmp'},
+  { 'hrsh7th/nvim-cmp', config = function()
+      local cmp = require("cmp")
+
+      local has_words_before = function()
+        if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+        return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
+      end
+
+      local feedkey = function(key, mode)
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+      end
+
+      cmp.setup({
+        enabled = function()
+          if require"cmp.config.context".in_treesitter_capture("comment")==true or require"cmp.config.context".in_syntax_group("Comment") then
+            return false
+          else
+            return true
+          end
+        end,
+        snippet = {
+          expand = function(args)
+            vim.fn["vsnip#anonymous"](args.body)
+          end,
+        },
+        completion = {
+          completeopt = 'menu,menuone,noinsert'
+        },
+        mapping = {
+          ["<Tab>"] = vim.schedule_wrap(function(fallback)
+            if cmp.visible() and has_words_before() then
+              cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+            else
+              fallback()
+            end
+          end),
+          ["<S-Tab>"] = cmp.mapping(function()
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+              feedkey("<Plug>(vsnip-jump-prev)", "")
+            end
+          end, { "i", "s" }),
+          ['C-j'] = cmp.mapping(function() cmp.select_next_item() end),
+          ['C-K'] = cmp.mapping(function() cmp.select_prev_item() end),
+          ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+          ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+          ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+          ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+          ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+          ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+          ['<C-e>'] = cmp.mapping({
+            i = cmp.mapping.abort(),
+            c = cmp.mapping.close(),
+          }),
+          ["<CR>"] = cmp.mapping.confirm({
+             -- this is the important line
+             behavior = cmp.ConfirmBehavior.Replace,
+             select = false,
+           }),
+        },
+        sources = cmp.config.sources({
+          -- { name = 'cmp_ai', group_index = 2 },
+          { name = "cody", group_index = 2 },
+          { name = "copilot", group_index = 2 },
+          { name = "latex_symbols", group_index = 2 },
+          { name = 'nvim_lsp', group_index = 2 },
+          { name = 'path', group_index = 2 },
+          { name = 'vsnip', group_index = 2 },
+        }, {
+          { name = 'buffer' },
+        })
+      })
+
+      cmp.setup.filetype('markdown', {
+        sources = cmp.config.sources({
+        }, {
+        })
+      })
+    end
+  },
   { 'hrsh7th/vim-vsnip'},
   { 'hrsh7th/cmp-vsnip'},
   {
@@ -408,8 +506,8 @@ require('lazy').setup({
               end, {expr=true})
 
               -- Our own
-              -- map('n', '<leader>hm', gs.change_base('master', true))
-              -- map('n', '<leader>hc', vim.ui.input({prompt = 'Change Git Base To: ', default = vim.g.gitgutter_diff_base}, function(input) gs.change_base(input, true); end, true))
+              map('n', '<leader>hm', function() gs.change_base('master', true) end)
+              map('n', '<leader>hc', function() vim.ui.input({prompt = 'Change Git Base To: ', default = vim.g.gitgutter_diff_base}, function(input) gs.change_base(input, true); end, true) end)
 
               -- -- Actions
               map('n', '<leader>hs', gs.stage_hunk)
@@ -620,7 +718,7 @@ require('lazy').setup({
       fzf = require('fzf-lua')
       fzf.register_ui_select()
       -- https://github.com/ibhagwan/nvim-lua/blob/main/lua/plugins/fzf-lua/init.lua
-      fzf.setup {
+      fzf.setup {"fzf-tmux",
         winopts = {
           height = 0.9,
           width = 0.9,
@@ -660,6 +758,9 @@ require('lazy').setup({
           -- Don't follow symlinks, weird behavior in JS repos.
           fd_opts           = "--color=never --type f --hidden --exclude .git",
         },
+        diagnostics = {
+          severity_limit = "Error",
+        },
         actions = {
             buffers = {
                 ["default"]     = actions.buf_edit,
@@ -685,6 +786,7 @@ require('lazy').setup({
 
       vim.cmd [[
         map z=           :lua require("fzf-lua").spell_suggest()<CR>
+        map <Space>'     :lua require("fzf-lua").marks()<CR>
         map <C-S-j>      :lua require("fzf-lua").git_status()<CR>
         map <C-g>        :lua require('fzf-lua').live_grep()<CR>
         map <C-q>        :lua require('fzf-lua').commands()<CR>
@@ -860,85 +962,6 @@ require('lazy').setup({
    { 'vim-ruby/vim-ruby', ft = { 'ruby', 'eruby' } },
 })
 
-local cmp = require("cmp")
-
-local has_words_before = function()
-  if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
-  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
-end
-
-local feedkey = function(key, mode)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
-end
-
-cmp.setup({
-  enabled = function()
-    if require"cmp.config.context".in_treesitter_capture("comment")==true or require"cmp.config.context".in_syntax_group("Comment") then
-      return false
-    else
-      return true
-    end
-  end,
-  snippet = {
-    expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body)
-    end,
-  },
-  completion = {
-    completeopt = 'menu,menuone,noinsert'
-  },
-  mapping = {
-    ["<Tab>"] = vim.schedule_wrap(function(fallback)
-      if cmp.visible() and has_words_before() then
-        cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-      else
-        fallback()
-      end
-    end),
-    ["<S-Tab>"] = cmp.mapping(function()
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-        feedkey("<Plug>(vsnip-jump-prev)", "")
-      end
-    end, { "i", "s" }),
-    ['C-j'] = cmp.mapping(function() cmp.select_next_item() end),
-    ['C-K'] = cmp.mapping(function() cmp.select_prev_item() end),
-    ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
-    ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
-    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-    ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-    ['<C-e>'] = cmp.mapping({
-      i = cmp.mapping.abort(),
-      c = cmp.mapping.close(),
-    }),
-    ["<CR>"] = cmp.mapping.confirm({
-       -- this is the important line
-       behavior = cmp.ConfirmBehavior.Replace,
-       select = false,
-     }),
-  },
-  sources = cmp.config.sources({
-    -- { name = 'cmp_ai', group_index = 2 },
-    { name = "cody", group_index = 2 },
-    { name = "copilot", group_index = 2 },
-    { name = "latex_symbols", group_index = 2 },
-    { name = 'nvim_lsp', group_index = 2 },
-    { name = 'path', group_index = 2 },
-    { name = 'vsnip', group_index = 2 },
-  }, {
-    { name = 'buffer' },
-  })
-})
-cmp.setup.filetype('markdown', {
-  sources = cmp.config.sources({
-  }, {
-  })
-})
-
 -- https://github.com/neovim/nvim-lspconfig/wiki/UI-customization
 vim.o.updatetime = 250
 
@@ -977,82 +1000,6 @@ augroup END
 ]]
 
  vim.lsp.set_log_level("info")
-
-function insert_line_at_cursor(text, newline)
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local row = cursor[1]
-  local column = cursor[2]
- 
-  if not newline then
-    vim.api.nvim_buf_set_text(0, row - 1, column, row - 1, column, {text})
-  else
-    vim.api.nvim_buf_set_lines(0, row, row, false, {text})
-  end
-end
-
-function insert_tag_at_cursor(text, newline)
-  local tag = string.match(text, "([#%a-]+)")
-  insert_line_at_cursor(tag, newline)
-end
-
-function ZettelkastenSearch()
- require'fzf-lua'.fzf_live(
-   "textgrep", {
-       actions = require'fzf-lua'.defaults.actions.files,
-       previewer = 'builtin',
-       exec_empty_query = true,
-       fzf_opts = {
-         ["--exact"] = '',
-         ["--ansi"] = '',
-         ["--tac"] = '',
-         ["--no-multi"] = '',
-         ["--no-info"] = '',
-         ["--phony"] = '',
-         ['--bind'] = 'change:reload:textgrep \"{q}\"',
-       }
-   }
- )
-end
-
-function ZettelkastenRelatedTags()
- require'fzf-lua'.fzf_exec(
-   "zk-related-tags \"" .. vim.fn.bufname("%") .. "\"", {
-       actions = { ['default'] = function(selected, opts) insert_tag_at_cursor(selected[1], true) end },
-       fzf_opts = { ["--exact"] = '', ["--nth"] = '2' }
-   }
- )
-end
-
-function ZettelkastenTags()
- require'fzf-lua'.fzf_exec(
-   "zkt-raw", {
-       actions = { ['default'] = function(selected, opts) insert_tag_at_cursor(selected[1], true) end },
-       fzf_opts = { ["--exact"] = '', ["--nth"] = '2' }
-   }
- )
-end
-
-function CompleteZettelkastenPath()
- require'fzf-lua'.fzf_exec(
-   "rg --files -t md | sed 's/^/[[/g' | sed 's/$/]]/'", {
-       actions = { ['default'] = function(selected, opts) insert_line_at_cursor(selected[1], false) end },
-   }
- )
-end
-
-function CompleteZettelkastenTag()
- require'fzf-lua'.fzf_exec(
-   "zkt-raw", {
-       actions = { ['default'] = function(selected, opts) insert_tag_at_cursor(selected[1], false) end },
-       fzf_opts = {
-         ["--exact"] = '',
-         ["--nth"] = '2',
-         ["--print-query"] = '',
-         ["--multi"] = "",
-       }
-   }
- )
-end
 EOF
 
 " https://medium.com/@vinodkri/zooming-vim-window-splits-like-a-pro-d7a9317d40
@@ -1078,27 +1025,5 @@ function! RenameFile()
 endfunction
 nnoremap <leader>r :call RenameFile()<cr>
 
-function! SNote(...)
-  let path = strftime("%Y%m%d%H%M")." ".trim(join(a:000)).".md"
-  execute ":sp " . fnameescape(path)
-endfunction
-command! -nargs=* SNote call SNote(<f-args>)
 
-function! Note(...)
-  let path = strftime("%Y%m%d%H%M")." ".trim(join(a:000)).".md"
-  execute ":e " . fnameescape(path)
-endfunction
-command! -nargs=* Note call Note(<f-args>)
-
-function! ZettelkastenSetup()
-  if expand("%:t") !~ '^[0-9]\+'
-    return
-  endif
-  lua vim.api.nvim_set_keymap('i', '[[', '<cmd>lua CompleteZettelkastenPath()<cr>', {})
-  lua vim.api.nvim_set_keymap('i', '#', '<cmd>lua CompleteZettelkastenTag()<cr>', {})
-endfunction
-
-command! ZKRT :lua ZettelkastenRelatedTags()
-command! ZKS :lua ZettelkastenSearch()
-command! ZKT :lua ZettelkastenTags()
-endif
+endif " retain
