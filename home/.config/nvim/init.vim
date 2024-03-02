@@ -116,11 +116,11 @@ simon_on_attach = function(client, bufnr)
 
    -- This broke in Neovim 0.7
    -- https://github.com/neovim/neovim/issues/17867 then map to C-[
-   buf_set_keymap('n', '<A-[>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
    -- buf_set_keymap('n', '[[', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
    -- buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
    -- buf_set_keymap('n', '<Esc>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-   buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+   -- buf_set_keymap('n', '<C-[>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+   buf_set_keymap('n', '<C-[>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
    buf_set_keymap('n', '<Esc>', '<cmd>lua require(\'fzf-lua\').lsp_definitions({jump_to_single_result = true })<CR>', opts)
    buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
 
@@ -128,23 +128,25 @@ simon_on_attach = function(client, bufnr)
    buf_set_keymap('n', '<C-K>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
    buf_set_keymap('n', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
    buf_set_keymap('v', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
-   -- buf_set_keymap('v', ',ca', '<cmd>lua require(\'fzf-lua\').lsp_code_actions()<CR>', opts)
-   -- buf_set_keymap('v', ',ca', ":<c-u>lua vim.lsp.buf.code_action()<CR>", opts)
-   buf_set_keymap('n', 'gR', "<cmd>lua require('fzf-lua').lsp_finder()<CR>", opts)
-   buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_incoming_calls()<CR>", opts)
-   -- buf_set_keymap('n', 'gr', "<cmd>lua require('fzf-lua').lsp_references()<CR>", opts)
-   buf_set_keymap('n', 'go', "<cmd>lua require('fzf-lua').lsp_outgoing_calls()<CR>", opts)
+   buf_set_keymap('n', 'gR', "<cmd>lua require(\'fzf-lua\').lsp_finder()<CR>", opts)
+   -- buf_set_keymap('n', 'gr', "<cmd>lua require(\'fzf-lua\').lsp_references()<CR>", opts)
+   buf_set_keymap('n', 'gr', "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+   buf_set_keymap('n', 'gT', "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
+
+   buf_set_keymap('n', 'go', "<cmd>lua require(\'fzf-lua\').lsp_outgoing_calls()<CR>", opts)
+   buf_set_keymap('n', 'gi', "<cmd>lua require(\'fzf-lua\').lsp_incoming_calls()<CR>", opts)
 
    buf_set_keymap('n', '[e', '<cmd>lua vim.diagnostic.goto_prev({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
    buf_set_keymap('n', ']e', '<cmd>lua vim.diagnostic.goto_next({severity = vim.diagnostic.severity.ERROR})<CR>', opts)
    buf_set_keymap('n', '[E', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
    buf_set_keymap('n', ']E', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-   buf_set_keymap('n', ',e', "<cmd>lua require('fzf-lua').lsp_document_diagnostics()<CR>", opts)
+   buf_set_keymap('n', ',e', "<cmd>lua require(\'fzf-lua\').lsp_document_diagnostics()<CR>", opts)
    buf_set_keymap('n', ',E', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
    buf_set_keymap('n', '<space>e', '<cmd>lua require(\'fzf-lua\').lsp_workspace_diagnostics()<CR>', opts)
    buf_set_keymap('n', '<space>r', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-   buf_set_keymap('n', 'g<A-l>', "<cmd>lua require('fzf-lua').lsp_document_symbols()<CR>", opts)
-   buf_set_keymap('n', 'gl', "<cmd>lua require('fzf-lua').lsp_live_workspace_symbols()<CR>", opts)
+   buf_set_keymap('n', 'g<A-l>', "<cmd>lua require(\'fzf-lua\').lsp_document_symbols()<CR>", opts)
+   buf_set_keymap('n', 'gl', "<cmd>lua require(\'fzf-lua\').lsp_live_workspace_symbols()<CR>", opts)
+   buf_set_keymap('n', 'gt', "<cmd>lua require(\'fzf-lua\').lsp_typedefs()<CR>", opts)
 
    buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
    buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
@@ -162,16 +164,16 @@ simon_on_attach = function(client, bufnr)
       }
 
       local filetype = vim.bo.filetype
-      if not excluded_filetypes[filetype] then
-            vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-            vim.api.nvim_create_autocmd("BufWritePre", {
-                    group = augroup,
-                    buffer = bufnr,
-                    callback = function()
-                            vim.lsp.buf.format { async = false }
-                    end,
-            })
-    end
+      -- if not excluded_filetypes[filetype] then
+      --       vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+      --       vim.api.nvim_create_autocmd("BufWritePre", {
+      --               group = augroup,
+      --               buffer = bufnr,
+      --               callback = function()
+      --                       vim.lsp.buf.format { async = false }
+      --               end,
+      --       })
+    -- end
   end
 
    vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focusable=false})]]
@@ -556,7 +558,6 @@ require('lazy').setup({
         end,
 
         ["rust_analyzer"] = function ()
-            require("rust-tools").setup {}
             require("lspconfig")["rust_analyzer"].setup {
               on_attach = simon_on_attach,
               settings = {
@@ -570,7 +571,8 @@ require('lazy').setup({
                       "node_modules",
                       "logs",
                       "tmp",
-                      "site",
+                      "**/node_modules",
+                      "**/site",
                       "web",
                       "target"
                     }
@@ -602,6 +604,7 @@ require('lazy').setup({
           'vim-language-server',
 
           'rust-analyzer',
+          "cpptools", -- Rust debugger
 
           'dockerfile-language-server',
           'hadolint', -- Dockerfiles
@@ -718,27 +721,27 @@ require('lazy').setup({
       fzf = require('fzf-lua')
       fzf.register_ui_select()
       -- https://github.com/ibhagwan/nvim-lua/blob/main/lua/plugins/fzf-lua/init.lua
-      fzf.setup {"fzf-tmux",
+      fzf.setup({"fzf-tmux",
         winopts = {
-          height = 0.9,
-          width = 0.9,
-          preview = {
-            default = 'bat',
-            flip_columns        = 500,        -- how many columns to allow vertical split
-            winopts = {                       -- builtin previewer window options
-              number            = false,
-              relativenumber    = false,
-            },
-          }
+          -- height = 0.9,
+          -- width = 0.9,
+          -- preview = {
+          --   default = 'bat',
+          --   flip_columns        = 500,        -- how many columns to allow vertical split
+          --   winopts = {                       -- builtin previewer window options
+          --     number            = false,
+          --     relativenumber    = false,
+          --   },
+          -- }
         },
         previewers = {
           -- builtin = { -- Let's try to disable this now, maybe bug was fixed..?
           --   syntax_limit_b = 1024 * 24,
           --   limit_b = 1024 * 24,
           -- },
-          bat = {
-            theme = 'base16-256',
-          },
+          -- bat = {
+          --   theme = 'base16-256',
+          -- },
         },
         fzf_opts = {
           ['--ansi']        = '',
@@ -782,19 +785,23 @@ require('lazy').setup({
             ["ctrl-d"]          = { actions.buf_del, actions.resume },
           }
         }
-      }
+      })
 
       vim.cmd [[
+        map <C-t>        :lua require('fzf-lua').files()<CR>
+        map <A-t>        :lua require("fzf-lua").git_status()<CR>
+
+        map <C-j>        :lua require('fzf-lua').buffers()<CR>
+
         map z=           :lua require("fzf-lua").spell_suggest()<CR>
         map <Space>'     :lua require("fzf-lua").marks()<CR>
-        map <C-S-j>      :lua require("fzf-lua").git_status()<CR>
-        map <C-g>        :lua require('fzf-lua').live_grep()<CR>
+
         map <C-q>        :lua require('fzf-lua').commands()<CR>
-        map <A-/>        :lua require('fzf-lua').lines()<CR>
+
+        map <C-g>        :lua require('fzf-lua').live_grep()<CR>
         map <Space>/     :lua require('fzf-lua').grep_cword()<CR>
         map <Leader>/    :lua require('fzf-lua').grep()<CR>
-        map <C-t>        :lua require('fzf-lua').files()<CR>
-        map <C-j>        :lua require('fzf-lua').buffers()<CR>
+
         map <C-l>        :lua require('fzf-lua').tags()<CR>
         map <A-l>        :lua require('fzf-lua').btags()<CR>
         map <Space>l     :lua require('fzf-lua').tags({ fzf_opts = { ["--query"] = vim.fn.expand("<cword>") }})<CR>
@@ -851,24 +858,45 @@ require('lazy').setup({
   'tpope/vim-eunuch',
   'tpope/vim-unimpaired',
   'tpope/vim-repeat',
-  { 'RRethy/nvim-base16', config = function()
+  { 'RRethy/nvim-base16', commit = '3c6a56016cea7b892f1d5b9b5b4388c0f71985be', config = function()
      vim.cmd [[
         let base16colorspace=256
         colorscheme base16-default-dark
         " Light
         " https://github.com/RRethy/nvim-base16
         " colorscheme base16-gruvbox-material-light-hard
-           ]]
-   end },
-   { 'janko-m/vim-test', config = function()
-     vim.cmd [[
-        let test#strategy = "vimux"
-        let test#python#runner = 'pytest'
-
-        map <leader>t :TestNearest<CR>
-        map <leader>T :TestFile<CR>
-        map <Space>t :TestLast<CR>
      ]]
+   end },
+   -- { 'janko-m/vim-test', config = function()
+   --   vim.cmd [[
+   --      let test#strategy = "vimux"
+   --      let test#python#runner = 'pytest'
+
+   --      map <leader>t :TestNearest<CR>
+   --      map <leader>T :TestFile<CR>
+   --      map <Space>t :TestLast<CR>
+   --   ]]
+   --  end
+  -- },
+  {
+    "nvim-neotest/neotest",
+    requires = {
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-treesitter/nvim-treesitter"
+    },
+    config = function()
+      require("neotest").setup({
+        adapters = {
+          require('rustaceanvim.neotest'),
+        },
+      })
+
+      vim.cmd [[
+        map <leader>t :lua require("neotest").run.run()<CR>
+        map <leader>T :lua require("neotest").run.run(vim.fn.expand("%"))<CR>
+        map <Space>t :lua lua require("neotest").output_panel.open({ enter = true })
+      ]]
     end
   },
   'mfussenegger/nvim-dap',
@@ -883,12 +911,12 @@ require('lazy').setup({
         endfunction
         map <C-e> :call RepeatLastTmuxCommand()<CR>
 
-        function! RunSomethingInTmux()
-          if &filetype ==# 'markdown'
-            call VimuxRunCommand("mdrr '" . expand('%') . "'")
-          end
-        endfunction
-        map <A-e> :call RunSomethingInTmux()<CR>
+        " function! RunSomethingInTmux()
+        "   if &filetype ==# 'markdown'
+        "     call VimuxRunCommand("mdrr '" . expand('%') . "'")
+        "   end
+        " endfunction
+        " map <A-e> :call RunSomethingInTmux()<CR>
 
         " this is useful for debuggers etc
         map <Space>b :call VimuxRunCommand(bufname("%") . ":" . line("."), 0)<CR>
@@ -949,7 +977,11 @@ require('lazy').setup({
     end
   },
   'godlygeek/tabular',
-  'simrat39/rust-tools.nvim',
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^4', -- Recommended
+    ft = { 'rust' },
+  },
   {
     "j-hui/fidget.nvim", -- shows loading and stuff
     opts = {
@@ -999,7 +1031,7 @@ augroup LSPDiagnosticsOnHover
 augroup END
 ]]
 
- vim.lsp.set_log_level("info")
+vim.lsp.set_log_level("info")
 EOF
 
 " https://medium.com/@vinodkri/zooming-vim-window-splits-like-a-pro-d7a9317d40
