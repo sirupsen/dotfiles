@@ -5,8 +5,7 @@ fi
 
 # alias box="mosh pufferbox -p 60000 -- tmux new-session -A -s main"
 # alias box-ssh="ssh -t pufferbox tmux new-session -A -s main"
-alias box="mosh gcp1 -p 60000 -- tmux new-session -A -s main"
-alias box-ssh="ssh -t gcp1 tmux new-session -A -s main"
+alias box-ssh='gcloud compute ssh --zone "us-central1-c" "gcp-box1" --project "turbopuffer" --tunnel-through-iap'
 alias spot-ssh='gcloud compute ssh --zone "us-central1-c" "gcp-spotbox1" --project "turbopuffer"'
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -57,7 +56,11 @@ alias gbr='git branch --no-merged origin/master --sort=-committerdate --verbose'
 alias grc='git rebase --continue'
 alias gl='git log --oneline'
 gco() {
-  _fzf_git_each_ref --no-multi | xargs git checkout
+  if [[ -z "$1" ]]; then
+    _fzf_git_each_ref --no-multi | xargs git checkout
+  fi
+
+  git checkout $@
 }
 # alias gb='git branch'
 alias gpf='if [[ $(gcb) != "master" ]]; then git push `git_origin_or_fork` +`gcb`; else echo "Not going to force push master bud"; fi'
@@ -140,9 +143,9 @@ refresh() {
 
   bun upgrade
 
-  rustup update
-  rustup update nightly
-  rustup component add clippy-preview
+  # rustup update
+  # rustup update nightly
+  # rustup component add clippy-preview
 
   asdf install nodejs latest
   asdf install golang latest

@@ -857,10 +857,10 @@ chars = "\u001Bs"
 key = "S"
 mods = "Alt"
 
-[[keyboard.bindings]]
-chars = "\u001Bt"
-key = "T"
-mods = "Alt"
+# [[keyboard.bindings]]
+# chars = "\u001bt"
+# key = "T"
+# mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001Bu"
@@ -1149,6 +1149,7 @@ program = "/opt/homebrew/bin/bash"
 [window]
 decorations = "none"
 startup_mode = "SimpleFullscreen"
+option_as_alt = "Both" # For Alt in NeoVim to work
 
 [window.dimensions]
 columns = 120

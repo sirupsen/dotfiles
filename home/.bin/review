@@ -71,7 +71,6 @@ def ensure_remote(remote)
   end
 end
 
-# TODO: Support separate origins.
 def remote_branch(string)
   # This is when a URL is passed and you get something like Shopify/shopify, but
   # you really want origin--but you also want to support forks. The more elegant
@@ -149,6 +148,7 @@ def org_repo_branch_from_url(url)
             pullRequest(number: #{pr_id}) { \
               title \
               body \
+              baseRefName \
               headRefName \
               isCrossRepository \
               headRepository { \
@@ -177,7 +177,6 @@ def org_repo_branch_from_url(url)
 
   response = http.request(request)
   json = JSON.parse(response.body)
-  p json
   pr = json['data']['repository']['pullRequest']
   pr['headRefName'] unless pr['isCrossRepository']
 
@@ -189,13 +188,16 @@ def org_repo_branch_from_url(url)
 
   merge_event = pr['timeline']['edges'].find { |edge| edge['node']['commit'] }
 
+  base_ref = json['data']['repository']['pullRequest']['baseRefName']
+
   [
     org,
     repo,
     "#{pr['headRepository']['owner']['login']}/#{pr['headRefName']}",
     pr_file,
     merge_event && merge_event['node']['commit']['oid'],
-    json['data']['repository']['defaultBranchRef']['name']
+    # json['data']['repository']['defaultBranchRef']['name']
+    base_ref
   ]
 end
 
